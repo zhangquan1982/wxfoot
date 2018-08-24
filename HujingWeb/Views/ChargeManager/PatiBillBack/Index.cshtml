@@ -1,0 +1,322 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+<link href="~/Scripts/MiniUI/demo.css" rel="stylesheet" type="text/css" />
+<script src="~/Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+<script src="~/Scripts/MiniUI/core.js" type="text/javascript"></script>
+<script src="~/Scripts/moment.min.js"></script>
+<style type="text/css">
+    html, body {
+        padding: 0;
+        margin: 0;
+        border: 0;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    table td {
+        font-size: 12px;
+    }
+
+    .myrow {
+        color: red;
+    }
+</style>
+<head>
+    <script src="../../Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+    <script src="../../Scripts/MiniUI/core.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var grid;
+        var gridPerson;
+        var gridcollect;
+        $(document).ready(function () {
+            mini.parse();
+            grid = mini.get("grid1");
+            gridcollect = mini.get("gridCollect");
+            gridPerson = mini.get("SelPerson");
+
+            grid.on("drawcell", function (e) {
+                var record = e.record,
+                column = e.column,
+                field = e.field,
+                value = e.value;
+
+                if (field == "Quantity") {
+                    e.cellStyle = "color:red;font-weight:bold;";
+                }
+
+                if (record.BackQuantity < 0) {
+                    e.rowCls = "myrow";
+                }
+            });
+
+            $("#btnSave").click(function (event) {
+
+                form.validate();
+                grid.validate();
+
+                if (form.isValid() == false) {
+                    return;
+                }
+
+                if (grid.isValid() == false) {
+                    return;
+                }
+                if (grid.getChanges().length == 0) {
+                    mini.showTips({ content: "没有选择保存项目！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                    return;
+                }
+                var items = gridcollect.getSelected();
+                var allAmount = 0;
+                if (items) {
+                    allAmount = items.Quantity;
+                }
+                var items = grid.getChanges();
+                if (items.length > 0) {
+                    for (var irow = 0; irow < items.length; irow++) {
+                        var item = items[irow];
+                        var quant1 = parseFloat(item.Quantity);
+                        var quant2 = parseFloat(item.BackQuantity);
+                        if (quant1 > allAmount) {
+                            mini.showTips({ content: "退数量不能大于可退数量！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                            return;
+                        }
+                        if (quant1 > quant2) {
+                            mini.showTips({ content: "退数量不能大于可退数量！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                            return;
+                        }
+                    }
+                }
+                mini.confirm("确定退费吗？", "确定", function (action) {
+                    if (action == "ok") {
+                        $.ajax({
+                            url: '@Url.Action("SavePatiBackBill")?SerialNum=' + $("#SerialNum").val(),
+                            type: 'post',
+                            dataType: "json",
+                            contentType: 'application/json',
+                            data: mini.encode({
+                                billItem: items
+                            }),
+                            cache: false,
+                            success: function (text) {
+                                if (text == true) {
+                                    mini.showTips({ content: "保存成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                                    var serial = $("#SerialNum").val();
+                                    gridcollect.load({ SerialNum: serial });
+                                    grid.load({ SerialNum: "ffsse", ItemId: "1ggssee" });
+                                } else {
+                                    mini.showTips({ content: "保存失败！", state: "danger", x: "center", y: "top", timeout: 3000 });
+                                }
+
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                alert(jqXHR.responseText);
+                                CloseWindow();
+                            }
+                        });
+                    }
+                });
+
+            });
+        });
+
+        function onComboValidation(e) {
+
+            var items = this.findItems(e.value);
+            if (!items || items.length == 0) {
+                e.isValid = false;
+                e.errorText = "输入值不在下拉数据中";
+
+                $("#SerialNum").val("");
+                $("#divPatiName").html("");
+                $("#divAge").html("");
+                $("#divAdmitDate").html("");
+                $("#divSex").html("");
+                $("#divPreAmount").html("");
+                $("#divLeftAmount").html("");
+                $("#divFeeAmount").html("");
+                gridcollect.load({ SerialNum: "fsde13423fg" });
+            }
+        }
+
+        function RefreshPerson(e) {
+            if (e.value.length >= 1) {
+                var url = '@Url.Action("GetInPatiPerson", "Common")?input=' + e.value;
+                gridPerson.load(url);
+            }
+        }
+
+        function BillConnectChangeClick(e) {
+            var serinum = $("#SerialNum").val();
+            var rows = e.sender.getSelected();
+            if (rows) {
+                grid.load({ SerialNum: serinum, ItemId: rows.ItemId });
+            }
+        }
+
+
+    </script>
+</head>
+<form id="frmBill">
+    <div>
+        <ul class="mnbreadcrumb">
+            <li>
+                <a href="#">入院收费</a> <span class="divider"></span>
+            </li>
+            <li>
+                <a href="#">老人退费</a>
+            </li>
+        </ul>
+    </div>
+    <div showcollapsebutton="true">
+        <div style="width: 720px; padding: 10px; height:25%; border: 1px gray solid">
+            <div>
+                <div style="float: left; margin-left: 5px;font-size:13px;">
+                    选择老人:
+                </div>
+                <div style="float: left; margin-left: 5px;font-size:13px;">
+                    <div style="float: left; margin-left: 5px">
+                        <div id="SelPerson" name="SelPerson" class="mini-combobox" style="width:120px;" popupwidth="360px" textfield="PatiName" valuefield="SerialNum"
+                             url='@Url.Action("GetInPatiPerson", "Common")' value="" allowinput="true" onvaluechanged="RefreshPerson" onvalidation="onComboValidation" onitemclick="ClickSelPerson">
+                            <div property="columns">
+                                <div header="床位号" field="BedName"></div>
+                                <div header="入院编号" field="SerialNum"></div>
+                                <div header="姓名" field="PatiName"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="float: left; font-size:13px; margin-left: 5px; color:red">
+                    提示：请在左侧输入框中输入姓名、入院号然后回车！
+                </div>
+                <div style="clear: both; height: 20px">
+                </div>
+                <div style="font-size:13px;  font-weight:bold">
+                    <div style="position:absolute; left:15px; top:90px">病人姓名：</div>
+                    <div style="position:absolute; left:110px; top:90px"><u id="divPatiName"></u></div>
+                    <div style="position:absolute; left:300px; top:90px">年龄：</div>
+                    <div style="position:absolute; left:360px; top:90px"><u id="divAge"></u></div>
+                    <div style="position:absolute; left:15px; top:130px">入院日期：</div>
+                    <div style="position:absolute; left:110px; top:130px"><u id="divAdmitDate"></u></div>
+                    <div style="position:absolute; left:300px; top:130px">性别：</div>
+                    <div style="position:absolute; left:360px; top:130px"><u id="divSex"></u></div>
+                    <div style="position:absolute; left:15px; top:170px">预交金：</div>
+                    <div style="position:absolute; left:110px; top:170px"><u id="divPreAmount"></u></div>
+                    <div style="position:absolute; left:300px; top:170px">消费金额：</div>
+                    <div style="position:absolute; left:390px; top:170px"><u id="divFeeAmount"></u></div>
+                    <div style="position:absolute; left:585px; top:170px;color:red">余额：</div>
+                    <div style="position:absolute; left:635px; top:170px; color:red"><u id="divLeftAmount"></u></div>
+                </div>
+                <div><input type="hidden" id="SerialNum" /></div>
+            </div>
+        </div>
+        <div class="fieldset-body">
+            <div style="clear: both; margin-top: 5px; width: 100%; height: 30px">
+                <div class="mini-toolbar" style="border-bottom: 0; padding: 0px;">
+                    <table style="width: 100%;">
+                        <tr>
+                            <td style="width: 100%;">
+                                <a class="mini-button" iconcls="icon-add" id="btnSave">退费</a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div id="gridCollect" class="mini-datagrid" style="width: 100%; height: 35%;"
+                     allowresize="true" url="@Url.Action("GetPatiBillCollect","PersonBill")" idfield="ItemId" pagesize="1000" onselectionchanged="BillConnectChangeClick" showpager="false">
+                    <div property="columns">
+                        <div type="checkcolumn" width="20">
+                        </div>
+                        <div field="ItemId" width="50" headeralign="center" align="center" allowsort="true">
+                            项目编码
+                        </div>
+                        <div field="ItemName" width="50" headeralign="center" align="center" allowsort="true">
+                            项目名称
+                        </div>
+                        <div field="UnitName" width="40" headeralign="center" align="center" allowsort="true">
+                            规格
+                        </div>
+                        <div field="Price" width="50" headeralign="center" align="center" vtype="float" allowsort="true">
+                            价格
+                        </div>
+                        <div field="Quantity" width="40" headeralign="center" align="center" vtype="float" allowsort="true">
+                            可退数量
+                        </div>
+                        <div field="TotalAmount" width="50" headeralign="center" align="center" vtype="float" allowsort="true">
+                            总金额
+                        </div>
+                    </div>
+                </div>            
+            <div style="clear:both;height:10px"></div>
+            <div>                
+                <div id="grid1" class="mini-datagrid" style="width: 100%; height:35%;"
+                     allowresize="true" url="@Url.Action("GetPatiBillBackList")" idfield="Status" allowcellselect="true" allowcelledit="true" pagesize="1000" showpager="false">
+                    <div property="columns">
+                        <div type="checkcolumn" width="20">
+                        </div>
+                        <div field="ItemId" width="50" headeralign="center" align="center">
+                            项目编码
+                        </div>
+                        <div field="ItemName" width="50" headeralign="center" align="center">
+                            项目名称
+                        </div>
+                        <div field="UnitName" width="40" headeralign="center" align="center">
+                            规格
+                        </div>
+                        <div field="BackQuantity" width="40" headeralign="center" align="center">
+                            可退数量
+                        </div>
+                        <div field="Price" width="60" headeralign="center" align="center">
+                            价格
+                        </div>
+                        <div field="Quantity" width="100" vtype="required;float" headeralign="center" allowsort="false">
+                            退数量
+                            <input property="editor" vtype="float" class="mini-spinner" value="0" minvalue="0" maxvalue="1000" style="width:100%;" />
+                        </div>
+                        <div field="TotalAmount" width="60" headeralign="center" align="center" vtype="float">
+                            总金额
+                        </div>
+                        <div field="CreateDate" width="60" headeralign="center" align="center">
+                            记账时间
+                        </div>
+                        <div field="CreateUser" width="50" headeralign="center" align="center">
+                            记账人
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script type="text/javascript">
+    mini.parse();
+    var grid = mini.get("grid1");
+    var form = new mini.Form("frmBill");
+
+    function ClickSelPerson(e) {
+        var result = e.item;
+        if (result.StatusName != "已入院") {
+            mini.showTips({ content: "此人未入院！", state: "warning", x: "center", y: "top", timeout: 3000 });
+            return;
+        }
+        var admitdate = moment(result.AdmitDate).format('YYYY-MM-DD');
+
+        $("#SerialNum").val(result.SerialNum);
+        var yjAmount = parseInt(result.PreAmount);
+        var yeAmount = parseInt(yjAmount - result.FeeAmount);
+        $("#divPatiName").html(result.PatiName);
+        $("#divAge").html(result.Age);
+        $("#divAdmitDate").html(admitdate);
+        $("#divSex").html(result.SexName);
+        $("#divPreAmount").html(result.PreAmount);
+        $("#divLeftAmount").html(yeAmount);
+        $("#divFeeAmount").html(result.FeeAmount);
+        $("#SerialNum").val(result.SerialNum);
+
+        gridcollect.load({ SerialNum: result.SerialNum });
+    }
+
+
+
+</script>

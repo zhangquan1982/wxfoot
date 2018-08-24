@@ -1,0 +1,192 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+<head>
+    <script src="~/Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+    <script src="~/Scripts/MiniUI/core.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var tree;
+        var grid;
+        $(document).ready(function () {
+            mini.parse();
+            tree = mini.get("tree1");
+            grid = mini.get("grid1");
+
+            tree.on("nodeselect", function (e) {
+                if (e.isLeaf) {
+                    grid.load({ floorid: e.node.FloorId });
+                } else {
+                    grid.load({ floorid: e.node.FloorId });
+                }
+            });
+        });
+
+
+        function AddRow() {
+            var tree = mini.get("tree1");
+            var node = tree.getSelectedNode();
+            var parentid = "";
+            if (node) {
+                parentid = node.FloorId;
+            }
+            if (node) {
+            } else {
+                var orgTypeCombo = mini.getbyName("AddRoot");
+            }
+
+            if (parentid == "") {
+                mini.showTips({ content: "请选择楼层！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+
+            var url = '@Url.Action("Add")?floorid=' + parentid;
+            mini.open({
+                url: url,
+                title: "绑定设备", width: 380, height: 340,
+                onload: function () {
+                    var iframe = this.getIFrameEl();
+                    //var data = { action: "new", floorid: parentid };
+                    //iframe.contentWindow.SetData(data);
+                },
+                ondestroy: function (action) {
+                    if (action != "cancel") {
+                        grid.load({ floorid: parentid });
+                    }
+                }
+            });
+        }
+
+
+      function OnBuildChanged(e) {
+            var buildCom = mini.get("combuild");
+            var tree1 = mini.get("tree1");
+            var id = buildCom.getValue();
+            //var combox = buildComb.getValue();
+            var url = '@Url.Action("GetBuildList", "BuildFloor")?build=' + id;
+            tree1.setUrl(url);
+            //tree1.load();
+        }
+
+
+        function Remove() {
+        var node = tree.getSelectedNode();
+        var parentid = "";
+        if (node) {
+            parentid = node.FloorId;
+        }
+        if (parentid == "") {
+            mini.showTips({ content: "请选择需要删除的项目！", state: "warning", x: "center", y: "top", timeout: 3000 });
+            return;
+        }
+
+        var row = grid.getSelected();
+        if (row.ItemID == "") {
+            mini.showTips({ content: "请选择需要删除的项目！", state: "warning", x: "center", y: "top", timeout: 3000 });
+            return;
+        }
+        mini.confirm("确定删除此项目吗？", "确定信息",
+            function (action) {
+                if (action == "ok") {
+                    $.ajax({
+                        type: 'POST',
+                        dataType: "json",
+                        url: "@Url.Action("Delete")?itemid=" + row.ItemID + "&floorid=" + parentid,
+                        cache: false,
+                        success: function (result) {
+                            if (result == "ok") {
+                                mini.showTips({ content: "删除成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                                grid.load({ floorid: parentid });
+                            }
+                            else {
+                                mini.showTips({ content: "操作失败！", state: "danger", x: "center", y: "top", timeout: 3000 });
+                            }
+                        }
+                    });
+                }
+            });
+    }
+
+
+
+    </script>
+</head>
+<div>
+    <ul class="mnbreadcrumb">
+        <li>
+            <a href="#">设备管理</a> <span class="divider"></span>
+        </li>
+        <li>
+            <a href="#">楼层绑定设备</a>
+        </li>
+    </ul>
+</div>
+<div class="mini-splitter" style="width: 100%; height:90%;">
+    <div size="140" showcollapsebutton="true">
+        <div class="mini-panel-header">
+            选择楼宇
+        </div>
+        <div>
+            <input id="combuild" name="combuild" class="mini-combobox" valuefield="BuildId" textfield="BuildName"
+                   style="width: 140px;" url='@Url.Action("GetBuildAll", "BuildFloor")'
+                   required="true" emptytext="请选择" onvaluechanged="OnBuildChanged" />
+        </div>
+        <div class="mini-panel-header">
+            选择楼层
+        </div>
+        <div class="mini-fit">
+            <ul id="tree1" class="mini-tree" url="@Url.Action("GetBuildFloor", "BuildFloor")" style="width:80px;"
+                showtreeicon="true" textfield="FloorName" idfield="FloorId" parentfield="pid" resultastree="false"></ul>
+        </div>
+    </div>
+    <div showcollapsebutton="true">
+        <div class="mini-panel-header">
+            设备信息
+        </div>
+        <div style="width: 100%; height: 30px">
+            <div class="mini-toolbar" style="border-bottom: 0; padding: 0px;">
+                <table style="width: 100%; color: #888">
+                    <tr>
+                        <td style="width: 100%; font-size: 12px;">
+                            <a class="mini-button" iconcls="icon-add" onclick="AddRow()">绑设备定</a><span class="separator"></span>
+                            <a class="mini-button" iconcls="icon-del" onclick="Remove()">删除设备</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div id="grid1" class="mini-datagrid" style="width: 100%; height: 90%;" allowresize="true"
+             url="@Url.Action("GetItemListByFloor","DictItem")" idfield="RoomId" pagesize="15">
+            <div property="columns">
+                <div type="checkcolumn">
+                </div>
+                <div field="ItemID" headeralign="center" width="150" visible="false">
+                    项目编码
+                    <input property="editor" class="mini-textbox" required="true" />
+                </div>
+                <div field="ItemName" headeralign="center" width="150">
+                    项目名称
+                    <input property="editor" class="mini-textbox" minwidth="150" required="true" />
+                </div>
+                <div name="InputStr" field="InputStr" headeralign="center" width="100">
+                    助记符
+                    <input property="editor" class="mini-textbox" minwidth="150" required="true" />
+                </div>
+                <div name="ItemDes" field="ItemDes" headeralign="center" width="100">
+                    别名
+                    <input property="editor" class="mini-textbox" minwidth="200" />
+                </div>
+                <div name="ItemSpec" field="ItemSpec" headeralign="center" width="100">
+                    规格
+                    <input property="editor" class="mini-textbox" minwidth="200" />
+                </div>
+                <div field="CreateDate" width="100" headeralign="center" dateformat="yyyy-MM-dd">
+                    创建日期
+                </div>
+                <div field="CreateUser" width="80" headeralign="center" align="center">
+                    创建人
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

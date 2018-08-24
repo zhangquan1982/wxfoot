@@ -1,0 +1,38 @@
+﻿@{
+    ViewBag.Title = "First";
+    Layout = null;
+}
+<head>
+    <script src="~/Scripts/jquery-3.0.0.min.js"></script>
+    <link href="~/css/frame/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/frame/app.css" rel="stylesheet" />
+    <style>
+        .section-container {
+            height: 15%;
+        }
+    </style>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var userid = $("#userid").val();
+            if (userid == "2001")
+            {
+                $("#divBed").hide();
+                $("#divPeson").hide();
+            }
+
+        });
+    </script>
+
+</head>
+<body >
+    <div class="console-body">
+        <div class="home-section-main clearfix">
+            <input type="hidden" id="userid" value="@ViewBag.UserId" />
+        </div>
+    </div>
+    <footer class="footer"></footer>
+    <script src="~/Scripts/jquery-3.0.0.min.js"></script>
+    <script src="~/Scripts/bootstrap.3.3/js/bootstrap.min.js"></script>
+    <script src="~/css/frame/admin_leftbar.js"></script>
+</body>

@@ -1,0 +1,97 @@
+﻿<link href="../../Scripts/MiniUI/demo.css" rel="stylesheet" type="text/css" />
+<script src="../../Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+<script src="../../Scripts/MiniUI/core.js" type="text/javascript"></script>
+<script src="../../Scripts/MiniUI/scripts/miniui/miniui.js" type="text/javascript"></script>
+<style type="text/css">
+    body
+    {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+    .header
+    {
+        background: url(../../Scripts/MiniUI/header.gif) repeat-x 0 -1px;
+    }
+    .Note
+    {
+        background: url(../../Scripts/MiniUI/Notes_Large.png) no-repeat;
+        width: 32px;
+        height: 32px;
+    }
+    .Recept
+    {
+        background: url(~/Scripts/MiniUI/Reception.jpg) no-repeat;
+        width: 32px;
+        height: 32px;
+    }
+    .Reports
+    {
+        background: url(../../Scripts/MiniUI/Reports_Large.png) no-repeat;
+        width: 32px;
+        height: 32px;
+    }
+</style>
+<div size="180" maxsize="250" minsize="100" showcollapsebutton="true" style="border: 0;">
+    <div id="leftTree" class="mini-outlookmenu" url="../../Scripts/MiniUI/data/outlookmenu.txt"
+        onitemselect="onNodeSelect" textfield="text" idfield="id" parentfield="pid">
+    </div>
+</div>
+<script type="text/javascript">
+    var tree = mini.get("leftTree");
+
+    function showTab(node) {
+        var tabs = mini.get("mainTabs");
+
+        var id = "tab$" + node.id;
+        var tab = tabs.getTab(id);
+        if (!tab) {
+            tab = {};
+            tab._nodeid = node.id;
+            tab.name = id;
+            tab.title = node.text;
+            tab.showCloseButton = true;
+
+            //这里拼接了url，实际项目，应该从后台直接获得完整的url地址
+            tab.url = node.url;
+
+            tabs.addTab(tab);
+        }
+
+        tabs.activeTab(tab);
+    }
+
+
+    function onNodeSelect(e) {
+        var node = e.item;
+        // var isLeaf = e.isLeaf;
+        location.href = node.url;
+        //if (isLeaf) {
+        //            showTab(node);
+        //}
+    }
+
+    function onClick(e) {
+        var text = this.getText();
+        alert(text);
+    }
+    function onQuickClick(e) {
+        tree.expandPath("datagrid");
+        tree.selectNode("datagrid");
+    }
+
+    function onTabsActiveChanged(e) {
+        var tabs = e.sender;
+        var tab = tabs.getActiveTab();
+        if (tab && tab._nodeid) {
+
+            var node = tree.getNode(tab._nodeid);
+            if (node && !tree.isSelectedNode(node)) {
+                tree.selectNode(node);
+            }
+        }
+    }
+</script>

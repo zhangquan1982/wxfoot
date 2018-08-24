@@ -1,0 +1,133 @@
+﻿@{
+    ViewBag.Title = "老人交款记录";
+    Layout = null;
+}
+<head>
+    <script src="../../../Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+    <script src="../../../Scripts/MiniUI/core.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var grid;
+        $(document).ready(function () {
+            mini.parse();
+            grid = mini.get("grid1");
+            grid.load();
+        });
+
+        function AddRow() {
+            var srnum = $("#PSerialNum").val();
+            if (srnum == "") {
+                mini.showTips({ content: "请输入老人信息！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+
+            var url = '@Url.Action("Add")?serialnum=' + srnum;
+            mini.open({
+                url: url,
+                title: "老人缴费", width: 520, height: 350,
+                onload: function () {
+                },
+                ondestroy: function (action) {
+                    if (action == "save") {
+                        mini.showTips({ content: "操作成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                        grid.load({ SerialNum: result.srnum });
+                    }
+                }
+            });
+        }
+
+
+    </script>
+</head>
+<div>
+    <ul class="mnbreadcrumb">
+        <li>
+            <a href="#">入院缴费</a> <span class="divider"></span>
+        </li>
+        <li>
+            <a href="#">操作员收费查询</a>
+        </li>
+    </ul>
+</div>
+<div showcollapsebutton="true">
+    <div style="width: 620px; padding: 10px; height: 80px; border: 1px gray solid">
+        <div>
+            <div style="float: left; margin-left: 5px">
+                老人信息:
+            </div>
+            <div style="float: left; margin-left: 5px">
+                <input id="SelSerialNum" name="SelSerialNum" class="mini-textbox" style="width: 120px" />
+            </div>
+            <div style="float: left; margin-left: 10px">
+                操作员:
+            </div>
+            <div style="float: left; margin-left: 5px">
+                <input id="UserId" name="UserId" class="mini-combobox" style="width: 120px" valuefield="UserId" textfield="UserName"
+                       url='@Url.Action("GetChargeUser","Common")' emptytext="请选择" />
+            </div>
+
+        </div>
+        <div style="clear: both; height: 15px">
+        </div>
+        <div style="">
+
+            <div style="float: left; margin-left: 5px">
+                收费日期:
+            </div>
+            <div style="float: left; margin-left: 5px">
+                <input id="dateBegin" name="dateBegin" class="mini-datepicker" style="width: 120px;" />
+            </div>
+            <div style="float: left; margin-left: 55px">
+                <input id="dateEnd" name="dateEnd" class="mini-datepicker" style="width: 120px;" />
+            </div>
+            <div style="position: absolute; left: 450px; top: 110px">
+                <a class="mini-button" onclick="Search()">查询</a>
+            </div>
+        </div>
+    </div>
+    <div id="grid1" class="mini-datagrid" style="width: 100%; height:70%;margin-top: 5px;" allowresize="true"
+         url="@Url.Action("GetPersonPayListVM")" idfield="PayId" pagesize="15" multiselect="false">
+        <div property="columns">
+            <div type="checkcolumn" width="25">
+            </div>
+            <div field="SerialNum" width="80" headeralign="center" align="center" allowsort="true">
+                入住编号
+            </div>
+            <div field="PatiName" width="70" headeralign="center" align="center" allowsort="true">
+                老人姓名
+            </div>
+            <div field="PayAmount" width="70" headeralign="center" align="center" allowsort="true">
+                交款金额
+            </div>
+            <div field="InvoiceId" width="70" headeralign="center" align="center" allowsort="true">
+                单据号
+            </div>
+            <div field="CreateDate" width="70" headeralign="center" align="center" allowsort="true" dateformat="yyyy-MM-dd">
+                交款日期
+            </div>
+            <div field="PayModeType" width="70" headeralign="center" align="center" allowsort="true" renderer="paymodeselect">
+                交款方式
+            </div>
+            <div field="CreateUser" width="70" headeralign="center" align="center" allowsort="true">
+                操作员
+            </div>
+        </div>
+    </div>
+    </div>
+    <script type="text/javascript">
+        function Search() {
+            var snum = mini.getbyName("SelSerialNum").getValue();
+            var begdate = mini.getbyName("dateBegin").text;
+            var enddate = mini.getbyName("dateEnd").text;
+            var uid = mini.getbyName("UserId").getValue();
+            grid.load({ patiname: snum, dateBegin: begdate, dateEnd: enddate, userid: uid });
+        }
+        var data = [{ CodeId: '0', CodeName: '现金' }, { CodeId: '1', CodeName: '刷卡' }, { CodeId: '2', CodeName: '现金+刷卡' }];
+        function paymodeselect(e) {
+            for (var i = 0, l = data.length; i < l; i++) {
+                var g = data[i];
+                if (g.CodeId == e.value) return g.CodeName;
+            }
+            return "";
+        }
+
+    </script>

@@ -1,0 +1,111 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<meta charset='UTF-8'></meta>
+<title>楼宇管理</title>
+<script src="~/Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+<script src="~/Scripts/MiniUI/core.js" type="text/javascript"></script>
+<link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+<link href="~/Scripts/jquery-gridly/stylesheets/jquery.gridly.css" rel="stylesheet"
+      type="text/css" />
+<link href="~/Scripts/jquery-gridly/stylesheets/sample.css" rel="stylesheet"
+      type="text/css" />
+<script src="~/Scripts/jquery-gridly/javascripts/jquery.js" type="text/javascript"></script>
+<script src="~/Scripts/jquery-gridly/javascripts/jquery.gridly.js" type="text/javascript"></script>
+<script src="~/Scripts/jquery-gridly/javascripts/sample.js" type="text/javascript"></script>
+<script src="~/Scripts/jquery-gridly/javascripts/rainbow.js" type="text/javascript"></script>
+<script src="~/Scripts/contextmenu/jquery.contextmenu.js"></script>
+<link href="~/Scripts/contextmenu/jquery.contextmenu.css" rel="stylesheet" />
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('.brick').contextPopup({
+            title: '',
+            items: [
+              {
+                  label: '添加楼层', icon: '../../../Scripts/contextmenu/demo/icons/shopping-basket.png', action: function (e) {
+                      console.log(e.currentTarget.childNodes[1].defaultValue);
+                      var serialNode = e.currentTarget.childNodes[1].defaultValue;
+                      location.href = '@Url.Action("FloorIndex", "BuildFloor")?buildid=' + serialNode;
+                  }
+              }
+            ]
+        });
+    });
+
+    function Add() {
+        var url = '@Url.Action("Edit")';
+        mini.open({
+            url: url,
+            title: "楼宇新建", width: 240, height: 180,
+            onload: function () {
+            },
+            ondestroy: function (action) {
+                if (action == "save") {
+                    mini.showTips({ content: "操作成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                    location.href = "@Url.Action("Index")";
+                }
+            }
+        });
+
+    }
+
+
+    function Del(num) {
+
+    }
+</script>
+<div>
+    <ul class="mnbreadcrumb">
+        <li>
+            <a href="#">基本信息</a> <span class="divider"></span>
+        </li>
+        <li>
+            <a href="#">楼宇管理</a>
+        </li>
+    </ul>
+</div>
+<div style="width: 100%; height: 40px;height:60px">
+    <div class="mini-toolbar" style="border-bottom: 0; padding: 0px;">
+        <table style="width: 100%;">
+            <tr>
+                <td style="width: 100%; font-size:12px">
+                    <a class="mini-button" iconcls="icon-add" id="btnAdd" plain="true" onclick="Add()">
+                        添加
+                    </a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div class='content'>
+    <section class='example'>
+        <div class='gridly'>
+            @foreach (var item in ViewBag.List)
+            {
+
+                <div class="bedStyle" id="D05" style="width:150px; height:160px; background:#9aa876; color:#000000" >
+                    <input class="SerialNum" type="hidden" value="@item.BuildId" />
+                    <div style="position: absolute; font-size: 18px; font-weight: bold; left: 8px; top: 20px">
+                        楼宇名称： @item.BuildName
+                        <hr />
+                    </div>
+                    <div style="position: absolute; font-size: 15px; left: 8px; top: 70px; ">
+                        楼层数量：  @item.OrgId
+                    </div>
+                    <div style="position: absolute; font-size: 15px; left: 8px; top:100px; ">
+                        备注：  @item.Memo
+                    </div>
+                </div>
+            }
+        </div>
+
+        <p class='actions'>
+            @*   <a class='add button' href='#'>Add</a>*@
+        </p>
+    </section>
+
+</div>
+

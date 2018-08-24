@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="PatiPayListMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="PatiPayList" type="HujingModel.PatiPayListEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="PatiPayList">
+      <result property="PayId" column="payid" />
+      <result property="UserId" column="userid" />
+      <result property="CardId" column="cardid" />
+      <result property="Memo" column="memo" />
+      <result property="PayAmount" column="payamount" />
+      <result property="Direction" column="direction" />
+      <result property="CancUser" column="cancuser" />
+      <result property="CancDate" column="cancdate" />
+      <result property="CancReason" column="cancreason" />
+      <result property="CreateUser" column="createuser" />
+      <result property="CreateDate" column="createdate" />
+      <result property="CancId" column="cancid" />
+      <result property="PrintTimes" column="printtimes" />
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      payid,
+      userid,
+      cardid,
+      memo,
+      payamount,
+      direction,
+      cancuser,
+      cancdate,
+      cancreason,
+      createuser,
+      createdate,
+      cancid,
+      printtimes
+      From PatiPayList
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          payid=#PayId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+    <select id="LoadAll" parameterClass="System.Collections.IDictionary" resultMap="SelectResult">
+      select * from
+      ( Select
+      payid,
+      userid,
+      cardid,
+      memo,
+      payamount,
+      direction,
+      cancuser,
+      cancdate,
+      cancreason,
+      createuser,
+      createdate,
+      cancid,
+      printtimes,
+      ROW_NUMBER() over(order by createdate desc ) rowNumber
+      From PatiPayList
+      where 1=1 $Condition$
+      ) aa
+      where rowNumber BETWEEN  #Next# and #Prev#
+    </select>
+
+ 
+
+    <insert id="Insert" parameterClass="PatiPayList">
+      Insert Into PatiPayList (
+      payid,
+      userid,
+      cardid,
+      memo,
+      payamount,
+      direction,
+      cancuser,
+      cancdate,
+      cancreason,
+      createuser,
+      createdate,
+      cancid,
+      printtimes
+      )Values(
+      #PayId#,
+      #UserId#,
+      #CardId#,
+      #Memo#,
+      #PayAmount#,
+      #Direction#,
+      #CancUser#,
+      #CancDate#,
+      #CancReason#,
+      #CreateUser#,
+      #CreateDate#,
+      #CancId#,
+      #PrintTimes#
+      )
+    </insert>
+
+    <update id="UpdatePatiPayList" parameterClass="PatiPayList">
+      Update PatiPayList Set
+      userid=#UserId#,
+      cardid=#CardId#,
+      memo=#Memo#,
+      payamount=#PayAmount#,
+      direction=#Direction#,
+      cancuser=#CancUser#,
+      cancdate=#CancDate#,
+      cancreason=#CancReason#,
+      createuser=#CreateUser#,
+      createdate=#CreateDate#,
+      cancid=#CancId#,
+      printtimes=#PrintTimes#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          payid=#PayId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+
+  </statements>
+</sqlMap>

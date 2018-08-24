@@ -1,0 +1,196 @@
+﻿@{
+    ViewBag.Title = "项目排班";
+    Layout = null;
+}
+<head>
+    <script src="~/Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+    <script src="~/Scripts/MiniUI/core.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var grid;
+        $(document).ready(function () {
+            mini.parse();
+            grid = mini.get("grid1");
+
+            //            grid.load();
+            var myDate = new Date();
+            var strDate = myDate.getFullYear() + "-" + (myDate.getMonth() + 1) + "-" + myDate.getDate();
+
+            var strEndDate = myDate.getFullYear() + "-" + (myDate.getMonth() + 2) + "-" + myDate.getDate();
+            mini.getbyName("dateBegin").setValue(strDate);
+            mini.getbyName("dateEnd").setValue(strEndDate);
+            Search();
+        });
+
+
+        function AddRow() {
+            var url = '@Url.Action("Add")';
+            mini.open({
+                url: url,
+                title: "菜单排班", width: 750, height: 550,
+                onload: function () {
+                    var iframe = this.getIFrameEl();
+                    var data = { action: "new" };
+                },
+                ondestroy: function (action) {
+                    if (action == "save") {
+                        Search();
+                    }
+                }
+            });
+        }
+
+
+        function Search() {
+            var DateBegin = mini.getbyName("dateBegin").text;
+            var DateEnd = mini.getbyName("dateEnd").text;
+            grid.load({ dateBegin: DateBegin, dateEnd: DateEnd});
+        }
+
+        function onKeyEnter(e) {
+            Search();
+        }
+
+        var StatusList = [{ id: '0', text: '咨询' }, { id: '1', text: '试住' }, { id: '3', text: '入住' }];
+        function OnStatusChange(e) {
+            for (var i = 0, l = StatusList.length; i < l; i++) {
+                var g = StatusList[i];
+                if (g.id == e.value) return g.text;
+            }
+            return "";
+        }
+
+    function Remove() {
+        var rows = grid.getSelecteds();
+        if (rows.length <= 0) {
+            mini.showTips({ content: "请选择需要删除的数据！", state: "warning", x: "center", y: "top", timeout: 3000 });
+            return;
+        }
+
+        var ids = [];
+        for (var i = 0, l = rows.length; i < l; i++) {
+            var r = rows[i];
+            ids.push(r.SchId);
+        }
+        var id = ids.join(',');
+        mini.confirm("确定删除此用户信息吗？", "确定信息",
+            function (action) {
+                if (action == "ok") {
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("Delete")',
+                        data: { "SchIds": id },
+                        cache: false,
+                        success: function (result) {
+                            if (result) {
+                                mini.showTips({ content: "操作成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                                grid.load();
+                            }
+                            else {
+                                mini.showTips({ content: "操作失败！", state: "danger", x: "center", y: "top", timeout: 3000 });
+                            }
+                        }
+                    });
+                }
+            }
+        );
+        }
+
+
+        var wubies = [{ id: "01", text: '早餐' }, { id:"02", text: '午餐' }, { id:"03", text: '晚餐' }];
+        function OnWubieChange(e) {
+            for (var i = 0, l = wubies.length; i < l; i++) {
+                var g = wubies[i];
+                if (g.id == e.value) return g.text;
+            }
+            return "";
+        }
+    </script>
+</head>
+<body>
+    <div>
+        <ul class="mnbreadcrumb">
+            <li>
+                <a href="#">基本信息</a> <span class="divider"></span>
+            </li>
+            <li>
+                <a href="#">菜单排班</a>
+            </li>
+        </ul>
+    </div>
+
+
+    <div showcollapsebutton="true">
+        <div>
+            <fieldset id="fd1" style="width:98%; height:85px">
+                <legend><span>菜单排班</span></legend>
+                <div class="fieldset-body">
+                    <div>
+                        <div style="float: left; margin-left: 30px">
+                            开始日期:
+                        </div>
+                        <div style="float: left; margin-left: 5px">
+                            <input id="dateBegin" name="dateBegin" class="mini-datepicker" style="width:120px" value="2000-01-01" />
+                        </div>
+
+                        <div style="float: left; margin-left: 5px">
+                            项目名称:
+                        </div>
+                        <div style="float: left; margin-left: 5px">
+                            <input id="PatiName" name="PatiName" class="mini-textbox" style="width:120px" />
+                        </div>
+                    </div>
+                    <div style="clear: both; height: 5px">
+                    </div>
+                    <div>
+                        <div style="float: left; margin-left: 30px">
+                            结束日期:
+                        </div>
+                        <div style="float: left; margin-left: 5px">
+                            <input id="dateEnd" name="dateEnd" class="mini-datepicker" style="width:120px" value="2000-01-01" />
+                        </div>
+                    </div>
+                    <div style="position: absolute; left: 450px; top: 100px">
+                        <a class="mini-button" onclick="Search()">查询</a>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div style="clear: both; margin-top: 5px; width: 100%; height: 30px">
+            <div class="mini-toolbar" style="border-bottom: 0; padding: 0px;">
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="width: 100%;">
+                            <a class="mini-button" iconcls="icon-add" onclick="AddRow()">增加</a><span class="separator"></span>
+                            <a id="btnDelete" class="mini-button" iconcls="icon-remove" plain="true" onclick="Remove()">删除</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div id="grid1" class="mini-datagrid" style="width: 100%; height: 63%;" allowresize="true"
+             url="@Url.Action("GetList")" idfield="SchId" pagesize="15" multiselect="true">
+            <div property="columns">
+                <div type="checkcolumn" width="25">
+                </div>
+                <div field="ItemID" width="80" headeralign="center" align="center" allowsort="true" visible="false">
+                    项目编号
+                </div>
+                <div field="ItemName" width="80" headeralign="center" align="center" allowsort="true">
+                    项目名称
+                </div>
+                <div field="UnitName" width="40" headeralign="center" align="center" allowsort="true">
+                    规格
+                </div>
+                <div field="Price" width="40" headeralign="center" align="center" allowsort="true">
+                    价格
+                </div>
+                <div field="ScheDate" width="80" headeralign="center" align="center" allowsort="true" dateformat="yyyy-MM-dd">
+                    排版日期
+                </div>
+                <div field="TypeCode" width="80" headeralign="center" align="center" allowsort="true"  renderer="OnWubieChange">
+                    午别
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

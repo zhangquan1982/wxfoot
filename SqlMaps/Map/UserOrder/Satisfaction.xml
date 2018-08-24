@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="SatisfactionMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="Satisfaction" type="HujingModel.SatisfactionEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="Satisfaction">
+      <result property="SatisId" column="satisid" />
+      <result property="OrderId" column="orderid" />
+      <result property="SatisResult" column="satisresult" />
+      <result property="CreateDate" column="createdate" />
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+
+    <select id="Count" parameterClass="string" resultClass="int">
+      Select count(satisid)
+      From Satisfaction where 1=1 $Condition$
+    </select>
+    
+    
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      satisid,
+      orderid,
+      satisresult,
+      createdate
+      From Satisfaction
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          satisid=#SatisId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+    <select id="LoadAll" parameterClass="System.Collections.IDictionary" resultMap="SelectResult">
+      select * from
+      ( Select
+      satisid,
+      orderid,
+      satisresult,
+      createdate
+      ROW_NUMBER() over(order by satisid ) rowNumber
+      From Satisfaction
+      where 1=1 $Condition$
+      ) aa
+      where rowNumber BETWEEN  #Next# and #Prev#
+    </select>
+    
+
+    <insert id="Insert" parameterClass="Satisfaction">
+      Insert Into Satisfaction (
+      satisid,
+      orderid,
+      satisresult,
+      createdate
+      )Values(
+      #SatisId#,
+      #OrderId#,
+      #SatisResult#,
+      #CreateDate#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="Satisfaction">
+      Update Satisfaction Set
+      satisid=#SatisId#,
+      orderid=#OrderId#,
+      satisresult=#SatisResult#,
+      createdate=#CreateDate#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          satisid=#SatisId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="int">
+      Delete From Satisfaction
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          satisid=#SatisId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+
+    <select id="GetSatisfactGroupDate" parameterClass="System.Collections.IDictionary" resultClass="System.Data.DataTable">
+      select * from
+      (
+      select CONVERT(varchar(12),OrderDinner.OrderDate,111) as OrderDate,OrderDinner.TypeCode,
+      SUM(CASE WHEN SatisResult = '满意' THEN 1
+      ELSE 0
+      END) AS Num1Count ,
+      SUM(CASE WHEN SatisResult = '一般' THEN 1
+      ELSE 0
+      END) AS Num2Count ,
+      SUM(CASE WHEN SatisResult = '不满意' THEN 1
+      ELSE 0
+      END) AS Num3Count ,
+      ROW_NUMBER() over(order by CONVERT(varchar(12),OrderDate, 111 ) desc) rowNumber
+      from  Satisfaction
+      inner join  OrderDinner  on Satisfaction.orderid = OrderDinner.OrdId
+      where 1=1 $Condition$
+      group by CONVERT(varchar(12),OrderDinner.OrderDate,111),OrderDinner.TypeCode,Satisfaction.SatisResult
+      ) aa
+      where rowNumber  BETWEEN #Next# and #Prev#
+    </select>
+    
+  </statements>
+</sqlMap>

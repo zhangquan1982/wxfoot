@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="OrgNewsMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="OrgNews" type="HujingModel.OrgNewsEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="OrgNews">
+      <result property="NewsId" column="newsid" />
+      <result property="NewType" column="newtype" />
+      <result property="IsPublic" column="ispublic" />
+      <result property="NewTitle" column="newtitle" />
+      <result property="NewContent" column="newcontent" />
+      <result property="Flag" column="flag" />
+      <result property="Status" column="status" />
+      <result property="CreateUser" column="createuser" />
+      <result property="CreateDate" column="createdate" />
+      <result property="UpdateUser" column="updateuser" />
+      <result property="UpdateDate" column="updatedate" />
+      <result property="ViewCount" column="viewcount" />
+      <result property="ViaUser" column="viauser" />
+      <result property="ViaTime" column="viatime" />
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+
+    <select id="Count" parameterClass="string" resultClass="int">
+      Select count(newsid) From OrgNews where 1=1 $Condition$
+    </select>
+    
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      newsid,
+      newtype,
+      ispublic,
+      newtitle,
+      newcontent,
+      flag,
+      status,
+      createuser,
+      createdate,
+      updateuser,
+      updatedate,
+      viewcount,
+      viauser,
+      viatime
+      From OrgNews
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          newsid=#NewsId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+    <select id="LoadAll" parameterClass="int" resultMap="SelectResult">
+      select * from
+      ( Select
+      newsid,
+      newtype,
+      ispublic,
+      newtitle,
+      newcontent,
+      flag,
+      status,
+      createuser,
+      createdate,
+      updateuser,
+      updatedate,
+      viewcount,
+      viauser,
+      viatime,
+      ROW_NUMBER() over(order by $OrderBy$ ) rowNumber
+      From OrgNews
+      where 1=1 $Condition$
+      ) aa
+      where rowNumber BETWEEN  #Next# and #Prev#
+    </select>
+
+    <insert id="Save" parameterClass="OrgNews">
+      Insert Into OrgNews (
+      newsid,
+      newtype,
+      ispublic,
+      newtitle,
+      newcontent,
+      flag,
+      status,
+      createuser,
+      createdate,
+      updateuser,
+      updatedate,
+      viewcount,
+      viauser,
+      viatime
+      )Values(
+      #NewsId#,
+      #NewType#,
+      #IsPublic#,
+      #NewTitle#,
+      #NewContent#,
+      #Flag#,
+      #Status#,
+      #CreateUser#,
+      #CreateDate#,
+      #UpdateUser#,
+      #UpdateDate#,
+      #ViewCount#,
+      #ViaUser#,
+      #ViaTime#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="OrgNews">
+      Update OrgNews Set
+      newtype=#NewType#,
+      ispublic=#IsPublic#,
+      newtitle=#NewTitle#,
+      newcontent=#NewContent#,
+      flag=#Flag#,
+      status=#Status#,
+      createuser=#CreateUser#,
+      createdate=#CreateDate#,
+      updateuser=#UpdateUser#,
+      updatedate=#UpdateDate#,
+      viewcount=#ViewCount#,
+      viauser=#ViaUser#,
+      viatime=#ViaTime#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          newsid=#NewsId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="int">
+      Delete From OrgNews
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          newsid=#NewsId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+  </statements>
+</sqlMap>

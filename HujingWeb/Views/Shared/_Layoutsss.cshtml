@@ -1,0 +1,24 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>养老院机构管理系统</title>
+    <meta name="viewport" content="width=device-width" />
+    @Scripts.Render("~/js/jquery.min.js")
+    @Scripts.Render("~/js/jquery.layout.js")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('body').layout({ applyDefaultStyles: true });
+        });
+    </script>
+</head>
+<body>
+    <div class="ui-layout-center">
+        @RenderBody()
+    </div>
+    <div class="ui-layout-north">
+        养老机构老人管理</div>
+    <div class="ui-layout-west">
+    </div>
+</body>
+</html>

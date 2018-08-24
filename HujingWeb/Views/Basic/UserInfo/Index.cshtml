@@ -1,0 +1,50 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<html>
+<head>
+    <link href="~/css/bootstrap.css" rel="stylesheet" />
+    <link href="~/css/Aliyun/accountcenter.css" rel="stylesheet" />
+    <link href="~/css/Aliyun/console1412.css" rel="stylesheet" />
+</head>
+<body>
+    <div ng-transclude="">
+        <div ui-view="" class="console-container ng-scope" ng-animate="{enter:'fade-enter'}">
+            <div class="secure ng-scope" bindonce="">
+                <div class="console-title console-title-border drds-detail-title clearfix" data-spm-anchor-id="5176.2020520207.0.i3.7e214c12dJMm0b">
+                    <h5 bo-bind="'account.security.setting' | translate">安全设置</h5><!-- ngIf: vm.IS_CHINESE_USER && !vm.isCertified -->
+                </div>
+                <div class="clearfix margin-top" data-spm-anchor-id="5176.2020520207.0.i2.7e214c12dJMm0b">
+                    <div class="avatar pull-left">
+                        <p>
+                            <img ng-src="~/Images/userperson.png" width="120" height="120" src="~/Images/userperson.png">
+                        </p><p class="avatar-txt-margin"><a modify-avatar="" selected-value="oss.aliyuncs.com/aliyun_id_photo_bucket/default_handsome.jpg" bo-bind="'account.security.setting.modify.avatar' | translate" class="ng-isolate-scope">修改头像</a></p>
+                    </div><div class="summary">
+                        <p class="ng-binding">
+                            <span bo-bind="'account.security.setting.login.account' | translate">登录账号</span> <span bo-bind="'colon' | translate">：</span>@ViewBag.LoginName <span class="margin-left" ng-show="vm.securitySettings.isCertified">
+                            </span>
+                        </p>
+                        <p class="ng-binding">
+                            <span bo-bind="'account.security.setting.time.regist' | translate">注册时间</span>
+                            <span bo-bind="'colon' | translate">：</span> 11-10-2017 21:02:00
+                        </p>
+                    </div>
+                </div><!-- ngIf: vm.IS_CHINESE_USER --><div ng-if="vm.IS_CHINESE_USER" class="ng-scope">
+                    <!--secure level--><div class="secure-level">
+                        <div class="pull-left" bo-bind="'account.security.setting.lb.current.level.for.your.account' | translate">您当前的角色</div>
+                        <div class="margin-left-4 pull-left">
+                            <span bo-bind="'account.security.setting.lb.level.security' | translate">角色</span>: <span class="text-warning ng-binding">@ViewBag.RoleName</span>
+                        </div>
+                    </div>
+                </div><!-- end ngIf: vm.IS_CHINESE_USER --><!--安全设置--><div security-settings="" model="vm.securitySettings" items="vm.securitySettingsConfig" action="vm.accountAction" class="ng-isolate-scope">
+                    <ul class="secure-set-list"></ul>
+                </div>
+            </div>
+        </div>
+        <div data-ng-controller="aliyunCommonController" class="ng-scope"></div>
+        <div growl="" class="ng-scope"><div class="growl">	<!-- ngRepeat: message in messages --></div></div>
+    </div>
+</body>
+
+</html>

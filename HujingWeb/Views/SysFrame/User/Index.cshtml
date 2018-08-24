@@ -1,0 +1,339 @@
+﻿@{
+    ViewBag.Title = "员工管理";
+    Layout = null;
+}
+<script src="~/Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+<script src="~/Scripts/MiniUI/core.js" type="text/javascript"></script>
+<script type="text/javascript">
+    var tree;
+    var grid;
+    $(document).ready(function () {
+        $("#usermini").removeAttr("style");
+        mini.parse();
+        tree = mini.get("tree1");
+        grid = mini.get("grid1");
+
+        tree.on("nodeselect", function (e) {
+            if (e.isLeaf) {
+                grid.load({ upperid: e.node.id });
+            } else {
+                grid.load({ upperid: e.node.id });
+            }
+        });
+    });
+
+
+    function AddRow() {
+        var tree = mini.get("tree1");
+        var node = tree.getSelectedNode();
+        var parentid = "";
+        if (node) {
+            parentid = node.id;
+        }
+        if (node) {
+        } else {
+            var orgTypeCombo = mini.getbyName("AddRoot");
+        }
+        var url = '@Url.Action("Add")';
+        if (parentid == "") {
+            mini.showTips({
+                content: "请选择部门！", state: "warning", x: "center", y: "top", timeout: 3000
+            });
+            return;
+        }
+        mini.open({
+            url: url,
+            title: "新增员工", width: 460, height: 280,
+            onload: function () {
+                var iframe = this.getIFrameEl();
+                var data = { action: "new", depid: node.id };
+                iframe.contentWindow.SetData(data);
+            },
+            ondestroy: function (action) {
+                if (action == "save") {
+                    mini.showTips({ content: "新增成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                    grid.load({ upperid: parentid });
+                }
+            }
+        });
+    }
+
+    function Edit() {
+        var node = tree.getSelectedNode();
+        var parentid = "";
+        if (node) {
+            parentid = node.id;
+        }
+        var rows = grid.getSelecteds();
+        if (rows.length <= 0) {
+            mini.showTips({
+                content: "请选择要编辑的用户！",
+                state: "warning",
+                x: "center",
+                y: "top",
+                timeout: 3000
+            });
+            return;
+        }
+        if (rows.length > 1) {
+            mini.showTips({ content: "只能选择一个用户！", state: "warning", x: "center", y: "top", timeout: 3000 });
+            return;
+        }
+        var url = '@Url.Action("Edit")?userid=' + rows[0].UserId;
+        if (rows.length == 1) {
+            mini.open({
+                url: url,
+                title: "编辑员工", width: 460, height:280,
+                onload: function () {
+                },
+                ondestroy: function (action) {
+                    if (action == "save") {
+                        mini.showTips({ content: "编辑成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                        grid.load({ upperid: parentid });
+                    }
+                }
+            });
+
+        }
+
+    }
+
+
+    function BindRole() {
+        var node = tree.getSelectedNode();
+        var parentid = "";
+        if (node) {
+            parentid = node.id;
+        }
+
+        var rows = grid.getSelecteds();
+        if (rows.length != 1) {
+            mini.showTips({
+                content: "请选择一个用户！",
+                state: "warning",
+                x: "center",
+                y: "top",
+                timeout: 3000
+            });
+            return;
+        }
+
+        var urlNew = '@Url.Action("BindRole", "SysUserRole")?userid=' + rows[0].UserId;
+        if (rows.length == 1) {
+            mini.open({
+                url: urlNew,
+                title: "绑定角色", width: 460, height: 330,
+                onload: function () {
+                },
+                ondestroy: function (action) {
+                    if (action != "cancel") {
+                        grid.load({ upperid: parentid });
+                    }
+                }
+            });
+
+        }
+
+    }
+
+    function Remove() {
+        var node = tree.getSelectedNode();
+        var parentid = "";
+        if (node) {
+            parentid = node.id;
+        }
+
+        var rows = grid.getSelecteds();
+        if (rows.length <= 0) {
+            mini.showTips({ content: "请选择需要停用的用户！", state: "warning", x: "center", y: "top", timeout: 3000 });
+            return;
+        }
+        var ids = [];
+        for (var i = 0, l = rows.length; i < l; i++) {
+            var r = rows[i];
+            ids.push(r.UserId);
+        }
+        var id = ids.join(',');
+        mini.confirm("确定删除此用户信息吗？", "确定信息",
+            function (action) {
+                if (action == "ok") {
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("Delete")',
+                        data: { "UserIds": id },
+                        cache: false,
+                        success: function (result) {
+                            if (result == "ok") {
+                                mini.showTips({ content: "操作成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                                grid.load({ upperid: parentid });
+                            }
+                            else {
+                                mini.showTips({ content: "操作失败！", state: "danger", x: "center", y: "top", timeout: 3000 });
+                            }
+                        }
+                    });
+                }
+            }
+        );
+    }
+
+    function ResetPwd() {
+        var node = tree.getSelectedNode();
+        var parentid = "";
+        if (node) {
+            parentid = node.id;
+        }
+
+        var rows = grid.getSelecteds();
+        if (rows.length <= 0) {
+            mini.showTips({ content: "请选择需要停用的用户！", state: "warning", x: "center", y: "top", timeout: 3000 });
+            return;
+        }
+        var ids = [];
+        for (var i = 0, l = rows.length; i < l; i++) {
+            var r = rows[i];
+            ids.push(r.UserId);
+        }
+        var id = ids.join(',');
+        mini.confirm("确定重置此用户密码吗？", "确定信息",
+            function (action) {
+                if (action == "ok") {
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("ReSetPwd")',
+                        data: { "UserIds": id },
+                        cache: false,
+                        success: function (result) {
+                            if (result == "ok") {
+                                mini.showTips({ content: "操作成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                                grid.load({ upperid: parentid });
+                            }
+                            else {
+                                mini.showTips({ content: "操作失败！", state: "danger", x: "center", y: "top", timeout: 3000 });
+                            }
+                        }
+                    });
+                }
+            }
+        );
+    }
+
+
+    function search() {
+        var key = mini.get("key").getValue();
+        grid.load({ key: key });
+    }
+    function onKeyEnter(e) {
+        search();
+    }
+    /////////////////////////////////////////////////
+    function onBirthdayRenderer(e) {
+        var value = e.value;
+        if (value) return mini.formatDate(value, 'yyyy-MM-dd');
+        return "";
+    }
+    function onMarriedRenderer(e) {
+        if (e.value == 1) return "是";
+        else return "否";
+    }
+    var Genders = [{ id: 0, text: '男' }, { id: 1, text: '女' }];
+    function OnSexChange(e) {
+        for (var i = 0, l = Genders.length; i < l; i++) {
+            var g = Genders[i];
+            if (g.id == e.value) return g.text;
+        }
+        return "";
+    }
+
+    var Checks = [{ id: false, text: '否' }, { id: true, text: '是' }];
+    function OnCheckChange(e) {
+        for (var i = 0, l = Checks.length; i < l; i++) {
+            var g = Checks[i];
+            if (g.id == e.value) return g.text;
+        }
+        return "";
+    }
+
+</script>
+<div>
+    <ul class="mnbreadcrumb">
+        <li>
+            <a href="#">系统管理</a> <span class="divider"></span>
+        </li>
+        <li>
+            <a href="#">用户管理</a>
+        </li>
+    </ul>
+</div>
+<div class="mini-splitter" style="width: 100%; height:90%;">
+    <div size="240" showcollapsebutton="true">
+        <div class="mini-toolbar" style="padding: 2px; border-top: 0; border-left: 0; border-right: 0;">
+            <span style="padding-left: 5px;">部门树</span>
+        </div>
+        <div class="mini-fit">
+            <ul id="tree1" class="mini-tree" url="@Url.Action("GetDepTree", "Department")" style="width: 100%;"
+                showtreeicon="true" textfield="name" idfield="id" parentfield="pid" resultastree="false"></ul>
+        </div>
+    </div>
+    <div showcollapsebutton="true">
+        <div class="mini-toolbar" style="border-bottom: 0; padding: 0px;">
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 100%;">
+                        <a class="mini-button" iconcls="icon-add" onclick="AddRow()">增加</a>
+                        <a class="mini-button" iconcls="icon-edit" onclick="Edit()">编辑</a>
+                        <a class="mini-button" iconcls="icon-del" onclick="Remove()">删除</a>
+                        <a class="mini-button" iconcls="icon-goto" onclick="BindRole()">角色授权</a>
+                        <a class="mini-button" iconcls="icon-redo" onclick="ResetPwd()">密码重置</a>
+                        @*<a class="mini-button" iconcls="icon-export" onclick="ResetPwd()">导出</a>*@
+                    </td>
+                    <td style="white-space: nowrap;">
+                        <input id="key" placeholder="请输入姓名" style="width: 150px;" onenter="onKeyEnter" />
+                        <a class="mini-button" onclick="search()">查询</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="grid1" class="mini-datagrid" style="width: 100%; height: 90%;" allowresize="true"
+             url="@Url.Action("GetList")" idfield="UserId" pagesize="15">
+            <div property="columns">
+                <div type="checkcolumn">
+                </div>
+                <div field="UserId" width="80" headeralign="center" align="center" allowsort="true">
+                    员工帐号
+                </div>
+                <div field="UserName" width="70" headeralign="center" align="center" allowsort="true">
+                    姓名
+                </div>
+                <div field="Sex" width="60" headeralign="center" align="center" renderer="OnSexChange">
+                    性别
+                </div>
+                <div field="BirthDate" width="90" headeralign="center" dateformat="yyyy-MM-dd">
+                    出生日期
+                </div>
+                <div field="Mobile" width="100" headeralign="center" align="center">
+                    手机号码
+                </div>
+                <div field="Email" headeralign="center" width="100">
+                    邮箱
+                </div>
+                <div field="Address" headeralign="center" width="100">
+                    家庭住址
+                </div>
+                <div field="Phone" headeralign="center" align="center" width="100">
+                    固定电话
+                </div>
+                <div field="Memo" headeralign="center" width="100">
+                    备注
+                </div>
+                <div field="Flag" headeralign="center" width="100" renderer="OnCheckChange">
+                    审核状态
+                </div>
+                <div field="CreateDate" width="100" headeralign="center" dateformat="yyyy-MM-dd"
+                     allowsort="true">
+                    创建日期
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

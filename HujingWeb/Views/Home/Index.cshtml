@@ -1,0 +1,124 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>食堂饭卡管理系统</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1.0,user-scalable=0">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-quuiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta charset="UTF-8">
+    <!--load bootsrap-->
+    @*<link href="../bootstrap.min.css" rel="stylesheet">*@
+    <!--load UI-->
+    <link href="~/css/frame/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/frame/app.css" rel="stylesheet" />
+    <link href="~/css/index.css" rel="stylesheet" />
+
+    @*<link rel='stylesheet' href='../app.css'>*@
+    <!--load icon-->
+    <link href="favicon.ico" rel="shortcut icon">
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
+
+
+</head>
+<body>
+    <nav class="navbar navbar-default topbar">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <div class="navbar-brand-icon"><i class="fa fa-envelope-open" aria-hidden="true"></i></div>
+                    <a class="navbar-brand" href="#" style="font-size:16px">饭卡系统</a>
+                </div>
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="hidden-xs">
+                            <a href="#" class="modal-link">
+                                <i class="fa fa-bell"></i>
+                                <span class="badge">1</span>
+                            </a>
+                        </li>
+                        <li class="hidden-xs">
+                            <a href="#" class="ajax-link">
+                                <i class="fa fa-envelope"></i>
+                                <span class="badge">1</span>
+                            </a>
+                        </li>
+                        @*<li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                    <div class="avatar">
+                                        <img src="~/Images/usermanager.png">
+                                    </div>
+                                </a>
+                            </li>*@
+                        <li class="dropdown" id="drowUser">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <span class="avatar">
+                                    <img src="~/Images/usermanager.png">
+                                </span>@ViewBag.UserName<span class="caret"></span>
+                            </a>
+
+                            <ul class="dropdown-menu" style="min-width: 100px;">
+                                <li>
+                                    <a href="@Url.Action("Index","UserInfo")" target="iframe">
+                                        <i class="fa fa-user"></i>
+                                        <span class="hidden-sm text">个人资料</span>
+                                    </a>
+                                </li>
+                                <li role="separator" class="divider"></li>
+                                <li>
+                                    <a href="@Url.Action("Login","Home")" id="logout">
+                                        <i class="fa fa-power-off"></i>
+                                        <span class="hidden-sm text">退出</span>
+                                    </a>
+                                </li>
+                            </ul>
+
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="main-body">
+        @{ Html.RenderAction("Menu", "Home");}
+        <div class="console">
+            <iframe src="/Home/First" id="iframe" name="iframe" frameborder="0" width="100%" height="100%" scrolling="yes"></iframe>
+        </div>
+    </div>
+    <footer class="footer"></footer>
+
+    <script src="~/Scripts/jquery-3.0.0.min.js"></script>
+    @*<script src="~/css/frame/vendor.js"></script>*@
+    @*<script src="~/css/frame/app.js"></script>*@
+    @*<script src="/assets/js/vendor.js"></script>
+        <script src="/assets/js/app.js"></script>*@
+    <script src="~/Scripts/bootstrap.3.3/js/bootstrap.min.js"></script>
+    <script src="~/css/frame/admin_leftbar.js"></script>
+    @*<script src="~/css/frame/admin_login.js"></script>
+        <script src="~/css/frame/admin_logs.js"></script>
+        <script src="~/css/frame/admin_msg.js"></script>
+        <script src="~/css/frame/admin_user.js"></script>*@
+    <script type="text/javascript">
+        $(document).ready(function () {
+            
+            $('.dropdown-toggle').dropdown();
+            $('#drowUser').hover( //鼠标滑过导航栏目时
+                function () {
+                    $('.dropdown-menu').show(); //显示下拉列表
+                    //$('.dropdown-toggle').dropdown();
+                    //$(this).css({ 'color': 'red', 'background-color': 'orange' }); //设置导航栏目样式，醒目
+                },
+                function () {
+                    $('.dropdown-menu').hide(); //鼠标移开后隐藏下拉列表
+                }
+            );
+        });
+    </script>
+</body>
+</html>

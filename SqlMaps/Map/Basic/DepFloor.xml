@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sqlMap namespace="DepFloorMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="DepFloor" type="HujingModel.DepFloorEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="DepFloor">
+      <result property="DepId" column="DepId"/>
+      <result property="FloorId" column="FloorId"/>
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+    
+    <select id="LoadAll" parameterClass="string" resultMap="SelectResult">
+      SELECT DepId ,FloorId FROM DepFloor where 1=1 $Condition$
+    </select>
+    
+    <insert id="Save" parameterClass="System.Collections.IDictionary">
+      INSERT INTO DepFloor(DepId ,FloorId) 
+      VALUES(#DepId# ,#FloorId#)
+    </insert>
+    
+    <delete id="Delete" parameterClass="string">
+      DELETE FROM DepFloor
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          DepId=#DepId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+  
+  </statements>
+</sqlMap>

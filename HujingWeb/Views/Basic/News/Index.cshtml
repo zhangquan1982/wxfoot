@@ -1,0 +1,252 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <script src="~/Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+    <script src="~/Scripts/MiniUI/core.js" type="text/javascript"></script>
+
+
+
+    @*<style type="text/css">
+            .myrow {
+                background-color: #b3efef;
+            }
+        </style>*@
+    <script type="text/javascript">
+        var grid;
+        $(document).ready(function () {
+            mini.parse();
+            grid = mini.get("gridView");
+            grid.load();
+            grid.on("drawcell", function (e) {
+                var record = e.record,
+                    column = e.column,
+                    field = e.field,
+                    value = e.value;
+                //设置行样式
+                if (record.Statuss == "已审核") {
+                    e.rowCls = "myrow";
+                }
+            });
+
+
+        });
+
+
+        function AddRow() {
+            var url = '@Url.Action("Add")';
+            location.href = url;
+            //mini.open({
+            //    url: url,
+            //    title: "新增公告", width: 750, height: 550,
+            //    onload: function () {
+            //        var iframe = this.getIFrameEl();
+            //        var data = { action: "new" };
+            //    },
+            //    ondestroy: function (action) {
+            //        if (action == "save") {
+            //            grid.load();
+            //        }
+            //    }
+            //});
+        }
+
+        function Edit() {
+            var row = grid.getSelected();
+
+            if (row) {
+                var url = '@Url.Action("Edit")?newsId=' + row.NewsId;
+                location.href = url;
+                //mini.open({
+                //    url: url,
+                //    title: "编辑公告", width: 750, height: 550,
+                //    onload: function () {
+                //    },
+                //    ondestroy: function (action) {
+                //        if (action == "save") {
+                //            search();
+                //        }
+                //    }
+                //});
+
+            }
+            else {
+                mini.showTips({ content: "请选择一个公告！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+
+
+
+        }
+
+
+        function Remove() {
+
+            var row = grid.getSelected();
+            if (row) {
+
+            }
+            else {
+                mini.showTips({ content: "请选择需要删除的公告！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+            mini.confirm("确定删除此信息吗？", "确定信息",
+                function (action) {
+                    if (action == "ok") {
+                        $.ajax({
+                            type: 'POST',
+                            url: '@Url.Action("DeleteNews")',
+                            data: { "newsIds": row.NewsId },
+                            cache: false,
+                            success: function (result) {
+                                if (result == true) {
+                                    mini.showTips({ content: "操作成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                                    search();
+                                }
+                                else {
+                                    mini.showTips({ content: "操作失败！", state: "danger", x: "center", y: "top", timeout: 3000 });
+                                }
+                            }
+                        });
+                    }
+                }
+            );
+        }
+
+        function search() {
+            var NewTitle = mini.getbyName("NewTitle").getValue();
+            var DateBegin = mini.getbyName("dateBegin").text;
+            var DateEnd = mini.getbyName("dateEnd").text;
+            grid.load({ "NewTitle": NewTitle, "dateBegin": DateBegin, "dateEnd": DateEnd });
+        }
+        function onKeyEnter(e) {
+            search();
+        }
+        function Via() {
+            var rows = grid.getSelecteds();
+            if (rows.length <= 0) {
+                mini.showTips({ content: "请选择您要审核的公告", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+            var ids = [];
+            for (var i = 0, l = rows.length; i < l; i++) {
+                var r = rows[i];
+                ids.push(r.NewsId);
+            }
+            var id = ids.join(',');
+            grid.loading("操作中，请稍后......");
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("Via")',
+                data: { "newsIds": id },
+                cache: false,
+                success: function (result) {
+                    if (result == "ok") {
+                        mini.showTips({ content: "审核成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                        grid.load({});
+                    }
+                    else {
+                        mini.showTips({ content: "审核失败,请联系管理员！", state: "danger", x: "center", y: "top", timeout: 3000 });
+                    }
+                }
+            });
+        }
+
+    </script>
+</head>
+<body style="">
+    <div>
+        <ul class="mnbreadcrumb">
+            <li>
+                <a href="#">公告</a> <span class="divider"></span>
+            </li>
+            <li>
+                <a href="#">公告管理</a>
+            </li>
+        </ul>
+    </div>
+    <div>
+        <fieldset id="fd1" style="width: 98%; height: 90px">
+            <legend><span>查询条件</span></legend>
+            <div class="fieldset-body">
+                <div>
+                    <div style="float: left; margin-left: 5px">
+                        公告标题:
+                    </div>
+                    <div style="float: left; margin-left: 5px">
+                        <input id="NewTitle" name="NewTitle" class="mini-textbox" style="width: 120px" />
+                    </div>
+                </div>
+                <div style="clear: both; height: 15px">
+                </div>
+                <div style="">
+                    <div style="float: left; margin-left: 5px">
+                        创建日期:
+                    </div>
+                    <div style="float: left; margin-left: 5px">
+                        <input id="dateBegin" name="dateBegin" class="mini-datepicker" style="width: 120px;" value="2000-01-01" />
+                    </div>
+                    <div style="float: left;margin-left: 5px">
+                        ~<input id="dateEnd" name="dateEnd" class="mini-datepicker" style="width: 120px;" />
+                    </div>
+                </div>
+                <div style="position: absolute; left: 400px; top: 110px">
+                    <a class="mini-button" onclick="search()">查询</a>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+    <div style="clear:both"></div>
+    <div showcollapsebutton="true">
+        <div class="mini-toolbar" style="border-bottom: 0; padding: 0px;">
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 100%;">
+                        <a class="mini-button" iconcls="icon-add" onclick="AddRow()">增加</a><span class="separator"></span>
+                        <a class="mini-button" iconcls="icon-edit" onclick="Edit()">编辑</a><span class="separator"></span>
+                        <a class="mini-button" iconcls="icon-del" onclick="Remove()">删除</a>
+                    </td>
+                    <td style="white-space: nowrap;">
+                        <input id="key" placeholder="请输入公告标题" style="width: 150px;" onenter="onKeyEnter" />
+                        <a class="mini-button" onclick="search()">查询</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="gridView" class="mini-datagrid" style="width: 100%; height:370px;"
+             allowresize="true" url="@Url.Action("GetList")" idfield="NewsId" pagesize="15">
+            <div property="columns">
+                <div type="checkcolumn" width="10">
+                </div>
+                <div field="NewTitle" width="60" headeralign="center" align="center" allowsort="true">
+                    公告标题
+                </div>
+                <div field="CreateUser" width="50" headeralign="center" align="center" allowsort="true">
+                    创建人
+                </div>
+                <div field="CreateDate" width="50" headeralign="center" align="center" allowsort="true" dateformat="yyyy-MM-dd">
+                    创建时间
+                </div>
+                <div field="Statuss" width="40" headeralign="center" align="center" allowsort="true">
+                    审核状态
+                </div>
+                <div field="ViaUser" width="40" headeralign="center" align="center" allowsort="true">
+                    审核人
+                </div>
+                <div field="ViaTimes" width="40" headeralign="center" align="center" allowsort="true" dateformat="yyyy-MM-dd">
+                    审核时间
+                </div>
+                <div field="ViewCount" width="40" headeralign="center" align="center" allowsort="true">
+                    访问次数
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>

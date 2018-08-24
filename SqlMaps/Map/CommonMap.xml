@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="UserInfoMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="UserInfo" type="HujingModel.UserInfoEntity, HujingModel" />
+  </alias>
+
+  <statements>
+    <select id="GetMaxId" parameterClass="System.Collections.IDictionary" resultClass="string">
+      Select max($Id$) From $TableName$
+    </select>
+
+    
+  </statements>
+</sqlMap>

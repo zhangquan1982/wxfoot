@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="SysOrgGroupMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="SysOrgGroup" type="HujingModel.SysOrgGroupEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="SysOrgGroup">
+      <result property="OrgId" column="orgid" />
+      <result property="GroupID" column="groupid" />
+      <result property="ChargeStatus" column="chargestatus" />
+      <result property="BeginDate" column="begindate" />
+      <result property="EndDate" column="enddate" />
+      <result property="ChargePrice" column="chargeprice" />
+      <result property="ChargeMemo" column="chargememo" />
+      <result property="ChargeUrl" column="chargeurl" />
+      <result property="CreateDate" column="createdate" />
+      <result property="UpdateDate" column="updatedate" />
+      <result property="CreateUser" column="createuser" />
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+
+    <select id="Count" parameterClass="string" resultClass="int">
+      Select count(OrgId+GroupID) From SysOrgGroup where 1=1 $Condition$
+    </select>
+    
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      orgid,
+      groupid,
+      chargestatus,
+      begindate,
+      enddate,
+      chargeprice,
+      chargememo,
+      chargeurl,
+      createdate,
+      updatedate,
+      createuser
+      From SysOrgGroup
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          orgid=#OrgId# AND
+          groupid=#GroupID#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+
+    <insert id="Save" parameterClass="SysOrgGroup">
+      Insert Into SysOrgGroup (
+      orgid,
+      groupid,
+      chargestatus,
+      begindate,
+      enddate,
+      chargeprice,
+      chargememo,
+      chargeurl,
+      createdate,
+      updatedate,
+      createuser
+      )Values(
+      #OrgId#,
+      #GroupID#,
+      #ChargeStatus#,
+      #BeginDate#,
+      #EndDate#,
+      #ChargePrice#,
+      #ChargeMemo#,
+      #ChargeUrl#,
+      #CreateDate#,
+      #UpdateDate#,
+      #CreateUser#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="SysOrgGroup">
+      Update SysOrgGroup Set
+      orgid=#OrgId#,
+      groupid=#GroupID#,
+      chargestatus=#ChargeStatus#,
+      begindate=#BeginDate#,
+      enddate=#EndDate#,
+      chargeprice=#ChargePrice#,
+      chargememo=#ChargeMemo#,
+      chargeurl=#ChargeUrl#,
+      createdate=#CreateDate#,
+      updatedate=#UpdateDate#,
+      createuser=#CreateUser#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          orgid=#OrgId#AND
+          groupid=#GroupID#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="int">
+      Delete From SysOrgGroup
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          orgid=#OrgId#AND
+          groupid=#GroupID#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+  </statements>
+</sqlMap>

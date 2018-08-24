@@ -1,0 +1,203 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="Pati_Out_VisitMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="Pati_Out_Visit" type="HujingModel.Pati_Out_VisitEntity, HujingModel" />
+    <typeAlias alias="Pati_Out_VisitAll" type="HujingModel.Pati_Out_VisitAllEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="Pati_Out_Visit">
+      <result property="SerialNum" column="serialnum" />
+      <result property="RowNO" column="rowno" />
+      <result property="RegDate" column="regdate" />
+      <result property="PatiID" column="patiid" />
+      <result property="PatiCateID" column="paticateid" />
+      <result property="PatiPayTypeId" column="patipaytypeid" />
+      <result property="VisitBegin" column="visitbegin" />
+      <result property="VisitEnd" column="visitend" />
+      <result property="WuBie" column="wubie" />
+      <result property="RegTypeID" column="regtypeid" />
+      <result property="RegOrgId" column="regorgid" />
+      <result property="DoctorUser" column="doctoruser" />
+      <result property="CreateUser" column="createuser" />
+      <result property="CreateDate" column="createdate" />
+      <result property="CancUser" column="cancuser" />
+      <result property="CancDate" column="cancdate" />
+      <result property="Status" column="status" />
+      <result property="PrintTimes" column="printtimes" />
+      <result property="OrgId" column="orgid" />
+    </resultMap>
+
+    <resultMap id="SelectResultAll" class="Pati_Out_VisitAll">
+      <result property="SerialNum" column="serialnum" />
+      <result property="RowNO" column="rowno" />
+      <result property="RegDate" column="regdate" />
+      <result property="PatiID" column="patiid" />
+      <result property="PatiCateID" column="paticateid" />
+      <result property="PatiPayTypeId" column="patipaytypeid" />
+      <result property="VisitBegin" column="visitbegin" />
+      <result property="VisitEnd" column="visitend" />
+      <result property="RegTypeID" column="regtypeid" />
+      <result property="WuBie" column="wubie" />
+      <result property="RegOrgId" column="regorgid" />
+      <result property="DoctorUser" column="doctoruser" />
+      <result property="CreateUser" column="createuser" />
+      <result property="CreateDate" column="createdate" />
+      <result property="CancUser" column="cancuser" />
+      <result property="CancDate" column="cancdate" />
+      <result property="Status" column="status" />
+      <result property="PrintTimes" column="printtimes" />
+      <result property="OrgId" column="orgid" />
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      serialnum,
+      rowno,
+      regdate,
+      patiid,
+      paticateid,
+      patipaytypeid,
+      visitbegin,
+      visitend,
+      regtypeid,
+      wubie,
+      regorgid,
+      doctoruser,
+      createuser,
+      createdate,
+      cancuser,
+      cancdate,
+      status,
+      printtimes,
+      orgid
+      From Pati_Out_Visit
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          serialnum=#SerialNum#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+    <select id="LoadAll" parameterClass="System.Collections.IDictionary" resultMap="SelectResult">
+      select * from
+      (
+      SELECT
+      serialnum,
+      rowno,
+      regdate,
+      patiid,
+      paticateid,
+      patipaytypeid,
+      visitbegin,
+      visitend,
+      regtypeid,
+      wubie,
+      regorgid,
+      doctoruser,
+      createuser,
+      createdate,
+      cancuser,
+      cancdate,
+      status,
+      printtimes,
+      orgid,
+      ROW_NUMBER() over(order by $sortField$ $sortOrder$) rowNumber
+      from Pati_Out_Visit
+      where 1=1  $Condition$
+      ) aa
+      where rowNumber  BETWEEN #Next# and #Prev#
+    </select>
+    
+    <select id="LoadAllOutVisitAll" parameterClass="System.Collections.IDictionary" resultMap="SelectResultAll">
+      select * from
+      (
+      SELECT  SerialNum, RowNO, RegDate, PatiID, PatiCateID, PatiPayTypeId, VisitBegin, VisitEnd, RegTypeID,wubie, RegOrgId, DoctorUser,
+      CreateUser, CreateDate, CancUser, CancDate, Status, PrintTimes, OrgId, PatiName, Age,
+      ROW_NUMBER() over(order by $sortField$ $sortOrder$) rowNumber
+      from vPati_Out_VisitAll
+      where 1=1  $Condition$
+      ) aa
+      where rowNumber  BETWEEN #Next# and #Prev#
+    </select>
+
+
+    <insert id="Insert" parameterClass="Pati_Out_Visit">
+      Insert Into Pati_Out_Visit (
+      serialnum,
+      rowno,
+      regdate,
+      patiid,
+      paticateid,
+      patipaytypeid,
+      visitbegin,
+      visitend,
+      wubie,
+      regtypeid,
+      regorgid,
+      doctoruser,
+      createuser,
+      createdate,
+      cancuser,
+      cancdate,
+      status,
+      printtimes
+      )Values(
+      #SerialNum#,
+      #RowNO#,
+      #RegDate#,
+      #PatiID#,
+      #PatiCateID#,
+      #PatiPayTypeId#,
+      #VisitBegin#,
+      #VisitEnd#,
+      #WuBie#,
+      #RegTypeID#,
+      #RegOrgId#,
+      #DoctorUser#,
+      #CreateUser#,
+      #CreateDate#,
+      #CancUser#,
+      #CancDate#,
+      #Status#,
+      #PrintTimes#
+      )
+    </insert>
+
+    <update id="UpdatePati_Out_Visit" parameterClass="Pati_Out_Visit">
+      Update Pati_Out_Visit Set
+      rowno=#RowNO#,
+      regdate=#RegDate#,
+      patiid=#PatiID#,
+      paticateid=#PatiCateID#,
+      patipaytypeid=#PatiPayTypeId#,
+      visitbegin=#VisitBegin#,
+      visitend=#VisitEnd#,
+      regtypeid=#RegTypeID#,
+      regorgid=#RegOrgId#,
+      doctoruser=#DoctorUser#,
+      createuser=#CreateUser#,
+      createdate=#CreateDate#,
+      cancuser=#CancUser#,
+      cancdate=#CancDate#,
+      status=#Status#,
+      printtimes=#PrintTimes#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          serialnum=#SerialNum#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="DeletePati_Out_Visit" parameterClass="int">
+      Delete From Pati_Out_Visit
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          serialnum=#SerialNum#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+  </statements>
+</sqlMap>

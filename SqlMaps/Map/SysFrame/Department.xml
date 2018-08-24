@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="DepartmentMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="Department" type="HujingModel.DepartmentEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="Department">
+      <result property="DepId" column="depid" />
+      <result property="DepName" column="depname" />
+      <result property="UpperId" column="upperid" />
+      <result property="InputStr" column="inputstr" />
+      <result property="Memo" column="memo" />
+      <result property="Flag" column="flag" />
+      <result property="CreateDate" column="createdate" />
+      <result property="UpdateDate" column="updatedate" />
+      <result property="CreateUser" column="createuser" />
+      <result property="UpdateUser" column="updateuser" />
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      depid,
+      depname,
+      upperid,
+      inputstr,
+      memo,
+      flag,
+      createdate,
+      updatedate,
+      createuser,
+      updateuser
+      From Department
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          depid=#DepId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+    <select id="LoadAll" parameterClass="System.Collections.IDictionary" resultMap="SelectResult">
+      select * from
+      ( Select
+      depid,
+      depname,
+      upperid,
+      inputstr,
+      memo,
+      flag,
+      createdate,
+      updatedate,
+      createuser,
+      updateuser,
+      ROW_NUMBER() over(order by $OrderBy$ ) rowNumber
+      From Department
+      where 1=1 $Condition$
+      ) aa
+      where rowNumber BETWEEN  #Next# and #Prev#
+    </select>
+
+    <insert id="Save" parameterClass="Department">
+      Insert Into Department (
+      depid,
+      depname,
+      upperid,
+      inputstr,
+      memo,
+      flag,
+      createdate,
+      updatedate,
+      createuser,
+      updateuser
+      )Values(
+      #DepId#,
+      #DepName#,
+      #UpperId#,
+      #InputStr#,
+      #Memo#,
+      #Flag#,
+      #CreateDate#,
+      #UpdateDate#,
+      #CreateUser#,
+      #UpdateUser#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="Department">
+      Update Department Set
+      depname=#DepName#,
+      inputstr=#InputStr#,
+      memo=#Memo#,
+      flag=#Flag#,
+      updatedate=#UpdateDate#,
+      updateuser=#UpdateUser#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          depid=#DepId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="int">
+      update Department set flag=1
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          depid=#DepId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+
+    <select id="Count" parameterClass="string" resultClass="int">
+      Select count(depid)
+      From Department where 1=1 $Condition$
+    </select>
+
+
+    <select id="GetMaxDepId" parameterClass="string" resultClass="string">
+      Select max(depid)
+      From Department where 1=1 $Condition$
+    </select>
+  </statements>
+</sqlMap>

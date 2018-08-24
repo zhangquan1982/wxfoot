@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="EnterpriseMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="Enterprise" type="HujingModel.EnterpriseEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="Enterprise">
+      <result property="EntId" column="entid" />
+      <result property="EntTypeId" column="enttypeid" />
+      <result property="EntName" column="entname" />
+      <result property="InputStr" column="inputstr" />
+      <result property="Address" column="address" />
+      <result property="Phone" column="phone" />
+      <result property="Contactor" column="contactor" />
+      <result property="Flag" column="flag" />
+      <result property="CreateDate" column="createdate" />
+      <result property="CreateUser" column="createuser" />
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+
+    <select id="Count" parameterClass="string" resultClass="int">
+      Select count(entid) From Enterprise where flag=0 $Condition$
+    </select>
+
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      entid,
+      enttypeid,
+      entname,
+      inputstr,
+      address,
+      phone,
+      contactor,
+      flag,
+      createdate,
+      createuser
+      From Enterprise
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          entid=#EntId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+
+    <select id="LoadAll" parameterClass="int" resultMap="SelectResult">
+      select * from
+      ( Select
+      entid,
+      enttypeid,
+      entname,
+      inputstr,
+      address,
+      phone,
+      contactor,
+      flag,
+      createdate,
+      createuser,
+      ROW_NUMBER() over(order by $OrderBy$ ) rowNumber
+      From Enterprise
+      where flag=0  $Condition$
+      ) aa
+      where rowNumber BETWEEN  #Next# and #Prev#
+    </select>
+
+
+    <insert id="Save" parameterClass="Enterprise">
+      Insert Into Enterprise (
+      entid,
+      enttypeid,
+      entname,
+      inputstr,
+      address,
+      phone,
+      contactor,
+      flag,
+      createdate,
+      createuser
+      )Values(
+      #EntId#,
+      #EntTypeId#,
+      #EntName#,
+      #InputStr#,
+      #Address#,
+      #Phone#,
+      #Contactor#,
+      #Flag#,
+      #CreateDate#,
+      #CreateUser#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="Enterprise">
+      Update Enterprise Set
+      enttypeid=#EntTypeId#,
+      entname=#EntName#,
+      inputstr=#InputStr#,
+      address=#Address#,
+      phone=#Phone#,
+      contactor=#Contactor#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          entid=#EntId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="int">
+      update  Enterprise set flag = 1
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          entid=#EntId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+  </statements>
+</sqlMap>

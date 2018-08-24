@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sqlMap namespace="NewsMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="Info" type="HujingModel.NewsInfoEntity, HujingModel" />
+    <typeAlias alias="Send" type="HujingModel.NewsSendEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="NewsInfoResultMap"  class="Info">
+      <result property="NewsId" column="NewsId"/>
+      <result property="NewType" column="NewType"/>
+      <result property="NewTitle" column="NewTitle"/>
+      <result property="NewContent" column="NewContent"/>
+      <result property="Flag" column="Flag"/>
+      <result property="Status" column="Status"/>
+      <result property="CreateUser" column="CreateUser"/>
+      <result property="CreateDate" column="CreateDate"/>
+      <result property="ViewCount" column="ViewCount"/>
+      <result property="ViaUser" column="ViaUser"/>
+      <result property="ViaTime" column="ViaTime"/>
+      <result property="OrgId" column="OrgId"/>
+    </resultMap>
+  </resultMaps>
+  <statements>
+
+    <!-- 。。。。。。begin。。。。。。。。。。。。公告。。。。。。begin。。。。。。。-->
+    <select id="FindNewsInfoListByCondition" parameterClass="System.Collections.IDictionary" resultMap="NewsInfoResultMap">
+      <![CDATA[
+       
+      SELECT TOP ($PageSize$)* FROM (
+      SELECT ROW_NUMBER() OVER(ORDER BY NewsId DESC) AS ROWNUMBER,NewsId,NewType ,NewTitle ,NewContent ,Flag ,Status ,CreateUser ,CreateDate ,ViewCount ,ViaUser ,ViaTime, OrgId
+      FROM NEWSINFO  WHERE Flag=0  $Condition$
+      ) A WHERE A.ROWNUMBER>$Next$
+      ]]>
+    </select>
+
+    <select id="GetCount" parameterClass="System.Collections.IDictionary" resultClass="int">
+      <![CDATA[
+      SELECT COUNT(NewsId) FROM NEWSINFO WHERE Flag=0 $Condition$
+      ]]>
+    </select>
+
+    <select id="Load" parameterClass="string" resultMap="NewsInfoResultMap">
+      SELECT * FROM NEWSINFO
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          NewsId=#NewsId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+    <insert id="Save" parameterClass="Info">
+      INSERT INTO NewsInfo(NewsId ,NewType ,NewTitle ,NewContent ,Flag ,Status ,CreateUser ,CreateDate ,ViewCount ,ViaUser ,ViaTime,OrgId)
+      VALUES(#NewsId# ,#NewType# ,#NewTitle# ,#NewContent# ,#Flag# ,#Status# ,#CreateUser# ,#CreateDate#,#ViewCount# ,#ViaUser# ,#ViaTime#,#OrgId#)
+    </insert>
+
+    <update id="Update" parameterClass="Info">
+      Update NewsInfo Set
+      newtype=#NewType#,
+      newtitle=#NewTitle#,
+      newcontent=#NewContent#,
+      flag=#Flag#,
+      status=#Status#,
+      createuser=#CreateUser#,
+      createdate=#CreateDate#,
+      viewcount=#ViewCount#,
+      viauser=#ViaUser#,
+      viatime=#ViaTime#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          newsid=#NewsId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <update id="UpdateVia" parameterClass="System.String" >
+      <![CDATA[
+      UPDATE NewsInfo SET status=1,viatime=getdate(),viauser='$viaUser$' where NewsId=$newsId$
+      ]]>
+    </update>
+    
+    <update id="UpdateCount" parameterClass="string" >
+      UPDATE NewsInfo SET viewCount=viewCount+1
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          NewsId=#NewsId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <update id="UpdateFlag" parameterClass="System.String" >
+      <![CDATA[
+      UPDATE NewsInfo SET flag=1 where NewsId=$newsId$
+      ]]>
+    </update>
+    <!-- 。。。。。。end。。。。。。。。。。。。公告。。。。。。end。。。。。。。-->
+
+
+    <!-- 。。。....begin.......。。。。秘密发送人。。。。....begin.....。。 -->
+    <delete id="DeleteNewsSend" parameterClass="System.String">
+      <![CDATA[
+       delete NewsSend WHERE 1=1 $Condition$
+      ]]>
+    </delete>
+
+    <insert id="INSERTNewsSendInfo" parameterClass="System.Collections.IDictionary">
+      <![CDATA[
+      INSERT INTO NewsSend(NewsId ,ToUserId ,SendTime ,ViewTime) VALUES(#NewsId# ,#ToUserId# ,#SendTime# ,#ViewTime#)
+       ]]>
+    </insert>-->
+    <!-- 。。。....end.......。。。。秘密发送人。。。。....end.....。。 -->
+  </statements>
+</sqlMap>

@@ -1,0 +1,177 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="SysGroupMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="SysGroup" type="HujingModel.SysGroupEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="SysGroup">
+      <result property="GroupID" column="groupid" />
+      <result property="GroupName" column="groupname" />
+      <result property="ParentID" column="parentid" />
+      <result property="ShowOrder" column="showorder" />
+      <result property="IconCls" column="iconcls" />
+      <result property="URL" column="url" />
+      <result property="Flag" column="flag" />
+      <result property="HisType" column="histype" />
+      <result property="IconClass" column="iconclass" />
+      
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+
+    <select id="Count" parameterClass="string" resultClass="int">
+      Select count(groupid) From SysGroup where flag=0 $Condition$
+    </select>
+
+    <select id="Load" parameterClass="string" resultMap="SelectResult">
+      Select
+      groupid,
+      groupname,
+      parentid,
+      showorder,
+      iconcls,
+      iconclass,
+      url,
+      flag,
+      histype
+      From SysGroup
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          groupid=#GroupID#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+    <select id="LoadAll" parameterClass="System.Collections.IDictionary" resultMap="SelectResult">
+      select * from
+      ( Select
+      groupid,
+      groupname,
+      parentid,
+      showorder,
+      iconcls,
+      iconclass,
+      url,
+      flag,
+      histype,
+      ROW_NUMBER() over(order by $OrderBy$ ) rowNumber
+      From SysGroup
+      where flag=0 $Condition$
+      ) aa
+      where rowNumber BETWEEN  #Next# and #Prev#
+    </select>
+
+    <select id="LoadAllByParentIdAndUserId" parameterClass="System.Collections.IDictionary" resultMap="SelectResult">
+      select * from
+      (
+      Select
+      SysGroup.groupid,
+      groupname,
+      parentid,
+      showorder,
+      iconcls,
+      iconclass,
+      url,
+      SysGroup.flag,
+      histype,
+      ROW_NUMBER() over(order by SysGroup.groupid ) rowNumber
+      From SysGroup inner join SysRoleGroup on SysGroup.groupid=SysRoleGroup.groupid
+      inner join SysRole on SysRoleGroup.RoleId = SysRole.RoleId
+      inner join SysUserRole on SysRole.RoleId=SysUserRole.RoleId
+      inner join UserInfo on SysUserRole.UserId=UserInfo.Userid
+      where 1=1 $Condition$
+      ) aa
+      where rowNumber BETWEEN  #Next# and #Prev#
+    </select>
+
+
+    <select id="LoadGroupListByUserId" parameterClass="string" resultMap="SelectResult">
+      Select
+      SysGroup.groupid,
+      groupname,
+      parentid,
+      showorder,
+      iconcls,
+      iconclass,
+      url,
+      SysGroup.flag,
+      histype
+      From SysGroup inner join SysRoleGroup on SysGroup.groupid=SysRoleGroup.groupid
+      inner join SysRole on SysRoleGroup.RoleId = SysRole.RoleId
+      inner join SysUserRole on SysRole.RoleId=SysUserRole.RoleId
+      inner join UserInfo on SysUserRole.UserId=UserInfo.Userid
+      where UserInfo.userid = $UserID$
+      union
+      select
+      SysGroup.groupid,
+      groupname,
+      parentid,
+      showorder,
+      iconcls,
+      iconclass,
+      url,
+      SysGroup.flag,
+      histype
+      from SysGroup where SysGroup.groupid in
+      (
+      Select
+      SysGroup.parentid
+      From SysGroup inner join SysRoleGroup on SysGroup.groupid=SysRoleGroup.groupid
+      inner join SysRole on SysRoleGroup.RoleId = SysRole.RoleId
+      inner join SysUserRole on SysRole.RoleId=SysUserRole.RoleId
+      inner join UserInfo on SysUserRole.UserId=UserInfo.Userid
+      where UserInfo.userid = $UserID$)
+    </select>
+
+    
+    <insert id="Save" parameterClass="SysGroup">
+      Insert Into SysGroup (
+      groupid,
+      groupname,
+      parentid,
+      showorder,
+      iconcls,
+      iconclass,
+      url,
+      flag
+      )Values(
+      #GroupID#,
+      #GroupName#,
+      #ParentID#,
+      #ShowOrder#,
+      #IconCls#,
+      #IconClass#,
+      #URL#,
+      #Flag#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="SysGroup">
+      Update SysGroup Set
+      groupid=#GroupID#,
+      groupname=#GroupName#,
+      parentid=#ParentID#,
+      showorder=#ShowOrder#,
+      iconcls=#IconCls#,
+      iconclass=#IconClass#,
+      url=#URL#,
+      flag=#Flag#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          groupid=#GroupID#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="int">
+      Delete From SysGroup
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          groupid=#GroupID#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+  </statements>
+</sqlMap>

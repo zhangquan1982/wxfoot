@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="SysUserRoleMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="SysUserRole" type="HujingModel.SysUserRoleEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="SysUserRole">
+      <result property="UserId" column="userid" />
+      <result property="UserName" column="username" />
+      <result property="RoleId" column="roleid" />
+      <result property="RoleName" column="rolename" />
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+    <select id="SelectSysUserRole" parameterClass="string" resultMap="SelectResult">
+      Select
+      userid,
+      username,
+      roleid,
+      rolename
+      From SysUserRole
+      where 1=1 $Condition$
+    </select>
+
+    <select id="SelectBindRole" parameterClass="string" resultMap="SelectResult">
+      Select
+      '' as userid,
+      '' as username,
+      sysrole.roleid,
+      sysrole.rolename
+      From sysrole
+      where 1=1 $Condition$
+    </select>
+
+    <insert id="Save" parameterClass="SysUserRole">
+      Insert Into SysUserRole (
+      userid,
+      username,
+      roleid,
+      rolename
+      )Values(
+      #UserId#,
+      #UserName#,
+      #RoleId#,
+      #RoleName#
+      )
+    </insert>
+
+
+    <delete id="Delete" parameterClass="int">
+      Delete From SysUserRole
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          userid=#UserId# and roleid=#RoleId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+  </statements>
+</sqlMap>

@@ -1,0 +1,4 @@
+﻿[{"name":"医保类型","id":"100","expanded":true,"pid":""},{"name":"用药","id":"101"
+,"expanded":true,"pid":""},{"name":"药品分类","id":"102","expanded":true,"pid":""},{"name":"主要疾病","id":"103","expanded":true,"pid":""
+},{"name":"居民身份","id":"104","expanded":true,"pid":""},{"name":"宗教信仰","id":"105","expanded":true,"pid":""
+}]

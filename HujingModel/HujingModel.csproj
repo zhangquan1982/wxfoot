@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{99A4C8E2-F507-4E54-8AE8-445AED50FA06}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>HujingModel</RootNamespace>
+    <AssemblyName>HujingModel</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\HujingWeb\bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac.Configuration, Version=3.3.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Autofac.Configuration.3.3.0\lib\net40\Autofac.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Basic\CheckCodeEntity.cs" />
+    <Compile Include="Basic\PackageItemEntity.cs" />
+    <Compile Include="Basic\PackageTypeEntity.cs" />
+    <Compile Include="Basic\ScheItemDateEntity.cs" />
+    <Compile Include="Basic\ScheItemDateEntityAll.cs" />
+    <Compile Include="Basic\ScheItemDateItemEntity.cs" />
+    <Compile Include="Basic\vmBed.cs" />
+    <Compile Include="ChargeManager\Condition\InvoiceSelCondition.cs" />
+    <Compile Include="ChargeManager\Fin_Invoice_StoreEntity.cs" />
+    <Compile Include="ChargeManager\PatiInBillEntity.cs" />
+    <Compile Include="ChargeManager\PatiInBillItemCollect.cs" />
+    <Compile Include="ChargeManager\PatiInBillItemEntity.cs" />
+    <Compile Include="ChargeManager\PatiInVoiceEntity.cs" />
+    <Compile Include="ChargeManager\PatiIn_Settle_InVoiceEntity.cs" />
+    <Compile Include="ChargeManager\PatiPayListEntity.cs" />
+    <Compile Include="ChargeManager\Pati_In_SettleListEntity.cs" />
+    <Compile Include="ChargeManager\Pati_In_Settle_DetailEntity.cs" />
+    <Compile Include="ChargeManager\PersonPayVoiceVM.cs" />
+    <Compile Include="MenuModel.cs" />
+    <Compile Include="OrgApply\BedSidyApplyEntity.cs" />
+    <Compile Include="SysFrame\UserAndCardEntity.cs" />
+    <Compile Include="SysFrame\UserCardEntity.cs" />
+    <Compile Include="Report\CommonNameCount.cs" />
+    <Compile Include="Report\OrgInfo.cs" />
+    <Compile Include="SearchCondition\SearchVisit.cs" />
+    <Compile Include="SysFrame\DepartmentEntity.cs" />
+    <Compile Include="Basic\DictCodeEntity.cs" />
+    <Compile Include="Basic\DictItemEntity.cs" />
+    <Compile Include="Basic\DictItem_CateEntity.cs" />
+    <Compile Include="Menu.cs" />
+    <Compile Include="SysFrame\OrganizationEntity.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SysFrame\OrgCardEntity.cs" />
+    <Compile Include="SysFrame\RegionAreaEntity.cs" />
+    <Compile Include="SysFrame\SysGroupEntity.cs" />
+    <Compile Include="SysFrame\SysGroupVM.cs" />
+    <Compile Include="SysFrame\SysOrgGroupEntity.cs" />
+    <Compile Include="SysFrame\SysRoleEntity.cs" />
+    <Compile Include="SysFrame\SysRoleGroupEntity.cs" />
+    <Compile Include="SysFrame\SysUserRoleEntity.cs" />
+    <Compile Include="SysFrame\UserVM.cs" />
+    <Compile Include="User.cs" />
+    <Compile Include="SysFrame\UserInfoEntity.cs" />
+    <Compile Include="UserOrder\OrderDinnerEntity.cs" />
+    <Compile Include="UserOrder\RefundsApplyEntity.cs" />
+    <Compile Include="UserOrder\SatisfactionEntity.cs" />
+    <Compile Include="ViewModel\BillItemModel.cs" />
+    <Compile Include="ViewModel\OrdersBySurvey.cs" />
+    <Compile Include="ViewModel\SatisfactGroupDate.cs" />
+    <Compile Include="ViewModel\UserBillTotal.cs" />
+    <Compile Include="ViewModel\UserOrderDetail.cs" />
+    <Compile Include="ViewModel\UserOrders.cs" />
+    <Compile Include="ViewModel\UserOrderTotal.cs" />
+    <Compile Include="WeiXin\WXPatiPayListEntity.cs" />
+    <Compile Include="WeiXin\WXPatiServiceDateEntity.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,310 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<head>
+    <link href="~/Scripts/MiniUI/demo.css" rel="stylesheet" type="text/css" />
+    <script src="~/Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+    <script src="~/Scripts/MiniUI/core.js" type="text/javascript"></script>
+    <script src="~/Scripts/moment.min.js"></script>
+    <link id="bs-css" href="~/Scripts/Charisma/css/bootstrap-cerulean.min.css" rel="stylesheet">
+    <link href="~/Scripts/Charisma/css/charisma-app.css" rel="stylesheet">
+    <style type="text/css">
+        html, body {
+            padding: 0;
+            margin: 0;
+            border: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        table td {
+            font-size: 12px;
+        }
+    </style>
+    <script type="text/javascript">
+        var grid2;
+        var gridPerson;
+        $(document).ready(function () {
+            mini.parse();
+            grid2 = mini.get("grid2");
+            gridPerson = mini.get("SelPerson");
+            $("#btnSave").click(function (event) {
+
+                form.validate();
+                grid2.validate();
+                if (form.isValid() == false) {
+                    return;
+                }
+                var srnum = mini.getbyName("SerialNum").getValue();
+                if (srnum == "") {
+                    mini.showTips({ content: "请输入老人信息！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                    return;
+                }
+                if (grid2.getData().length == 0) {
+                    mini.showTips({ content: "没有需要计费的项目！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                    return;
+                }
+                var head = form.getData();
+                var items = grid2.getData();
+
+                mini.confirm("确定执行计费？", "确定", function (action) {
+                    if (action == "ok") {
+                        $.ajax({
+                            url: '@Url.Action("SavePersonBill")',
+                            type: 'post',
+                            dataType: "json",
+                            contentType: 'application/json',
+                            data: mini.encode({
+                                billHead: form.getData(),
+                                billItem: grid2.getData()
+                            }),
+                            cache: false,
+                            success: function (text) {
+                                if (text == true) {
+                                    mini.showTips({ content: "计费成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                                    grid2.clearRows();
+                                } else {
+                                    mini.showTips({ content: "保存失败！", state: "danger", x: "center", y: "top", timeout: 3000 });
+                                }
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                alert(jqXHR.responseText);
+                                CloseWindow();
+                            }
+                        });
+                    }
+                });
+            });
+        });
+
+        function PreAmountView() {
+            var srnum = mini.getbyName("SerialNum").getValue();
+            if (srnum == "") {
+                mini.showTips({ content: "请输入老人信息！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+            var url = '@Url.Action("PreViewGrid")?serialnum=' + srnum;
+
+            mini.open({
+                url: url,
+                title: "预交金收取", width: 720, height: 300,
+                onload: function () {
+                },
+                ondestroy: function (action) {
+                }
+            });
+        }
+
+        function BillAmountView() {
+            var srnum = mini.getbyName("SerialNum").getValue();
+            if (srnum == "") {
+                mini.showTips({ content: "请输入老人信息！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+            var url = '@Url.Action("PesonBillView")?serialnum=' + srnum;
+
+            mini.open({
+                url: url,
+                title: "老人费用查看", width: 720, height: 500,
+                onload: function () {
+                },
+                ondestroy: function (action) {
+                }
+            });
+        }
+    </script>
+</head>
+
+<form id="frmBill">
+
+    <div showcollapsebutton="true">
+        <div style="width: 720px; padding: 10px; height: 20%; border: 1px gray solid">
+            <div>
+                <div style="float: left; margin-left: 5px;font-size:13px;">
+                    选择老人:
+                </div>
+                <div style="float: left; margin-left: 5px;font-size:13px;">
+                    <div style="float: left; margin-left: 5px">
+                        <div id="SelPerson" name="SelPerson" class="mini-combobox" style="width:120px;" popupwidth="360px" textfield="PatiName" valuefield="SerialNum"
+                             url='@Url.Action("GetInPatiPerson", "Common")' value="" allowinput="true" onvaluechanged="RefreshPerson" onvalidation="onComboValidation" onitemclick="ClickSelPerson">
+                            <div property="columns">
+                                <div header="床位号" field="BedName"></div>s
+                                <div header="入院编号" field="SerialNum"></div>
+                                <div header="姓名" field="PatiName"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="float: left; font-size:16px; margin-left: 5px; color:red">
+                    提示：请在左侧输入框中输入姓名、入院号然后回车！
+                </div>
+                <div style="clear: both; height: 20px">
+                </div>
+                <div style="font-size:13px;  font-weight:bold">
+                    <div style="position:absolute; left:15px; top:50px">病人姓名：</div>
+                    <div style="position:absolute; left:110px; top:50px"><u id="divPatiName"></u></div>
+                    <div style="position:absolute; left:300px; top:50px">年龄：</div>
+                    <div style="position:absolute; left:360px; top:50px"><u id="divAge"></u></div>
+                    <div style="position:absolute; left:15px; top:90px">入院日期：</div>
+                    <div style="position:absolute; left:110px; top:90px"><u id="divAdmitDate"></u></div>
+                    <div style="position:absolute; left:300px; top:90px">性别：</div>
+                    <div style="position:absolute; left:360px; top:90px"><u id="divSex"></u></div>
+                    <div style="position:absolute; left:15px; top:130px">预交金：</div>
+                    <div style="position:absolute; left:110px; top:130px"><u id="divPreAmount"></u></div>
+                    <div style="position:absolute; left:300px; top:130px">消费金额：</div>
+                    <div style="position:absolute; left:390px; top:130px"><u id="divFeeAmount"></u></div>
+                    <div style="position:absolute; left:585px; top:130px;color:red">余额：</div>
+                    <div style="position:absolute; left:635px; top:130px; color:red"><u id="divLeftAmount"></u></div>
+                </div>
+                <input id="SerialNum" name="SerialNum" class="mini-textbox" style="width: 100px" visible="false" />
+            </div>
+
+
+        </div>
+        <br />
+        <div style="width: 100%; height: 30px">
+            <div class="mini-toolbar" style="border-bottom: 0; padding: 0px;">
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="width: 100%;">
+                            <a class="mini-button" iconcls="icon-add" id="btnAdd" onclick="AddRow()">增加</a>
+                            <span class="separator"></span>
+                            <a class="mini-button" iconcls="icon-save" id="btnSave" plain="true">执行计费</a>
+                            <span class="separator"></span>
+                            @*<a class="mini-button" iconcls="icon-search" id="btnPreView" onclick="PreAmountView()">预交金查看</a>*@
+                            <a class="mini-button" iconcls="icon-search" id="btnBillView" onclick="BillAmountView()">费用查看</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div>
+            <div id="grid2" class="mini-datagrid" style="width: 100%; height: 70%;"
+                 allowresize="true" idfield="Status" allowresize="true" allowcellselect="true"
+                 allowcelledit="true" editnextonenterkey="true" editnextrowcell="true"
+                 showpager="false">
+                <div property="columns">
+                    <div type="indexcolumn"></div>
+                    <div field="InputStr" align="center" width="60" headeralign="center" allowsort="false">
+                        助记符
+                        <div class="mini-autocomplete" style="width:250px;" property="editor"
+                             popupwidth="300" value="" text="" textfield="InputStr" valuefield="ItemID" searchfield="inputStr"
+                             url="@Url.Action("GetDictItemList", "InOutStore")" onvaluechanged="onValueChanged">
+                            <div property="columns">
+                                <div header="助记符" field="InputStr" width="30"></div>
+                                <div header="项目编码" field="ItemID"></div>
+                                <div header="项目名称" field="ItemName"></div>
+                                <div header="单位" field="UnitName"></div>
+                                <div header="价格" field="WholesalePrice"></div>
+                                <div header="生产厂家" field="EnterpriseName"></div>
+                                <div header="批次号" field="BatchCode"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div name="ItemID" field="ItemID" width="80" headeralign="center" allowsort="false" visible="false">
+                        项目编码
+                    </div>
+                    <div name="ItemName" field="ItemName" width="80" headeralign="center" allowsort="false">
+                        项目名称
+                    </div>
+                    <div name="UnitName" align="center" field="UnitName" width="40" headeralign="center" allowsort="false">
+                        单位
+                    </div>
+                    <div field="Quantity" align="center" width="40" headeralign="center" allowsort="false">
+                        数量
+                        <input property="editor" vtype="float" class="mini-textbox" style="width:100%;" />
+                    </div>
+                    <div field="Price" align="right" width="60" headeralign="center" allowsort="false" datatype="float">价格</div>
+                    <div field="TotAmount" align="right" width="60" headeralign="center" allowsort="false" datatype="float">金额</div>
+                    <div field="BatchCode" align="right" width="60" headeralign="center" allowsort="false">批号</div>
+                    <div field="EnterpriseId" visible="false" width="100" headeralign="center" allowsort="false">企业</div>
+                    <div field="EnterpriseName" width="100" headeralign="center" allowsort="false">生产厂家</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</form>
+<script type="text/javascript">
+    mini.parse();
+    var grid2 = mini.get("grid2");
+    var form = new mini.Form("frmBill");
+
+    function AddRow() {
+        var newRow = {};
+        grid2.clearRows();
+        grid2.addRow(newRow, 0);
+    }
+
+
+    function ClickSelPerson(e) {
+        var result = e.item;
+        if (result.StatusName != "已入院") {
+            mini.showTips({ content: "此人未入院！", state: "warning", x: "center", y: "top", timeout: 3000 });
+            return;
+        }
+        var admitdate = moment(result.AdmitDate).format('YYYY-MM-DD');
+
+        mini.getbyName("SerialNum").setValue(result.SerialNum);
+        var yjAmount = parseInt(result.PreAmount);
+        var yeAmount = parseInt(yjAmount - result.FeeAmount);
+        $("#divPatiName").html(result.PatiName);
+        $("#divAge").html(result.Age);
+        $("#divAdmitDate").html(admitdate);
+        $("#divSex").html(result.SexName); 
+        $("#divPreAmount").html(result.PreAmount);
+        $("#divLeftAmount").html(yeAmount);
+        $("#divFeeAmount").html(result.FeeAmount);
+    }
+
+
+    function onComboValidation(e) {
+
+        var items = this.findItems(e.value);
+        if (!items || items.length == 0) {
+            e.isValid = false;
+            e.errorText = "输入值不在下拉数据中";
+
+            mini.getbyName("SerialNum").setValue("");
+            $("#divPatiName").html("");
+            $("#divAge").html("");
+            $("#divAdmitDate").html("");
+            $("#divSex").html("");
+            $("#divPreAmount").html("");
+            $("#divLeftAmount").html("");
+            $("#divFeeAmount").html("");
+        }
+    }
+
+    function RefreshPerson(e) {
+        if (e.value.length >= 1) {
+            var url = '@Url.Action("GetInPatiPerson", "Common")?input=' + e.value;
+            gridPerson.load(url);
+        }
+    }
+
+    function onValueChanged(e) {
+        var item = e.selected;
+        var row = grid2.getSelected();
+        item.Quantity = 1;
+        if (item.ItemName != "") {
+            var newRow = {};
+            item.Price = item.SalesPrice;
+            item.TotAmount = item.SalesPrice * 1;
+        }
+
+        grid2.updateRow(row, item);
+        var newRow = {};
+        grid2.addRow(newRow, 0);
+    }
+
+    grid2.on("cellendedit", function (sender) {
+        if (sender.field == "Quantity") {
+            var row = grid2.getRow(sender.rowIndex);
+            row.TotAmount = row.SalesPrice * row.Quantity;
+            grid2.updateRow(row, row);
+        }
+    });
+</script>

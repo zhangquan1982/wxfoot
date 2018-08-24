@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="OrderDinnerMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="OrderDinner" type="HujingModel.OrderDinnerEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="OrderDinner">
+      <result property="OrdId" column="ordid" />
+      <result property="OrdName" column="ordname" />
+      <result property="UserId" column="userid" />
+      <result property="OrderDate" column="orderdate" />
+      <result property="TypeCode" column="typecode" />
+      <result property="Quantity" column="quantity" />
+      <result property="CancUser" column="cancuser" />
+      <result property="CancReason" column="cancreason" />
+      <result property="CreateUser" column="createuser" />
+      <result property="CreateDate" column="createdate" />
+      <result property="OrdStatus" column="ordstatus" />
+      <result property="CancDate" column="cancdate" />
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+
+    <select id="Count" parameterClass="string" resultClass="int">
+      Select count(OrdId)
+      From OrderDinner where 1=1 $Condition$
+    </select>
+    
+    
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      ordid,
+      ordname,
+      userid,
+      orderdate,
+      typecode,
+      quantity,
+      cancuser,
+      cancreason,
+      createuser,
+      createdate,
+      ordstatus,
+      cancdate
+      From OrderDinner
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          ordid=#OrdId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+    <select id="LoadAll" parameterClass="System.Collections.IDictionary" resultMap="SelectResult">
+      select * from
+      ( Select
+      ordid,
+      ordname,
+      userid,
+      orderdate,
+      typecode,
+      quantity,
+      cancuser,
+      cancreason,
+      createuser,
+      createdate,
+      ordstatus,
+      cancdate,
+      ROW_NUMBER() over(order by ordid ) rowNumber
+      From OrderDinner
+      where 1=1 $Condition$
+      ) aa
+      where rowNumber BETWEEN  #Next# and #Prev#
+    </select>
+
+    <insert id="Insert" parameterClass="OrderDinner">
+      Insert Into OrderDinner (
+      ordid,
+      ordname,
+      userid,
+      orderdate,
+      typecode,
+      quantity,
+      cancuser,
+      cancreason,
+      createuser,
+      createdate,
+      ordstatus,
+      cancdate
+      )Values(
+      #OrdId#,
+      #OrdName#,
+      #UserId#,
+      #OrderDate#,
+      #TypeCode#,
+      #Quantity#,
+      #CancUser#,
+      #CancReason#,
+      #CreateUser#,
+      #CreateDate#,
+      #OrdStatus#,
+      #CancDate#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="OrderDinner">
+      Update OrderDinner Set
+      ordid=#OrdId#,
+      ordname=#OrdName#,
+      userid=#UserId#,
+      orderdate=#OrderDate#,
+      typecode=#TypeCode#,
+      quantity=#Quantity#,
+      cancuser=#CancUser#,
+      cancreason=#CancReason#,
+      createuser=#CreateUser#,
+      createdate=#CreateDate#,
+      ordstatus=#OrdStatus#,
+      cancdate=#CancDate#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          ordid=#OrdId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <!--<delete id="DeleteOrderDinner" parameterClass="int">
+      Delete From OrderDinner
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          ordid=#OrdId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>-->
+
+    <select id="GetOrderDinnerCollect" parameterClass="System.Collections.IDictionary" resultClass="System.Data.DataTable">
+      select * from
+      (
+      SELECT
+      CONVERT(varchar(12),OrderDate,111) as OrderDate,TypeCode,sum(Quantity) as Quantity,
+      ROW_NUMBER() over(order by CONVERT(varchar(12),OrderDate, 111 ) desc) rowNumber
+      FROM OrderDinner
+      where 1=1 $Condition$  group by CONVERT(varchar(12),OrderDate,111) ,TypeCode
+      ) aa
+      where rowNumber  BETWEEN #Next# and #Prev#
+    </select>
+
+
+    <select id="GetOrderDinnerCollectCount" parameterClass="System.Collections.IDictionary" resultClass="System.Data.DataTable">
+      SELECT
+      CONVERT(varchar(12),OrderDate,111) as OrderDate,TypeCode,sum(Quantity) as Quantity,
+      ROW_NUMBER() over(order by CONVERT(varchar(12),OrderDate, 111 ) desc) rowNumber
+      FROM OrderDinner
+      where 1=1 $Condition$  group by CONVERT(varchar(12),OrderDate,111) ,TypeCode
+    </select>
+
+
+    <select id="GetOrderDinnerDetail" parameterClass="System.Collections.IDictionary" resultClass="System.Data.DataTable">
+      select * from
+      (
+      SELECT
+      UserInfo.UserId,UserInfo.UserName, OrderDate,TypeCode , Quantity,
+      ROW_NUMBER() over(order by CONVERT(varchar(12),OrderDate, 111 ) desc) rowNumber
+      FROM OrderDinner inner join UserInfo on OrderDinner.UserId = UserInfo.UserId
+      where 1=1 $Condition$  
+      ) aa
+      where rowNumber  BETWEEN #Next# and #Prev#
+    </select>
+
+
+    <select id="GetOrderDinnerDetailCount" parameterClass="string" resultClass="int">
+      SELECT count(ordid)
+      FROM OrderDinner inner join UserInfo on OrderDinner.UserId = UserInfo.UserId
+      where 1=1 $Condition$
+    </select>
+
+
+
+
+  </statements>
+</sqlMap>

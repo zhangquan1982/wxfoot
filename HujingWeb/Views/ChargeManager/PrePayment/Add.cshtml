@@ -1,0 +1,177 @@
+﻿@{
+    ViewBag.Title = "初始费收取";
+    Layout = null;
+}
+<script src="~/Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+<script src="~/Scripts/MiniUI/core.js" type="text/javascript"></script>
+<script src="~/Scripts/jquery.form.js" type="text/javascript"></script>
+<script src="~/Scripts/Print/jquery.jqprint-0.3.js"></script>
+<script src="~/Scripts/moment.min.js"></script>
+<form id="frmPrePayment" method="post" action="InVisit/SaveSetCost">
+
+    <fieldset id="fd1" style="width: 450px; height: 90px; font-weight:bold">
+        <legend><span>老人信息</span></legend>
+        <div class="fieldset-body">
+            <div>
+                <input name="SerialNum" class="mini-textbox" visible="false" value="@ViewBag.SerialNum" />
+                <div style="position: absolute; top: 30px; left: 25px">
+                    入住编号:@ViewBag.SerialNum
+                </div>
+                <br />
+                <div style="position: absolute; top: 55px; left: 25px">
+                    老人信息:@ViewBag.PatiName
+                </div>
+                <br />
+                <div style="position: absolute; top: 85px; left: 25px">
+                    家庭住址:@ViewBag.Address
+                </div>
+            </div>
+        </div>
+
+    </fieldset>
+    <fieldset id="fd3" style="width: 450px; height: 150px;">
+        <legend><span>预交金</span></legend>
+        <div class="fieldset-body" style="margin-top:5px">
+            <div style=" ">
+                <span>押金金额：</span>
+                <input id="Deposit" name="Deposit" class="mini-combobox" style="width: 120px" valuefield="CodeId" textfield="CodeName"
+                       url='@Url.Action("GetCommonDictCode", "Common", new { codeType = @HujingCommon.DictCodeTypeClass.DepositAmount })' required="true" emptytext="请选择" />
+            </div>
+        </div>
+        <div style="clear:both"></div>
+        <div style="margin-top:10px">
+            <div style="">
+                <span>
+                    收费方式：
+                </span>
+
+                <input name="PayModeType" class="mini-combobox" valuefield="CodeId" textfield="CodeName"
+                       style="width: 120px" allowinput="false" data="[{CodeId: '0', CodeName: '现金'}, {CodeId: '1', CodeName: '刷卡'}, {CodeId: '2', CodeName: '现金+刷卡'}]"
+                       required="true" emptytext="请选择" onvaluechanged="PayModeChange" />
+            </div>
+            <br />
+            <div style=" margin-top:10px; font-weight:bold">
+                <div id="divCash" style="float:left;font-size:14px">现金金额:<input id="AmountCash" name="AmountCash" class="mini-textbox" vtype="float" required="true" value="0" style="width: 120px" /></div>
+                <div id="divCard" style="float:left;font-size:14px; margin-left:10px">刷卡金额:<input id="AmountCard" name="AmountCard" class="mini-textbox" vtype="float" required="true" value="0" style="width: 120px" /></div>
+            </div>
+
+        </div>
+    </fieldset>
+    <div style="text-align: center; padding: 10px;">
+        <a class="mini-button" id="btnSave" href="javascript:void(0);" style="width: 60px; margin-right: 20px;">确定</a> <a class="mini-button" onclick="onCancel" style="width: 60px;">取消</a>
+    </div>
+
+
+    <div id="printContent">
+        <div style="float:left;text-align:center;font-size:18px;margin-left:150px; font-weight:bold">@ViewBag.OrgTitle</div>
+        <div style="clear:both; height:40px"></div>
+        <div style="float:left; margin-left:50px">入院编号:</div><div style="float:left">@ViewBag.SerialNum</div><div style="float:left; margin-left:30px;font-size:12px">票据号:</div><div id="divVoiceNo">@ViewBag.InVoiceNo</div>
+        <div style="clear:both; height:20px"></div>
+        <div style="float:left; margin-left:50px">老人信息:</div><div style="float:left">@ViewBag.PatiName</div>
+        <div style="clear:both; height:10px"></div>
+        <table style="border:1px;width:600px; border:solid;margin-left:50px">
+            <tr><th>收费项目</th><th>金额</th></tr>
+            <tr><td align="center">入院预交金</td><td align="center"><div id="allAmount"></div></td></tr>
+        </table>
+        <div style="clear:both; height:10px"></div>
+        <div style="float:left;margin-left:50px">收款时间:</div><div style="float:left" id="printTime"></div>
+        <div style="float:left;margin-left:200px">收费员工号:</div><div style="float:left">@ViewBag.UserId</div>
+    </div>
+</form>
+<script type="text/javascript">
+    mini.parse();
+    var form = new mini.Form("frmPrePayment");
+
+    $(document).ready(function () {
+
+        $("#printContent").hide();
+        var serialid = "";
+        var sernum = mini.getbyName("SerialNum").getValue();
+
+        //保存
+        $("#btnSave").click(function (event) {
+            form.validate();
+
+            if (form.isValid() == false) {
+                return;
+            }
+
+            var cash = mini.getbyName("AmountCash").getValue();
+            var card = mini.getbyName("AmountCard").getValue();
+
+            if ((cash == "0") && (card == "0")) {
+                mini.showTips({ content: "请输入金额数！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+            var nowTime = moment().format("YYYY-MM-DD HH:mm:ss");
+            $("#printTime").html(nowTime);
+
+            var InputAmount = 0;
+
+            InputAmount = parseFloat(cash) + parseFloat(card);
+            var confrmMsg = "确认收取金额" + InputAmount + "?";
+            var DepositAmount = mini.getbyName("Deposit").text;
+           
+            if (InputAmount.toString() != DepositAmount) {
+                mini.showTips({ content: "输入金额和押金金额不一致,请核对后重新输入！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+
+            $("#allAmount").html(DepositAmount);
+
+            var confrmMsg = "预交金额为：" + InputAmount + "，是否确认收费?";
+            var jsonhead = form.getData();
+            var invoice = $("#divVoiceNo").html();
+            jsonhead.CreateUser = invoice;
+            mini.confirm(confrmMsg, "确定", function (action) {
+                if (action == "ok") {
+                    $("#btnSave").hide();
+                    $.ajax({
+                        url: "@Url.Action("SavePrePatiPayList")",
+                        type: 'post',
+                        data: jsonhead,
+                        cache: false,
+                        success: function (text) {
+                            if (text == true) {
+                                $("#printContent").show();
+                                $("#printContent").jqprint(); //打印
+                                //window.CloseOwnerWindow("save");
+                            } else {
+                                mini.showTips({ content: "保存失败！", state: "danger", x: "center", y: "top", timeout: 3000 });
+                            }
+
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            alert(jqXHR.responseText);
+                        }
+                    });
+                }
+            });
+
+        });
+    });
+
+    function PayModeChange() {
+        var pamode = mini.getbyName("PayModeType").getValue();
+
+        if (pamode == "0") {
+            $("#divCard").hide();
+            $("#divCash").show();
+        }
+        else if (pamode == "1") {
+            $("#divCard").show();
+            $("#divCash").hide();
+        }
+        else {
+            $("#divCard").show();
+            $("#divCash").show();
+        }
+    }
+
+
+    function onCancel(e) {
+        window.CloseOwnerWindow("cancel");
+    }
+
+
+</script>

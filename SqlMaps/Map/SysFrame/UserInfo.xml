@@ -1,0 +1,277 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="UserInfoMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="UserInfo" type="HujingModel.UserInfoEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="UserInfo">
+      <result property="UserId" column="userid" />
+      <result property="UserName" column="username" />
+      <result property="InputStr" column="inputstr" />
+      <result property="Password" column="password" />
+      <result property="DepId" column="depid" />
+      <result property="Flag" column="flag" />
+      <result property="Address" column="address" />
+      <result property="Phone" column="phone" />
+      <result property="Mobile" column="mobile" />
+      <result property="LoginName" column="loginname" />
+      <result property="Sex" column="sex" />
+      <result property="BirthDate" column="birthdate" />
+      <result property="Email" column="email" />
+      <result property="Memo" column="memo" />
+      <result property="RoleType" column="roletype" />
+      <result property="CreateDate" column="createdate" />
+      <result property="UpdateDate" column="updatedate" />
+      <result property="CreateUser" column="createuser" />
+      <result property="UpdateUser" column="updateuser" />
+      <result property="OpenId" column="openid" />
+      <result property="CardId" column="cardid" />
+      <result property="IdentyCard" column="identycard" />
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+
+    <select id="LoadByMobile" parameterClass="int" resultMap="SelectResult">
+      Select
+      userid,
+      username,
+      inputstr,
+      password,
+      depid,
+      flag,
+      address,
+      phone,
+      mobile,
+      loginname,
+      sex,
+      birthdate,
+      email,
+      memo,
+      roletype,
+      createdate,
+      updatedate,
+      createuser,
+      updateuser,
+      openid,
+      cardid,
+      identycard
+      From UserInfo
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          mobile=#Mobile#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+    <select id="Load" parameterClass="string" resultMap="SelectResult">
+      Select
+      userid,
+      username,
+      inputstr,
+      password,
+      depid,
+      flag,
+      address,
+      phone,
+      mobile,
+      loginname,
+      sex,
+      birthdate,
+      email,
+      memo,
+      roletype,
+      createdate,
+      updatedate,
+      createuser,
+      updateuser,
+      openid,
+      cardid,
+      identycard
+      From UserInfo
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          userid = #UserId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+    
+    
+    <select id="LoadByLoginName" parameterClass="string" resultMap="SelectResult">
+      Select
+      userid,
+      username,
+      inputstr,
+      password,
+      depid,
+      flag,
+      address,
+      phone,
+      mobile,
+      loginname,
+      sex,
+      birthdate,
+      email,
+      memo,
+      roletype,
+      createdate,
+      updatedate,
+      createuser,
+      updateuser,
+      openid,
+      cardid,
+      identycard
+      From UserInfo
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          userid = #UserId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+
+    <select id="LoadAll" parameterClass="System.Collections.IDictionary" resultMap="SelectResult">
+      select * from
+      ( Select
+      userid,
+      username,
+      inputstr,
+      password,
+      depid,
+      flag,
+      address,
+      phone,
+      mobile,
+      loginname,
+      sex,
+      birthdate,
+      email,
+      memo,
+      roletype,
+      createdate,
+      updatedate,
+      createuser,
+      updateuser,
+      openid,
+      cardid,
+      identycard,
+      ROW_NUMBER() over(order by $sortField$ $sortOrder$ ) rowNumber
+      From UserInfo
+      where 1=1 $Condition$
+      ) aa
+      where rowNumber BETWEEN  #Next# and #Prev#
+    </select>
+
+    <select id="Count" parameterClass="string" resultClass="int">
+      select count(userid) from UserInfo where 1=1
+    </select>
+
+
+    <insert id="Save" parameterClass="UserInfo">
+      Insert Into UserInfo (
+      userid,
+      username,
+      password,
+      depid,
+      flag,
+      address,
+      phone,
+      mobile,
+      loginname,
+      sex,
+      birthdate,
+      email,
+      memo,
+      roletype,
+      createdate,
+      createuser,
+      openid,
+      cardid,
+      identycard
+      )Values(
+      #UserId#,
+      #UserName#,
+      #Password#,
+      #DepId#,
+      #Flag#,
+      #Address#,
+      #Phone#,
+      #Mobile#,
+      #LoginName#,
+      #Sex#,
+      #BirthDate#,
+      #Email#,
+      #Memo#,
+      #RoleType#,
+      #CreateDate#,
+      #CreateUser#,
+      #OpenId#,
+      #CardId#,
+      #IdentyCard#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="UserInfo">
+      Update UserInfo Set
+      username=#UserName#,
+      inputstr=#InputStr#,
+      address=#Address#,
+      phone=#Phone#,
+      mobile=#Mobile#,
+      loginname=#LoginName#,
+      sex=#Sex#,
+      birthdate=#BirthDate#,
+      email=#Email#,
+      memo=#Memo#,
+      updatedate=#UpdateDate#,
+      updateuser=#UpdateUser#,
+      openid=#OpenId#,
+      identycard=#IdentyCard#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          userid=#UserId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <update id="CheckUser" parameterClass="UserInfo">
+      Update UserInfo Set
+      flag=#Flag#,
+      updatedate=#UpdateDate#,
+      updateuser=#UpdateUser#,
+      openid=#OpenId#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          userid=#UserId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+
+    <update id="UpdatePwd" parameterClass="UserInfo">
+      Update UserInfo Set
+      password=#Password#,
+      updatedate=#UpdateDate#,
+      updateuser=#UpdateUser#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          userid=#UserId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="int">
+      update UserInfo set flag=1
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          userid=#UserId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+    <select id="GetMaxUserId"  parameterClass="int">
+      Select max(userid) From UserInfo
+    </select>
+
+  </statements>
+</sqlMap>

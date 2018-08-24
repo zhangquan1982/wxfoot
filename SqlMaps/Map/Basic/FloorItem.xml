@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sqlMap namespace="FloorItemMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="FloorItem" type="HujingModel.FloorItemEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="FloorItem">
+      <result property="ItemId" column="ItemId"/>
+      <result property="FloorId" column="FloorId"/>
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+
+    <select id="Count" parameterClass="string" resultClass="int">
+      Select count(ItemId) From FloorItem where 1=1 $Condition$
+    </select>
+    
+    <select id="LoadAll" parameterClass="string" resultMap="SelectResult">
+      SELECT ItemId ,FloorId FROM FloorItem where 1=1 $Condition$
+    </select>
+
+    <insert id="Save" parameterClass="System.Collections.IDictionary">
+      INSERT INTO FloorItem(ItemId ,FloorId)
+      VALUES(#ItemId# ,#FloorId#)
+    </insert>
+
+    <delete id="Delete" parameterClass="string">
+      DELETE FROM FloorItem
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          FloorId=#FloorId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+    <delete id="DeleteByItem" parameterClass="string">
+      DELETE FROM FloorItem
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          ItemId=#ItemId# and FloorId=#FloorId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+  </statements>
+</sqlMap>

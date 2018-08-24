@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="PatiInVisit_BedListMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="PatiInVisit_BedList" type="HujingModel.PatiInVisit_BedListEntity, HujingModel" />
+    <typeAlias alias="vChangeBedList" type="HujingModel.vChangeBedEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="PatiInVisit_BedList">
+      <result property="BedChangeId" column="bedchangeid" />
+      <result property="SerialNum" column="serialnum" />
+      <result property="SrcBedId" column="srcbedid" />
+      <result property="DestBedId" column="destbedid" />
+      <result property="CreateDate" column="createdate" />
+      <result property="CreateUser" column="createuser" />
+      <result property="OrgId" column="orgid" />
+    </resultMap>
+
+    <resultMap id="SelectChangeBed" class="vChangeBedList">
+      <result property="BedChangeId" column="BedChangeId"/>
+      <result property="SerialNum" column="SerialNum"/>
+      <result property="PatiName" column="PatiName"/>
+      <result property="Age" column="Age"/>
+      <result property="CreateDate" column="CreateDate"/>
+      <result property="SrcBedName" column="SrcBedName"/>
+      <result property="DescBedName" column="DescBedName"/>
+      <result property="CreateUser" column="CreateUser"/>
+      <result property="DepId" column="DepId"/>
+      <result property="DepName" column="DepName"/>
+      <result property="BuildName" column="BuildName"/>
+      <result property="RoomName" column="RoomName"/>
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      bedchangeid,
+      serialnum,
+      srcbedid,d
+      destbedid,
+      createdate,
+      createuser,
+      orgid
+      From PatiInVisit_BedList
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          bedchangeid=#BedChangeId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+    <select id="LoadAll" parameterClass="System.Collections.IDictionary" resultMap="SelectChangeBed">
+      Select
+      BedChangeId,
+      SerialNum,
+      PatiName,
+      Age,
+      CreateDate,
+      SrcBedName,
+      DescBedName,
+      CreateUser,
+      DepId,
+      DepName,
+      BuildName,
+      RoomName
+      From vChangeBed where 1=1 $Condition$
+    </select>
+
+
+    <insert id="Save" parameterClass="PatiInVisit_BedList">
+      Insert Into PatiInVisit_BedList (
+      bedchangeid,
+      serialnum,
+      srcbedid,
+      destbedid,
+      createdate,
+      createuser,
+      orgid
+      )Values(
+      #BedChangeId#,
+      #SerialNum#,
+      #SrcBedId#,
+      #DestBedId#,
+      #CreateDate#,
+      #CreateUser#,
+      #OrgId#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="PatiInVisit_BedList">
+      Update PatiInVisit_BedList Set
+      serialnum=#SerialNum#,
+      srcbedid=#SrcBedId#,
+      destbedid=#DestBedId#,
+      createdate=#CreateDate#,
+      createuser=#CreateUser#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          bedchangeid=#BedChangeId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="int">
+      Delete From PatiInVisit_BedList
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          bedchangeid=#BedChangeId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+  </statements>
+</sqlMap>

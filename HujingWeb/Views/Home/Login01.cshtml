@@ -1,0 +1,56 @@
+﻿@{
+    ViewBag.Title = "Login";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>养老微信平台</title>
+    <meta charset="utf-8">
+    <link href="~/Content/loginstyle.css" rel="stylesheet" />
+    <link href="css/style.css" rel='stylesheet' type='text/css' />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="~/Scripts/jquery-1.7.1.min.js"></script>
+    <script src="~/Scripts/jquery-1.7.1.js"></script>
+    <script src="~/Scripts/jquery.form.js"></script>
+    <script type="text/javascript">
+    </script>
+</head>
+<body style="background-color:#21A957">
+    <!-----start-main---->
+    <div class="main">
+        <div class="login-form">
+            <h1>养老信息管理平台</h1>
+            <div class="head">
+                <img src="~/Images/user.png" alt="" />
+            </div>
+            <form id="OldPersonLogin" action="/Home/LoginOn">
+                用户名：<input type="text" class="text" name="LoginName" id="LoginName" maxlength="10" value="">
+                密码：<input type="password" value="" name="password" id="password" maxlength="25">
+                <div class="submit">
+                    <input type="submit" value="用户登录">
+                    <label style="margin-left: 10px; color: red" id="Msg">@ViewBag.ErrMsg</label>
+                </div>
+            </form>
+        </div>
+        <!--//End-login-form-->
+        <!-----start-copyright---->
+        <div class="copy-right">
+
+        </div>
+        <!-----//end-copyright---->
+    </div>
+    <!-----//end-main---->
+
+    <script type="text/javascript">
+        var WinAlerts = window.alert;
+        window.alert = function (e) {
+            if (e != null && e.indexOf("提示内容") > -1) {
+                alert("瑚景养老信息系统！")
+            } else {
+                alert("提示信息！")
+            }
+        };
+    </script>
+</body>
+</html>

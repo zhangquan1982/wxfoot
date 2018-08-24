@@ -1,0 +1,140 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="ScheItemDateMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="ScheItemDate" type="HujingModel.ScheItemDateEntity, HujingModel" />
+    <typeAlias alias="ScheItemDateAll" type="HujingModel.ScheItemDateEntityAll, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="ScheItemDate">
+      <result property="SchId" column="schid" />
+      <result property="ItemID" column="itemid" />
+      <result property="ScheDate" column="schedate" />
+      <result property="ScheType" column="schetype" />
+      <result property="TypeCode" column="typecode" />
+      <result property="CreateDate" column="createdate" />
+      <result property="CreateUser" column="createuser" />
+    </resultMap>
+
+    <resultMap id="SelectResultAll" class="ScheItemDateAll">
+      <result property="SchId" column="schid" />
+      <result property="ItemID" column="itemid" />
+      <result property="ItemName" column="itemname" />
+      <result property="UnitName" column="unitname" />
+      <result property="Price" column="price" />
+      <result property="ScheDate" column="schedate" />
+      <result property="ScheType" column="schetype" />
+      <result property="TypeCode" column="typecode" />
+      <result property="CreateDate" column="createdate" />
+      <result property="CreateUser" column="createuser" />
+    </resultMap>
+
+  </resultMaps>
+
+  <statements>
+
+    <select id="Count" parameterClass="string" resultClass="int">
+      Select
+      count(schid)
+      From ScheItemDate s1
+      inner join dictitem s2 on s1.itemid = s2.itemid
+      where flag=0 $Condition$
+    </select>
+
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      schid,
+      itemid,
+      schedate,
+      schetype,
+      typecode,
+      createdate,
+      createuser
+      From ScheItemDate
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          schid=#SchId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+    <select id="LoadScheAll" parameterClass="System.Collections.IDictionary" resultMap="SelectResultAll">
+      select * from
+      ( Select
+      schid,
+      s1.itemid,
+      s2.itemname,
+      unitname,
+      SalesPrice as Price,
+      schedate,
+      schetype,
+      typecode,
+      s1.createdate,
+      s1.createuser,
+      ROW_NUMBER() over(order by $OrderBy$ ) rowNumber
+      From ScheItemDate s1
+      inner join dictitem s2 on s1.itemid = s2.itemid
+      where s1.flag=0 $Condition$
+      ) aa
+      where rowNumber BETWEEN  #Next# and #Prev#
+    </select>
+
+
+    <insert id="Save" parameterClass="ScheItemDate">
+      Insert Into ScheItemDate (
+      schid,
+      itemid,
+      schedate,
+      schetype,
+      typecode,
+      createdate,
+      createuser,
+      Flag
+      )Values(
+      #SchId#,
+      #ItemID#,
+      #ScheDate#,
+      #ScheType#,
+      #TypeCode#,
+      #CreateDate#,
+      #CreateUser#,
+      0
+      )
+    </insert>
+
+    <update id="Update" parameterClass="ScheItemDate">
+      Update ScheItemDate Set
+      schid=#SchId#,
+      itemid=#ItemID#,
+      schedate=#ScheDate#,
+      schetype=#ScheType#,
+      typecode=#TypeCode#,
+      createdate=#CreateDate#,
+      createuser=#CreateUser#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          schid=#SchId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="int">
+      delete from ScheItemDate
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          schid=#SchId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+
+    <select id="GetScheDateList" parameterClass="System.Collections.IDictionary" resultClass="System.Data.DataTable">
+      select distinct ScheDate, datename(weekday, ScheDate) from ScheItemDate   where 1=1  $Condition$ order by ScheDate
+    </select>
+
+
+    <select id="GetScheDateListByDateAndType" parameterClass="System.Collections.IDictionary" resultClass="System.Data.DataTable">
+      select distinct ScheItemDate.ItemID,DictItem.ItemName from ScheItemDate inner join DictItem on ScheItemDate.ItemId=DictItem.Itemid   where 1=1  $Condition$
+    </select>
+    
+  </statements>
+</sqlMap>

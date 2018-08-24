@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="DepBedMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="DepBed" type="HujingModel.DepBedEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="DepBed">
+      <result property="DepId" column="depid" />
+      <result property="BedId" column="bedid" />
+      <result property="CreateDate" column="createdate" />
+      <result property="CreateUser" column="createuser" />
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+
+    <select id="Count" parameterClass="string" resultClass="int">
+      Select count(bedid) From DepBed where 1=1 $Condition$
+    </select>
+    
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      depid,
+      bedid,
+      createdate,
+      createuser
+      From DepBed
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+    <select id="LoadAll" parameterClass="string" resultMap="SelectResult">
+      SELECT
+      depid,
+      bedid,
+      createdate,
+      createuser
+      From DepBed
+      where 1=1 $Condition$
+    </select>
+
+    <insert id="Save" parameterClass="DepBed">
+      Insert Into DepBed (
+      depid,
+      bedid,
+      createdate,
+      createuser
+      )Values(
+      #DepId#,
+      #BedId#,
+      #CreateDate#,
+      #CreateUser#
+      )
+    </insert>
+
+
+    <delete id="Delete" parameterClass="int">
+      Delete From DepBed
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          depid=#DepId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+  </statements>
+</sqlMap>

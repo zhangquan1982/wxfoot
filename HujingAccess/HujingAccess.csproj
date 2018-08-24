@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{049E6FD0-39D0-4BEB-8D81-C6A977DD059C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>HujingAccess</RootNamespace>
+    <AssemblyName>HujingAccess</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\HujingWeb\bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+    <WarningLevel>0</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Autofac.Configuration">
+      <HintPath>..\packages\Autofac.Configuration.3.3.0\lib\net40\Autofac.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="IBatisNet.Common">
+      <HintPath>..\ICommonAccess\bin\Debug\IBatisNet.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="IBatisNet.DataMapper">
+      <HintPath>..\ICommonAccess\bin\Debug\IBatisNet.DataMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Basic\CheckCodeAccess.cs" />
+    <Compile Include="Basic\DictItemAccess.cs" />
+    <Compile Include="Basic\PackageItemAccess.cs" />
+    <Compile Include="Basic\PackageTypeAccess.cs" />
+    <Compile Include="Basic\ScheItemDateAccess.cs" />
+    <Compile Include="ChargeManager\PatiInBillAccess.cs" />
+    <Compile Include="ChargeManager\PatiInBillItemAccess.cs" />
+    <Compile Include="ChargeManager\PatiPayListAccess.cs" />
+    <Compile Include="SysFrame\DepartmentAccess.cs" />
+    <Compile Include="Basic\DictCodeAccess.cs" />
+    <Compile Include="Basic\DictItem_CateAccess.cs" />
+    <Compile Include="SysFrame\OrganizationAccess.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SysFrame\OrgCardAccess.cs" />
+    <Compile Include="SysFrame\RegionAreaAccess.cs" />
+    <Compile Include="SysFrame\SysGroupAccess.cs" />
+    <Compile Include="SysFrame\SysRoleAccess.cs" />
+    <Compile Include="SysFrame\SysRoleGroupAccess.cs" />
+    <Compile Include="SysFrame\SysUserRoleAccess.cs" />
+    <Compile Include="SysFrame\UserCardAccess.cs" />
+    <Compile Include="SysFrame\UserInfoAccess.cs" />
+    <Compile Include="UserOrder\OrderDinnerAccess.cs" />
+    <Compile Include="UserOrder\RefundsApplyAccess.cs" />
+    <Compile Include="UserOrder\SatisfactionAccess.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HujingCommon\HujingCommon.csproj">
+      <Project>{31d1a41f-d548-45bd-b2c0-fef142010e84}</Project>
+      <Name>HujingCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HujingModel\HujingModel.csproj">
+      <Project>{99A4C8E2-F507-4E54-8AE8-445AED50FA06}</Project>
+      <Name>HujingModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ICommonAccess\ICommonAccess.csproj">
+      <Project>{c156ccc6-80de-4222-adcc-6019f863eea0}</Project>
+      <Name>ICommonAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IHujingAccess\IHujingAccess.csproj">
+      <Project>{d0a8cb9b-acc7-4d78-8c00-97b2b6ae2ed9}</Project>
+      <Name>IHujingAccess</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

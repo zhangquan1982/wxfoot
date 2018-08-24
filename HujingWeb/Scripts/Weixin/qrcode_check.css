@@ -1,0 +1,276 @@
+﻿.qrcode_scan {
+    width: 280px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 15px;
+}
+
+    .qrcode_scan h3 {
+        font-weight: 400;
+        font-style: normal;
+        text-align: center;
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+
+    .qrcode_scan .qrcode_wrp {
+        text-align: center;
+        font-size: 0;
+        margin-bottom: 15px;
+    }
+
+    .qrcode_scan .qrcode {
+        width: 100%;
+        height: 100%;
+    }
+
+    .qrcode_scan .status {
+        padding: 7px 12px;
+        display: table-cell;
+        width: inherit;
+        height: 45px;
+        border-radius: 100px;
+        -moz-border-radius: 100px;
+        -webkit-border-radius: 100px;
+        vertical-align: middle;
+        text-align: left;
+    }
+
+        .qrcode_scan .status.tips {
+            text-align: center;
+        }
+
+        .qrcode_scan .status p {
+            font-size: 14px;
+        }
+
+    .qrcode_scan .icon_qrcode_scan {
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 5px;
+    }
+
+    .qrcode_scan .status_txt {
+        display: inline-block;
+        *display: inline;
+        *zoom: 1;
+        vertical-align: middle;
+    }
+
+        .qrcode_scan .status_txt h4 {
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        .qrcode_scan .status_txt p {
+            position: relative;
+            top: -2px;
+        }
+
+.qrcode_scan_light .status {
+    background-color: #f4f5f9;
+    color: #222;
+}
+
+.qrcode_scan_light .icon_qrcode_scan {
+    width: 38px;
+    height: 38px;
+}
+
+    .qrcode_scan_light .icon_qrcode_scan.succ {
+        background: url("/mpres/zh_CN/htmledition/comm_htmledition/style/widget/qrcode_check_z25b76d.png") 0 0 no-repeat;
+    }
+
+    .qrcode_scan_light .icon_qrcode_scan.warn {
+        background: url("/mpres/zh_CN/htmledition/comm_htmledition/style/widget/qrcode_check_z25b76d.png") 0 -48px no-repeat;
+    }
+
+.qrcode_scan_dark {
+    background-color: #333;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+
+    .qrcode_scan_dark h3 {
+        color: #fff;
+    }
+
+    .qrcode_scan_dark .status {
+        background-color: #232323;
+        box-shadow: inset 0 5px 10px -5px #191919,0 1px 0 0 #444;
+        -moz-box-shadow: inset 0 5px 10px -5px #191919,0 1px 0 0 #444;
+        -webkit-box-shadow: inset 0 5px 10px -5px #191919,0 1px 0 0 #444;
+        color: #fff;
+    }
+
+    .qrcode_scan_dark .icon_qrcode_scan {
+        width: 38px;
+        height: 38px;
+    }
+
+        .qrcode_scan_dark .icon_qrcode_scan.succ {
+            background: url("/mpres/zh_CN/htmledition/comm_htmledition/style/widget/qrcode_check_z25b76d.png") 0 -96px no-repeat;
+        }
+
+        .qrcode_scan_dark .icon_qrcode_scan.warn {
+            background: url("/mpres/zh_CN/htmledition/comm_htmledition/style/widget/qrcode_check_z25b76d.png") 0 -144px no-repeat;
+        }
+
+.qrcode_scan_light .status {
+    display: block;
+    *zoom: 1;
+    background-color: #fff;
+}
+
+    .qrcode_scan_light .status:after {
+        content: "\200B";
+        display: block;
+        height: 0;
+        clear: both;
+    }
+
+.qrcode_scan_light .icon_qrcode_scan {
+    width: 16px;
+    height: 16px;
+    float: left;
+    margin-right: 6px;
+    margin-top: 4px;
+}
+
+    .qrcode_scan_light .icon_qrcode_scan.succ {
+        background: url("/mpres/zh_CN/htmledition/comm_htmledition/style/widget/qrcode_check_z25b76d.png") 0 -192px no-repeat;
+    }
+
+    .qrcode_scan_light .icon_qrcode_scan.warn {
+        background: url("/mpres/zh_CN/htmledition/comm_htmledition/style/widget/qrcode_check_z25b76d.png") 0 -218px no-repeat;
+    }
+
+.qrcode_scan_light .status_txt {
+    display: block;
+    overflow: hidden;
+}
+
+.qr_pop_check .qrcode_scan_light .icon_qrcode_scan {
+    width: 16px;
+    height: 16px;
+}
+
+    .qr_pop_check .qrcode_scan_light .icon_qrcode_scan.succ {
+        background: url("/mpres/zh_CN/htmledition/comm_htmledition/style/widget/qrcode_check_z25b76d.png") 0 -244px no-repeat;
+    }
+
+    .qr_pop_check .qrcode_scan_light .icon_qrcode_scan.warn {
+        background: url("/mpres/zh_CN/htmledition/comm_htmledition/style/widget/qrcode_check_z25b76d.png") 0 -270px no-repeat;
+    }
+
+.qr_pop_check .qrcode_wrp {
+    width: 132px;
+    position: relative;
+    border: 1px solid #e7e7eb;
+    margin: 0;
+    padding: 0;
+}
+
+    .qr_pop_check .qrcode_wrp .qrcode {
+        display: block;
+        width: 132px;
+        height: 132px;
+    }
+
+    .qr_pop_check .qrcode_wrp .qrcode_loading {
+        position: relative;
+        width: 132px;
+        height: 132px;
+    }
+
+        .qr_pop_check .qrcode_wrp .qrcode_loading .loading_qrcode {
+            width: 132px;
+            height: 132px;
+            background: url("/mpres/zh_CN/htmledition/comm_htmledition/style/widget/qrcode_check_z25b76d.png") 0 -296px no-repeat;
+        }
+
+        .qr_pop_check .qrcode_wrp .qrcode_loading .gif_loading {
+            background: transparent url(/mpres/htmledition/images/loading218877.gif) no-repeat 0 0;
+            width: 30px;
+            height: 30px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-top: -15px;
+            margin-left: -15px;
+        }
+
+    .qr_pop_check .qrcode_wrp .qrcode_tips {
+        position: absolute;
+        margin-left: 1px;
+        width: 330px;
+        height: 132px;
+        *height: 136px;
+        top: -1px;
+        left: 100%;
+        text-align: left;
+        border: 1px solid #e7e7eb;
+        border-left: 0 none;
+    }
+
+        .qr_pop_check .qrcode_wrp .qrcode_tips a {
+            display: inline-block;
+        }
+
+    .qr_pop_check .qrcode_wrp .desc {
+        color: #8d8d8d;
+        margin-top: 1em;
+    }
+
+        .qr_pop_check .qrcode_wrp .desc:first-child {
+            margin-top: 0;
+        }
+
+    .qr_pop_check .qrcode_wrp .page_msg {
+        padding: 20px 10px;
+        line-height: 1.6;
+    }
+
+        .qr_pop_check .qrcode_wrp .page_msg .inner {
+            padding: 17px;
+        }
+
+        .qr_pop_check .qrcode_wrp .page_msg.small_gap {
+            padding: 10px;
+        }
+
+        .qr_pop_check .qrcode_wrp .page_msg.desc_gap .desc {
+            padding-top: 10px;
+        }
+
+            .qr_pop_check .qrcode_wrp .page_msg.desc_gap .desc:first-child {
+                padding-top: 0;
+            }
+
+    .qr_pop_check .qrcode_wrp .status {
+        background-color: #fff;
+        display: block;
+        color: #222;
+        padding: 22px 27px;
+    }
+
+        .qr_pop_check .qrcode_wrp .status .icon_qrcode_scan {
+            float: left;
+            margin-right: 6px;
+            margin-top: 4px;
+        }
+
+        .qr_pop_check .qrcode_wrp .status .status_txt {
+            display: block;
+            overflow: hidden;
+            line-height: 1.6;
+        }
+
+            .qr_pop_check .qrcode_wrp .status .status_txt p {
+                color: #8d8d8d;
+            }
+
+            .qr_pop_check .qrcode_wrp .status .status_txt h4 {
+                font-weight: 400;
+            }

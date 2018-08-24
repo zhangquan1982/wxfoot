@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="PatiInBillMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="PatiInBill" type="HujingModel.PatiInBillEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="PatiInBill">
+      
+      <result property="OrgId" column="orgid" />
+      <result property="BillId" column="billid" />
+      <result property="SerialNum" column="serialnum" />
+      <result property="DepOrg" column="deporg" />
+      <result property="DepLoc" column="deploc" />
+      <result property="BillUser" column="billuser" />
+      <result property="SettleId" column="settleid" />
+      <result property="SettleDate" column="settledate" />
+      <result property="CreateDate" column="createdate" />
+      <result property="CreateUser" column="createuser" />
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      orgid,
+      billid,
+      serialnum,
+      deporg,
+      deploc,
+      billuser,
+      settleid,
+      settledate,
+      createdate,
+      createuser
+      From PatiInBill
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          billid=#BillId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+
+    <insert id="Save" parameterClass="PatiInBill">
+      Insert Into PatiInBill (
+      orgid,
+      billid,
+      serialnum,
+      deporg,
+      deploc,
+      billuser,
+      settleid,
+      settledate,
+      createdate,
+      createuser
+      )Values(
+      #OrgId#,
+      #BillId#,
+      #SerialNum#,
+      #DepOrg#,
+      #DepLoc#,
+      #BillUser#,
+      #SettleId#,
+      #SettleDate#,
+      #CreateDate#,
+      #CreateUser#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="PatiInBill">
+      Update PatiInBill Set
+      billid=#BillId#,
+      serialnum=#SerialNum#,
+      deporg=#DepOrg#,
+      deploc=#DepLoc#,
+      billuser=#BillUser#,
+      settleid=#SettleId#,
+      settledate=#SettleDate#,
+      createdate=#CreateDate#,
+      createuser=#CreateUser#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+
+
+  </statements>
+</sqlMap>

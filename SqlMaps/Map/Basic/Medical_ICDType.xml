@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="Medical_ICDType" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="Medical_ICDType" type="HujingModel.Medical_ICDType, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="Medical_ICDType">
+      <result property="OrgId" column="orgid" />
+      <result property="ICDTypeId" column="icdtypeid" />
+      <result property="ICDTypeName" column="icdtypename" />
+      <result property="UpperId" column="upperid" />
+      <result property="InputStr" column="inputstr" />
+      <result property="Flag" column="flag" />
+      <result property="CreateDate" column="createdate" />
+      <result property="UpdateDate" column="updatedate" />
+      <result property="CreateUser" column="createuser" />
+      <result property="UpdateUser" column="updateuser" />
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+    <select id="Load" parameterClass="Medical_ICDType" resultMap="SelectResult">
+      Select
+      orgid,
+      icdtypeid,
+      icdtypename,
+      upperid,
+      inputstr,
+      flag,
+      createdate,
+      updatedate,
+      createuser,
+      updateuser
+      From Medical_ICDType
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          orgid=#OrgId# AND
+          icdtypeid=#ICDTypeId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+
+    <insert id="Save" parameterClass="Medical_ICDType">
+      Insert Into Medical_ICDType (
+      orgid,
+      icdtypeid,
+      icdtypename,
+      upperid,
+      inputstr,
+      flag,
+      createdate,
+      updatedate,
+      createuser,
+      updateuser
+      )Values(
+      #OrgId#,
+      #ICDTypeId#,
+      #ICDTypeName#,
+      #UpperId#,
+      #InputStr#,
+      #Flag#,
+      #CreateDate#,
+      #UpdateDate#,
+      #CreateUser#,
+      #UpdateUser#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="Medical_ICDType">
+      Update Medical_ICDType Set
+      orgid=#OrgId#,
+      icdtypeid=#ICDTypeId#,
+      icdtypename=#ICDTypeName#,
+      upperid=#UpperId#,
+      inputstr=#InputStr#,
+      flag=#Flag#,
+      createdate=#CreateDate#,
+      updatedate=#UpdateDate#,
+      createuser=#CreateUser#,
+      updateuser=#UpdateUser#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          orgid=#OrgId#AND
+          icdtypeid=#ICDTypeId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="int">
+      Delete From Medical_ICDType
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          orgid=#OrgId#AND
+          icdtypeid=#ICDTypeId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+  </statements>
+</sqlMap>

@@ -1,0 +1,259 @@
+﻿@{
+    ViewBag.Title = "入院办理";
+    Layout = null;
+}
+<head>
+    <script src="~/Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+    <script src="~/Scripts/MiniUI/core.js" type="text/javascript"></script>
+    <style type="text/css">
+        .icon-boy, .icon-female {
+            width: 16px;
+            height: 16px;
+            overflow: hidden;
+            margin: auto;
+            background: url(../../../Images/man1.gif) no-repeat;
+            text-align: center;
+            display: block;
+        }
+
+        .icon-female {
+            background: url(../../../Images/woman.gif) no-repeat;
+        }
+
+        .myrow {
+            background: #fceee2;
+        }
+    </style>
+
+    <script type="text/javascript">
+        var grid;
+        $(document).ready(function () {
+            mini.parse();
+            grid = mini.get("grid1");
+            //            grid.load();
+            var myDate = new Date();
+            var strDate = myDate.getFullYear() + "-" + (myDate.getMonth() + 1) + "-" + myDate.getDate();
+            mini.getbyName("dateEnd").setValue(strDate);
+
+            grid.on("drawcell", function (e) {
+                var record = e.record,
+                column = e.column,
+                field = e.field,
+                value = e.value;
+
+                if (column.field == "SexName") {
+                    if (e.value == "女") {
+                        e.cellHtml = "<span class='icon-female'></span>"
+                    } else {
+                        e.cellHtml = "<span class='icon-boy'></span>"
+                    }
+                }
+
+                //设置行样式
+                if (record.SexName == "女") {
+                    e.rowCls = "myrow";
+                }
+            });
+        });
+
+
+        function AddRow() {
+            var rows = grid.getSelecteds();
+            if (rows.length <= 0) {
+                mini.showTips({ content: "请选择一条记录！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+            if (rows.length > 1) {
+                mini.showTips({ content: "只能选择一条记录！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+
+            var url = '@Url.Action("Add")?serialnum=' + rows[0].SerialNum;
+            if (rows.length == 1) {
+                mini.open({
+                    url: url,
+                    title: "办理入院", width: 500, height: 380,
+                    onload: function () {
+                    },
+                    ondestroy: function (action) {
+                        search();
+                        if (action == "ok") {
+                            mini.showTips({ content: "操作成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                        }
+                    }
+                });
+            }
+
+        }
+
+
+
+        function search() {
+            var Patiname = mini.getbyName("PatiName").getValue();
+            var DateBegin = mini.getbyName("dateBegin").text;
+            var DateEnd = mini.getbyName("dateEnd").text;
+            var Channel = mini.getbyName("MediaChannel").getValue();
+            grid.load({ patiname: Patiname, dateBegin: DateBegin, dateEnd: DateEnd, channel: Channel });
+        }
+
+        function onKeyEnter(e) {
+            search();
+        }
+
+        var Genders = [{ id: 0, text: '男' }, { id: 1, text: '女' }];
+        function OnSexChange(e) {
+            for (var i = 0, l = Genders.length; i < l; i++) {
+                var g = Genders[i];
+                if (g.id == e.value) return g.text;
+            }
+            return "";
+        }
+
+
+        var internList = [{ id: '1', text: '简单了解' }, { id: '2', text: '详细咨询' }, { id: '3', text: '计划入住' }];
+        function OnIntentionChange(e) {
+            for (var i = 0, l = internList.length; i < l; i++) {
+                var g = internList[i];
+                if (g.id == e.value) return g.text;
+            }
+            return "";
+        }
+
+        var StatusList = [{ id: '0', text: '咨询' }, { id: '1', text: '试住' }, { id: '3', text: '入住' }];
+        function OnStatusChange(e) {
+            for (var i = 0, l = StatusList.length; i < l; i++) {
+                var g = StatusList[i];
+                if (g.id == e.value) return g.text;
+            }
+            return "";
+        }
+
+        var CareType = [{ id: 1, text: '自理' }, { id: 2, text: '介护' }];
+        function OnCareTypeChange(e) {
+            for (var i = 0, l = CareType.length; i < l; i++) {
+                var g = CareType[i];
+                if (g.id == e.value) return g.text;
+            }
+            return "";
+        }
+    </script>
+</head>
+<div>
+    <ul class="mnbreadcrumb">
+        <li>
+            <a href="#">入院收费</a> <span class="divider"></span>
+        </li>
+        <li>
+            <a href="#">入院办理</a>
+        </li>
+    </ul>
+</div>
+<div showcollapsebutton="true">
+    <div style="width: 520px; padding: 10px; height: 80px; border: 1px gray solid">
+        <div>
+            <div style="float: left; margin-left: 5px">
+                老人信息:
+            </div>
+            <div style="float: left; margin-left: 5px">
+                <input id="PatiName" name="PatiName" class="mini-textbox" style="width: 120px" />
+            </div>
+            <div style="float: left; margin-left: 26px">
+                咨询日期:
+            </div>
+            <div style="float: left; margin-left: 5px">
+                <input id="dateBegin" name="dateBegin" class="mini-datepicker" style="width: 120px;" value="2000-01-01"  />
+            </div>
+        </div>
+        <div style="clear: both; height: 5px">
+        </div>
+        <div style="">
+            <div style="float: left; margin-left: 5px">
+                媒介渠道:
+            </div>
+            <div style="float: left; margin-left: 5px">
+                <input id="MediaChannel" name="MediaChannel" class="mini-combobox" style="width: 120px" valuefield="CodeId" textfield="CodeName"
+                       url='@Url.Action("GetCommonDictCode", "Common", new { codeType = @HujingCommon.DictCodeTypeClass.MediaChannel })' emptytext="请选择" />
+            </div>
+            <div style="margin-left: 265px">
+                <input id="dateEnd" name="dateEnd" class="mini-datepicker" style="width: 120px;" />
+            </div>
+        </div>
+        <div style="position: absolute; left: 450px; top: 110px">
+            <a class="mini-button" onclick="search()">查询</a>
+        </div>
+    </div>
+    <div style="clear: both; margin-top: 5px; width: 100%; height: 30px">
+        <div class="mini-toolbar" style="border-bottom: 0; padding: 0px;">
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 100%;">
+                        <a class="mini-button" iconcls="icon-add" onclick="AddRow()">入院办理</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div id="grid1" class="mini-datagrid" style="width: 100%; height: 60%;" allowresize="true"
+         url="@Url.Action("GetPersonList")" idfield="SerialNum" pagesize="15" multiselect="true">
+        <div property="columns">
+            <div type="checkcolumn" width="25">
+            </div>
+            <div field="AppointDate" width="120" headeralign="center" align="center" allowsort="true"
+                 dateformat="yyyy-MM-dd">
+                预约入院日期
+            </div>
+            <div field="SerialNum" width="80" headeralign="center" align="center" allowsort="true">
+                入住编号
+            </div>
+            <div field="StatusName" width="80" headeralign="center" align="center" allowsort="true">
+                入住状态
+            </div>
+            <div field="MediaChannelName" width="70" headeralign="center" align="center" allowsort="true">
+                媒介
+            </div>
+            <div field="PatiName" width="70" headeralign="center" align="center" allowsort="true">
+                老人姓名
+            </div>
+            <div field="SexName" width="70" headeralign="center" align="center" allowsort="true">
+                性别
+            </div>
+            <div field="Age" width="70" headeralign="center" align="center" allowsort="true">
+                年龄
+            </div>
+            <div field="BuildName" width="70" headeralign="center" align="center" allowsort="true">
+                楼宇
+            </div>
+            <div field="FloorName" width="70" headeralign="center" align="center" allowsort="true">
+                楼层
+            </div>
+            <div field="RoomName" width="70" headeralign="center" align="center" allowsort="true">
+                房间
+            </div>
+            <div field="BedName" width="70" headeralign="center" align="center" allowsort="true">
+                床位
+            </div>
+            <div field="MarriageName" width="70" headeralign="center" align="center" allowsort="true">
+                婚姻状况
+            </div>
+            <div field="AdmitDate" width="70" headeralign="center" align="center" allowsort="true"
+                 dateformat="yyyy-MM-dd">
+                入住日期
+            </div>
+            <div field="CareTypeName" width="70" headeralign="center" align="center" allowsort="true">
+                自理能力
+            </div>
+            <div field="NationName" width="70" headeralign="center" align="center" allowsort="true">
+                民族
+            </div>
+            <div field="Religion" width="70" headeralign="center" align="center" allowsort="true">
+                宗教
+            </div>
+            <div field="Address" width="70" headeralign="center" align="center" allowsort="true">
+                地址
+            </div>
+            <div field="CreateUser" width="70" headeralign="center" align="center" allowsort="true">
+                登记人
+            </div>
+        </div>
+    </div>
+</div>

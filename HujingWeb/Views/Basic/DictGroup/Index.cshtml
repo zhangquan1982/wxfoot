@@ -1,0 +1,198 @@
+﻿@{
+    ViewBag.Title = "项目套餐";
+    Layout = null;
+}
+<head>
+    <script src="../../../Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+    <script src="../../../Scripts/MiniUI/core.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var tree;
+        var grid;
+        $(document).ready(function () {
+            mini.parse();
+            tree = mini.get("tree1");
+            grid = mini.get("grid1");
+
+            tree.on("nodeselect", function (e) {
+                grid.load({ CodeTypeId: e.node.id });
+            });
+
+        });
+
+
+        function AddTypeRow() {
+            var url = '@Url.Action("TypeAdd")';
+            mini.open({
+                url: url,
+                title: "新增套餐", width: 350, height: 180,
+                onload: function () {
+
+                },
+                ondestroy: function (action) {
+                    if (action == "typesave") {
+                        tree.load();
+                    }
+                    else if (action == "typesave") {
+                        tree.load();
+                    }
+                }
+            });
+        }
+
+        function AddRow() {
+            var tree = mini.get("tree1");
+            var node = tree.getSelectedNode();
+            var parentid = "";
+            if (node) {
+                parentid = node.id;
+            }
+            if (parentid == "") {
+                mini.showTips({ content: "请选择套餐！", state: "warning", x: "center", y: "top", timeout: 3000
+                });
+                return;
+            }
+            var url = '@Url.Action("Add")';
+            mini.open({
+                url: url,
+                title: "新增项目", width: 320, height: 180,
+                onload: function () {
+                    var iframe = this.getIFrameEl();
+                    var data = { action: "add", codetypeid: parentid, codetypename: node.name };
+                    iframe.contentWindow.SetData(data);
+                },
+                ondestroy: function (action) {
+                    if (action == "save") {
+                        grid.load({ CodeTypeId: parentid });
+                    }
+                }
+            });
+        }
+
+        function Edit() {
+            var node = tree.getSelectedNode();
+            var parentid = "";
+            if (node) {
+                parentid = node.id;
+            }
+
+            var rows = grid.getSelecteds();
+            if (rows.length <= 0) {
+                mini.showTips({
+                    content: "请选择要编辑的项目！",
+                    state: "warning",
+                    x: "center",
+                    y: "top",
+                    timeout: 3000
+                });
+                return;
+            }
+            if (rows.length > 1) {
+                mini.showTips({ content: "只能选择一个项目！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+            var url = '@Url.Action("Edit")?codeid=' + rows[0].CodeId + '&codetypeid=' + rows[0].CodeTypeId;
+            if (rows.length == 1) {
+                mini.open({
+                    url: url,
+                    title: "编辑项目", width: 320, height: 180,
+                    onload: function () {
+                    },
+                    ondestroy: function (action) {
+                        if (action != "cancel") {
+                            grid.load({ CodeTypeId: parentid });
+                        }
+                    }
+                });
+
+            }
+
+        }
+
+        function Remove() {
+            var node = tree.getSelectedNode();
+            var parentid = "";
+            if (node) {
+                parentid = node.id;
+            }
+            var row = grid.getSelected();
+            if (row.CodeId == "") {
+                mini.showTips({ content: "请选择需要删除的项目！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+            mini.confirm("确定删除此用户信息吗？", "确定信息",
+                function (action) {
+                    if (action == "ok") {
+                        $.ajax({
+                            type: 'POST',
+                            url: '@Url.Action("Delete")',
+                            data: { "CodeTypeId": parentid, "CodeId": row.CodeId },
+                            cache: false,
+                            success: function (result) {
+                                if (result == "ok") {
+                                    mini.showTips({ content: "操作成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                                    grid.load({ CodeTypeId: parentid });
+                                }
+                                else {
+                                    mini.showTips({ content: "操作失败！", state: "danger", x: "center", y: "top", timeout: 3000 });
+                                }
+                            }
+                        });
+                    }
+                }
+            );
+        }
+
+    
+    </script>
+</head>
+<div>
+    <ul class="mnbreadcrumb">
+        <li>
+            <a href="#">基本信息</a> <span class="divider"></span>
+        </li>
+        <li>
+            <a href="#">组套管理</a>
+        </li>
+    </ul>
+</div>
+<div class="mini-splitter" style="width: 100%; height: 100%;">
+    <div size="180" showcollapsebutton="true">
+        <div class="mini-fit">
+            <ul id="tree1" class="mini-tree" url="@Url.Action("GetTypeList")" style="width: 100%;"
+                showtreeicon="true" textfield="name" idfield="id" parentfield="pid" resultastree="false">
+            </ul>
+        </div>
+    </div>
+    <div showcollapsebutton="true">
+        <div style="width: 100%; height: 30px">
+            <div class="mini-toolbar" style="border-bottom: 0; padding: 0px;">
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="width: 100%;">
+                            <a class="mini-button" iconcls="icon-add" onclick="AddTypeRow()">新增分类</a> <a class="mini-button"
+                                iconcls="icon-add" onclick="AddRow()">新增项目</a> <a class="mini-button" iconcls="icon-edit"
+                                    onclick="Edit()">编辑</a> <a class="mini-button" iconcls="icon-del" onclick="Remove()">
+                                        删除</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div id="grid1" class="mini-datagrid" style="height: 90%;" allowresize="true" url="@Url.Action("GetList")"
+            idfield="CodeId" pagesize="15">
+            <div property="columns">
+                <div type="checkcolumn">
+                </div>
+                <div field="CodeId" width="60" headeralign="center"  align="center" renderer="OnSexChange">
+                    项目编码</div>
+                <div field="CodeName" width="90" headeralign="center" headeralign="center" align="center">
+                    项目名称</div>
+                <div field="Memo" headeralign="center" width="100">
+                    备注</div>
+                <div field="CreateDate" width="100" headeralign="center" dateformat="yyyy-MM-dd"
+                    allowsort="true">
+                    创建日期</div>
+            </div>
+        </div>
+    </div>
+</div>

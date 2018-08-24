@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="BuildFloorMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="BuildFloor" type="HujingModel.BuildFloorEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="BuildFloor">
+      <result property="FloorId" column="FloorId"/>
+      <result property="BuildNum" column="BuildNum"/>
+      <result property="BuildName" column="BuildName"/>
+      <result property="FloorName" column="FloorName"/>
+      <result property="Memo" column="Memo"/>
+      <result property="OrgId" column="OrgId"/>
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+
+    <select id="Count" parameterClass="string" resultClass="int">
+      Select count(FloorId) From BuildFloor where 1=1 $Condition$
+    </select>
+    
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      FloorId,
+      BuildNum,
+      BuildName,
+      FloorName,
+      Memo,
+      OrgId
+      From BuildFloor
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          FloorId=#FloorId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+    <select id="LoadAll" parameterClass="string" resultMap="SelectResult">
+      Select
+      BuildFloor.FloorId,
+      BuildNum,
+      BuildName,
+      FloorName,
+      Memo,
+      OrgId
+      From BuildFloor
+      left join DepFloor on BuildFloor.FloorId = DepFloor.FloorId
+      where 1=1 $Condition$
+      order by BuildName,FloorName
+    </select>
+
+
+    <insert id="Save" parameterClass="BuildFloor">
+      Insert Into BuildFloor (
+      FloorId,
+      BuildNum,
+      BuildName,
+      FloorName,
+      Memo,
+      OrgId
+      )Values(
+      #FloorId#,
+      #BuildNum#,
+      #BuildName#,
+      #FloorName#,
+      #Memo#,
+      #OrgId#
+      )
+    </insert>
+
+
+    <delete id="Delete" parameterClass="int">
+      Delete From BuildFloor
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          FloorId=#FloorId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+  </statements>
+</sqlMap>

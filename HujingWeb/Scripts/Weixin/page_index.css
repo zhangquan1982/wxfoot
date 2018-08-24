@@ -1,0 +1,750 @@
+﻿.icon_mpkind_label {
+    background: transparent url(/mpres/htmledition/images/icon/icon_mpkind_label.png) no-repeat 0 0;
+    width: 55px;
+    height: 20px;
+    vertical-align: middle;
+    display: inline-block;
+}
+
+    .icon_mpkind_label.subscribe {
+        background-position: 0 -20px;
+    }
+
+    .icon_mpkind_label.service {
+        background-position: 0 0;
+    }
+
+.icon_mp_quick_nav {
+    background: transparent url(/mpres/htmledition/images/icon/icon_mp_quick_nav.png) no-repeat 0 0;
+    width: 48px;
+    height: 48px;
+    vertical-align: middle;
+    display: inline-block;
+}
+
+    .icon_mp_quick_nav.nav_message {
+        background-position: 0 0;
+    }
+
+    .icon_mp_quick_nav.nav_group {
+        background-position: 0 -58px;
+    }
+
+    .icon_mp_quick_nav.nav_message {
+        background-position: 0 -116px;
+    }
+
+    .icon_mp_quick_nav.nav_message {
+        background-position: 0 -174px;
+    }
+
+.icon_index_tap {
+    width: 34px;
+    height: 34px;
+    vertical-align: middle;
+    display: inline-block;
+}
+
+.added_message .icon_index_tap {
+    background: url(/mpres/zh_CN/htmledition/comm_htmledition/style/page/page_index_z350ca8.png) 0 0 no-repeat;
+    margin-top: 8px;
+}
+
+.added_fans .icon_index_tap {
+    background: url(/mpres/zh_CN/htmledition/comm_htmledition/style/page/page_index_z350ca8.png) 0 -38px no-repeat;
+}
+
+.total_fans .icon_index_tap {
+    background: url(/mpres/zh_CN/htmledition/comm_htmledition/style/page/page_index_z350ca8.png) 0 -76px no-repeat;
+}
+
+.total_money .icon_index_tap {
+    background: url(/mpres/zh_CN/htmledition/comm_htmledition/style/page/page_index_z350ca8.png) 0 -114px no-repeat;
+}
+
+.qrcode_scan {
+    width: 280px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 15px;
+}
+
+    .qrcode_scan h3 {
+        font-weight: 400;
+        font-style: normal;
+        text-align: center;
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+
+    .qrcode_scan .qrcode_wrp {
+        text-align: center;
+        font-size: 0;
+        margin-bottom: 15px;
+    }
+
+    .qrcode_scan .qrcode {
+        width: 100%;
+        height: 100%;
+    }
+
+    .qrcode_scan .status {
+        padding: 7px 12px;
+        display: table-cell;
+        width: inherit;
+        height: 45px;
+        border-radius: 100px;
+        -moz-border-radius: 100px;
+        -webkit-border-radius: 100px;
+        vertical-align: middle;
+        text-align: left;
+    }
+
+        .qrcode_scan .status.tips {
+            text-align: center;
+        }
+
+        .qrcode_scan .status p {
+            font-size: 14px;
+        }
+
+    .qrcode_scan .icon_qrcode_scan {
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 5px;
+    }
+
+    .qrcode_scan .status_txt {
+        display: inline-block;
+        *display: inline;
+        *zoom: 1;
+        vertical-align: middle;
+    }
+
+        .qrcode_scan .status_txt h4 {
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        .qrcode_scan .status_txt p {
+            position: relative;
+            top: -2px;
+        }
+
+.qrcode_scan_light .status {
+    background-color: #b5b5b5;
+    color: #fff;
+}
+
+.qrcode_scan_light .icon_qrcode_scan {
+    width: 38px;
+    height: 38px;
+}
+
+    .qrcode_scan_light .icon_qrcode_scan.succ {
+        background: url(/mpres/zh_CN/htmledition/comm_htmledition/style/page/page_index_z350ca8.png) 0 -152px no-repeat;
+    }
+
+    .qrcode_scan_light .icon_qrcode_scan.warn {
+        background: url(/mpres/zh_CN/htmledition/comm_htmledition/style/page/page_index_z350ca8.png) 0 -194px no-repeat;
+    }
+
+.qrcode_scan_dark {
+    background-color: #333;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+
+    .qrcode_scan_dark h3 {
+        color: #fff;
+    }
+
+    .qrcode_scan_dark .status {
+        background-color: #232323;
+        box-shadow: inset 0 5px 10px -5px #191919,0 1px 0 0 #444;
+        -moz-box-shadow: inset 0 5px 10px -5px #191919,0 1px 0 0 #444;
+        -webkit-box-shadow: inset 0 5px 10px -5px #191919,0 1px 0 0 #444;
+        color: #fff;
+    }
+
+    .qrcode_scan_dark .icon_qrcode_scan {
+        width: 38px;
+        height: 38px;
+    }
+
+        .qrcode_scan_dark .icon_qrcode_scan.succ {
+            background: url(/mpres/zh_CN/htmledition/comm_htmledition/style/page/page_index_z350ca8.png) 0 -236px no-repeat;
+        }
+
+        .qrcode_scan_dark .icon_qrcode_scan.warn {
+            background: url(/mpres/zh_CN/htmledition/comm_htmledition/style/page/page_index_z350ca8.png) 0 -278px no-repeat;
+        }
+
+.mini_tips {
+    position: relative;
+}
+
+    .mini_tips a {
+        color: #459ae9;
+    }
+
+    .mini_tips .btn_primary {
+        margin-left: 1em;
+        color: #fff;
+    }
+
+    .mini_tips .btn_verify {
+        position: absolute;
+        top: 50%;
+        margin-top: -13px;
+        right: 15px;
+    }
+
+    .mini_tips.with_frm .tips_msg {
+        padding-top: 4px;
+    }
+
+.highlight_box {
+    position: relative;
+    z-index: 0;
+    padding: 9px 15px;
+    margin-bottom: 0;
+}
+
+    .highlight_box .mini_tips {
+        position: static;
+    }
+
+.popover {
+    width: 343px;
+}
+
+    .popover .frm_label {
+        width: 3em;
+    }
+
+    .popover .frm_input_box {
+        display: inline-block;
+        *display: inline;
+        *zoom: 1;
+        width: 84px;
+        margin: 0;
+        margin-right: .5em;
+    }
+
+.qrcheck_title {
+    text-align: center;
+    padding-bottom: 10px;
+}
+
+.qrcheck_box {
+    text-align: center;
+}
+
+    .qrcheck_box.primary {
+        border: 1px solid #e7e7eb;
+    }
+
+        .qrcheck_box.primary .qrcheck_qrcode_area {
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
+            width: 140px;
+            height: 120px;
+            padding: 10px 0;
+            background-image: url(/mpres/htmledition/images/pic/common/pic_qrcode_default2fab61.png);
+        }
+
+        .qrcheck_box.primary .qrcheck_msg_area {
+            text-align: left;
+            display: table-cell;
+            vertical-align: middle;
+            border-left: 1px solid #e7e7eb;
+            padding: 10px 14px;
+        }
+
+        .qrcheck_box.primary .qrcheck_msg {
+            width: 100%;
+        }
+
+            .qrcheck_box.primary .qrcheck_msg p {
+                overflow: hidden;
+            }
+
+                .qrcheck_box.primary .qrcheck_msg p.spacing {
+                    margin-top: 1em;
+                }
+
+            .qrcheck_box.primary .qrcheck_msg.with_icon .qrcheck_msg_inner {
+                padding-left: 25px;
+                position: relative;
+            }
+
+            .qrcheck_box.primary .qrcheck_msg.with_icon i {
+                position: absolute;
+                left: 0;
+                top: 3px;
+            }
+
+        .qrcheck_box.primary .qrcheck_img_area {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .qrcheck_box.primary .qrcheck_img {
+            width: 120px;
+            height: 120px;
+        }
+
+        .qrcheck_box.primary .qrcheck_msg_area {
+            margin-top: 0;
+        }
+
+.qrcheck_qrcode_area {
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
+    width: 220px;
+    height: 220px;
+    background: transparent url(/mpres/htmledition/images/pic/common/pic_qrcode_default.jpg) no-repeat 50% 50%;
+}
+
+.qrcheck_msg_area {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.qrcheck_mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255,255,255,0.95) !important;
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#f2ffffff',endcolorstr = '#f2ffffff');
+    text-align: center;
+}
+
+.qrcheck_img_area {
+    background-color: #fff;
+}
+
+.qrcheck_img {
+    display: block;
+    width: 220px;
+    height: 220px;
+}
+
+.qrcheck_msg {
+    display: inline-block;
+    vertical-align: middle;
+    color: #8d8d8d;
+}
+
+.qrcheck_msg_title {
+    color: #222;
+}
+
+.head_box {
+    *z-index: 1;
+}
+
+.popover .frm_control_group {
+    position: relative;
+    bottom: -11px;
+    padding-bottom: 0;
+}
+
+.index_show_area {
+    padding: 20px 15px 16px;
+    text-align: justify;
+    text-justify: distribute-all-lines;
+    font-size: 0;
+}
+
+    .index_show_area:after {
+        display: inline-block;
+        width: 100%;
+        height: 0;
+        font-size: 0;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        content: ".";
+    }
+
+    .index_show_area .tj_item {
+        font-size: 14px;
+        text-align: left;
+        text-justify: auto;
+    }
+
+.notices_box {
+    margin: 0 15px;
+}
+
+.index_tap {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+    vertical-align: top;
+    text-align: center;
+}
+
+    .index_tap .inner {
+        overflow: hidden;
+        *zoom: 1;
+    }
+
+    .index_tap:hover .tap_inner {
+        border-left-color: transparent;
+    }
+
+    .index_tap a {
+        padding-top: 26px;
+        padding-bottom: 26px;
+    }
+
+    .index_tap .tap_inner {
+        display: block;
+        border-left: 1px solid #6fa7ce;
+    }
+
+    .index_tap.added {
+        width: 65%;
+    }
+
+        .index_tap.added .inner {
+            background-color: #7cbae5;
+            border: 1px solid #6eb0dd;
+        }
+
+        .index_tap.added .index_tap_item:hover {
+            background-color: #73afd9;
+        }
+
+    .index_tap.total {
+        width: 34%;
+    }
+
+        .index_tap.total .inner {
+            background-color: #60d295;
+            border: 1px solid #57c78b;
+        }
+
+        .index_tap.total .index_tap_item {
+            width: 100%;
+        }
+
+            .index_tap.total .index_tap_item:hover {
+                background-color: #58c88d;
+            }
+
+.index_tap_item {
+    float: left;
+}
+
+    .index_tap_item:first-child .tap_inner {
+        border-left-width: 0;
+    }
+
+    .index_tap_item a {
+        display: block;
+        *zoom: 1;
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .index_tap_item .number {
+        margin-left: 5px;
+        font-weight: 400;
+        font-style: normal;
+        vertical-align: middle;
+        font-size: 35px;
+    }
+
+    .index_tap_item .title {
+        display: block;
+        font-weight: 400;
+        font-style: normal;
+        font-size: 16px;
+        letter-spacing: 2px;
+        margin-top: -10px;
+    }
+
+.mp_news_item {
+    position: relative;
+    border-top: 1px solid #e7e7eb;
+    font-size: 14px;
+}
+
+    .mp_news_item:first-child {
+        border-top-width: 0;
+    }
+
+    .mp_news_item a {
+        display: block;
+        padding-right: 10em;
+        padding-left: 20px;
+        color: #222;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+        .mp_news_item a:hover {
+            color: #459ae9;
+        }
+
+        .mp_news_item a strong {
+            display: block;
+            font-weight: 400;
+            font-style: normal;
+            width: 52em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            word-wrap: normal;
+        }
+
+    .mp_news_item .read_more {
+        position: absolute;
+        right: 20px;
+        top: 0;
+        color: #8d8d8d;
+        text-decoration: none;
+    }
+
+.pagination {
+    padding: 0 15px;
+}
+
+.pagination_wrp {
+    padding: 20px 0;
+}
+
+.dialog_wrp.index {
+    top: 40%;
+    padding: 3px;
+    background: rgba(0,0,0,0.15) !important;
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#26000000',endcolorstr = '#26000000');
+    border-radius: 6px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+}
+
+    .dialog_wrp.index .dialog_bd {
+        padding: 55px 70px 30px;
+    }
+
+    .dialog_wrp.index h4 {
+        font-size: 18px;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    .dialog_wrp.index p {
+        margin: 28px 0;
+    }
+
+.index_qrcode_box {
+    text-align: center;
+    padding-bottom: 38px;
+}
+
+.quality_tips {
+    padding-bottom: 40px;
+}
+
+    .quality_tips .tips_con {
+        padding-bottom: 16px;
+    }
+
+.index_qrcode_scan .index_qrcode_wrp {
+    padding-bottom: 10px;
+}
+
+    .index_qrcode_scan .index_qrcode_wrp img {
+        border: 1px solid #e7e7eb;
+        width: 195px;
+    }
+
+.index_qrcode_scan .index_qrcode_tips {
+    color: #8d8d8d;
+}
+
+.mini_tips .btn_original {
+    margin-top: -17px;
+}
+
+.frm_code_tips {
+    margin-bottom: 10px;
+    color: #8d8d8d;
+}
+
+.frm_code_box {
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+    .frm_code_box .input_wrap {
+        display: block;
+        float: left;
+        width: 34px;
+        height: 34px;
+        line-height: 34px;
+        vertical-align: middle;
+        border: 1px solid #e7e7eb;
+        border-left-width: 0;
+        text-align: center;
+    }
+
+        .frm_code_box .input_wrap:first-child {
+            border-left-width: 1px;
+        }
+
+    .frm_code_box input {
+        display: inline-block;
+        width: 100%;
+        height: 100%;
+        border: 0 none;
+        text-align: center;
+        zoom: 1;
+        height: auto\9;
+        *margin-top: 6px;
+    }
+
+.frm_code_btn {
+    text-align: center;
+}
+
+.index_confirm_dialog .dialog_bd {
+    padding: 66px 175px 108px;
+}
+
+.index_confirm_dialog .page_msg .inner {
+    padding: 10px 0 20px;
+    border-bottom: 1px solid #e7e7eb;
+    margin-bottom: 20px;
+}
+
+.index_confirm_dialog .frm_label {
+    width: 8em;
+}
+
+.index_confirm_mod .frm_control_group {
+    padding-bottom: 0;
+}
+
+.index_confirm_mod .qrcheck_box {
+    margin-top: 10px;
+}
+
+.tips_global.onecent_tips.width_step {
+    position: relative;
+    padding-left: 22px;
+}
+
+    .tips_global.onecent_tips.width_step:before {
+        content: '';
+        position: absolute;
+        left: 6px;
+        top: 0;
+        bottom: 5px;
+        border-left: 2px solid #e7e7eb;
+    }
+
+    .tips_global.onecent_tips.width_step .register_step {
+        margin-top: 20px;
+    }
+
+    .tips_global.onecent_tips.width_step .register_step_icon {
+        position: absolute;
+        left: 0;
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        vertical-align: middle;
+        background-color: #e7e7eb;
+        color: #fff;
+        font-style: normal;
+        text-align: center;
+        -webkit-border-radius: 50%;
+        border-radius: 50%;
+        line-height: 1.3;
+        margin-left: -3px;
+    }
+
+.register_type_form {
+    border: 1px solid #e7e7eb;
+    padding: 20px 15px 0;
+    margin-top: 15px;
+}
+
+    .register_type_form .group {
+        margin-bottom: 20px;
+    }
+
+    .register_type_form .title {
+        width: 6em;
+        color: #222;
+        margin-right: .5em;
+    }
+
+    .register_type_form .msg .frm_input_box {
+        width: 246px;
+    }
+
+    .register_type_form .msg .mini_tips {
+        margin-left: 6.3em;
+    }
+
+.del_acct_pay {
+    padding: 30px;
+}
+
+.del_acct_form {
+    padding: 0 40px 40px;
+}
+
+.del_acct_pay_info {
+    border: 1px solid #d9d9d9;
+    padding: 15px;
+    margin-bottom: 25px;
+}
+
+.del_acct_agreement {
+    padding: 0 30px;
+    margin: 30px 0;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+    .del_acct_agreement h2 {
+        font-weight: normal;
+        text-align: center;
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+
+    .del_acct_agreement p {
+        margin-bottom: 10px;
+    }
+
+.del_acct_step .qrcode_scan {
+    width: 500px;
+    padding-bottom: 50px;
+}
+
+    .del_acct_step .qrcode_scan .qrcode_wrp {
+        width: 500px;
+    }
+
+    .del_acct_step .qrcode_scan .qrcode {
+        width: 280px;
+    }
+
+    .del_acct_step .qrcode_scan .status {
+        width: 280px;
+        margin: 0 auto;
+    }

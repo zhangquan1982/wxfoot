@@ -1,0 +1,206 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="PatiBasicMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="PatiBasic" type="HujingModel.PatiBasicEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="PatiBasic">
+      <result property="PatiID" column="patiid" />
+      <result property="HCardId" column="hcardid" />
+      <result property="HCardTypeId" column="hcardtypeid" />
+      <result property="PatiName" column="patiname" />
+      <result property="SexId" column="sexid" />
+      <result property="Marriage" column="marriage" />
+      <result property="BirthDate" column="birthdate" />
+      <result property="NationId" column="nationid" />
+      <result property="WorkType" column="worktype" />
+      <result property="Phone" column="phone" />
+      <result property="Mobile" column="mobile" />
+      <result property="Address" column="address" />
+      <result property="CertTypeId" column="certtypeid" />
+      <result property="CertNum" column="certnum" />
+      <result property="Flag" column="flag" />
+      <result property="OrgId" column="orgid" />
+      <result property="CreateDate" column="createdate" />
+      <result property="UpdateDate" column="updatedate" />
+      <result property="CreateUser" column="createuser" />
+      <result property="UpdateUser" column="updateuser" />
+      <result property="Password" column="password" />
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      patiid,
+      hcardid,
+      hcardtypeid,
+      patiname,
+      sexid,
+      marriage,
+      birthdate,
+      nationid,
+      worktype,
+      phone,
+      mobile,
+      address,
+      certtypeid,
+      certnum,
+      flag,
+      orgid,
+      createdate,
+      updatedate,
+      createuser,
+      updateuser,
+      password
+      From PatiBasic
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          patiid=#PatiID#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+    <select id="LoadByCerNum" parameterClass="int" resultMap="SelectResult">
+      Select
+      patiid,
+      hcardid,
+      hcardtypeid,
+      patiname,
+      sexid,
+      marriage,
+      birthdate,
+      nationid,
+      worktype,
+      phone,
+      mobile,
+      address,
+      certtypeid,
+      certnum,
+      flag,
+      orgid,
+      createdate,
+      updatedate,
+      createuser,
+      updateuser,
+      password
+      From PatiBasic
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          certnum=#CertNum#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+    
+    
+    <select id="LoadAll" parameterClass="System.Collections.IDictionary" resultMap="SelectResult">
+      select * from
+      ( Select
+      patiid,
+      hcardid,
+      hcardtypeid,
+      patiname,
+      sexid,
+      marriage,
+      birthdate,
+      nationid,
+      worktype,
+      phone,
+      mobile,
+      address,
+      certtypeid,
+      certnum,
+      flag,
+      orgid,
+      createdate,
+      updatedate,
+      createuser,
+      updateuser,
+      password,
+      ROW_NUMBER() over(order by createdate ) rowNumber
+      From PatiBasic
+      where 1=1 $Condition$
+      ) aa
+      where rowNumber BETWEEN  #Next# and #Prev#
+    </select>
+
+    <insert id="Insert" parameterClass="PatiBasic">
+      Insert Into PatiBasic (
+      patiid,
+      hcardid,
+      hcardtypeid,
+      patiname,
+      sexid,
+      marriage,
+      birthdate,
+      nationid,
+      worktype,
+      phone,
+      mobile,
+      address,
+      certtypeid,
+      certnum,
+      flag,
+      orgid,
+      createdate,
+      createuser,
+      password
+      )Values(
+      #PatiID#,
+      #HCardId#,
+      #HCardTypeId#,
+      #PatiName#,
+      #SexId#,
+      #Marriage#,
+      #BirthDate#,
+      #NationId#,
+      #WorkType#,
+      #Phone#,
+      #Mobile#,
+      #Address#,
+      #CertTypeId#,
+      #CertNum#,
+      #Flag#,
+      #OrgId#,
+      #CreateDate#,
+      #CreateUser#,
+      #Password#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="PatiBasic">
+      Update PatiBasic Set
+      hcardid=#HCardId#,
+      hcardtypeid=#HCardTypeId#,
+      patiname=#PatiName#,
+      sexid=#SexId#,
+      marriage=#Marriage#,
+      birthdate=#BirthDate#,
+      nationid=#NationId#,
+      worktype=#WorkType#,
+      phone=#Phone#,
+      mobile=#Mobile#,
+      address=#Address#,
+      certtypeid=#CertTypeId#,
+      certnum=#CertNum#,
+      updatedate=#UpdateDate#,
+      updateuser=#UpdateUser#,
+      password=#Password#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          patiid=#PatiID#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="int">
+      Delete From PatiBasic
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          patiid=#PatiID#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+  </statements>
+</sqlMap>

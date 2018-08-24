@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="UserCardMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="UserCard" type="HujingModel.UserCardEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="UserCard">
+      <result property="UserId" column="userid" />
+      <result property="CardId" column="cardid" />
+      <result property="Flag" column="flag" />
+      <result property="Note" column="note" />
+      <result property="CreateDate" column="createdate" />
+      <result property="UpdateDate" column="updatedate" />
+      <result property="CreateUser" column="createuser" />
+      <result property="UpdateUser" column="updateuser" />
+      <result property="PreAmount" column="preamount" />
+      <result property="FeeAmount" column="feeamount" />
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+
+    
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      userid,
+      cardid,
+      flag,
+      note,
+      createdate,
+      updatedate,
+      createuser,
+      updateuser,
+      preamount,
+      feeamount
+      From UserCard
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          cardid=#CardId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+
+    <insert id="Insert" parameterClass="UserCard">
+      Insert Into UserCard (
+      userid,
+      cardid,
+      flag,
+      note,
+      createdate,
+      updatedate,
+      createuser,
+      updateuser,
+      preamount,
+      feeamount
+      )Values(
+      #UserId#,
+      #CardId#,
+      #Flag#,
+      #Note#,
+      #CreateDate#,
+      #UpdateDate#,
+      #CreateUser#,
+      #UpdateUser#,
+      #PreAmount#,
+      #FeeAmount#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="UserCard">
+      Update UserCard Set
+      cardid=#CardId#,
+      flag=#Flag#,
+      note=#Note#,
+      updateuser=#UpdateUser#,
+      preamount=#PreAmount#,
+      feeamount=#FeeAmount#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          cardid=#CardId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+
+  </statements>
+</sqlMap>

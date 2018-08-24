@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="CheckCodeMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="CheckCode" type="HujingModel.CheckCodeEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="CheckCode">
+      <result property="Mobile" column="mobile" />
+      <result property="Code" column="code" />
+      <result property="IPAddress" column="ipaddress" />
+      <result property="CreateDate" column="createdate" />
+      <result property="ExpireDate" column="expiredate" />
+      <result property="IsUse" column="isuse" />
+      <result property="UserDate" column="userdate" />
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+
+    <select id="Count" parameterClass="string" resultClass="int">
+      Select count(codetypeid+codeid) From CheckCode where 1=1 $Condition$
+    </select>
+    
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      mobile,
+      code,
+      ipaddress,
+      createdate,
+      expiredate,
+      isuse,
+      userdate
+      From CheckCode
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          mobile=#Mobile#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+    <select id="GetNewCode" parameterClass="int" resultMap="SelectResult">
+      Select
+      top 1
+      mobile,
+      code,
+      ipaddress,
+      createdate,
+      expiredate,
+      isuse,
+      userdate
+      From CheckCode 
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          mobile=#Mobile# and expiredate is null and isUse=0 order by createdate desc
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+
+    <insert id="Save" parameterClass="CheckCode">
+      Insert Into CheckCode (
+      mobile,
+      code,
+      ipaddress,
+      createdate,
+      expiredate,
+      isuse,
+      userdate
+      )Values(
+      #Mobile#,
+      #Code#,
+      #IPAddress#,
+      #CreateDate#,
+      #ExpireDate#,
+      #IsUse#,
+      #UserDate#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="CheckCode">
+      Update CheckCode Set
+      mobile=#Mobile#,
+      code=#Code#,
+      ipaddress=#IPAddress#,
+      createdate=#CreateDate#,
+      expiredate=#ExpireDate#,
+      isuse=#IsUse#,
+      userdate=#UserDate#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          mobile=#Mobile# and code=#Code#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+
+  </statements>
+</sqlMap>

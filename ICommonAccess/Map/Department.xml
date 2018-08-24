@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sqlMap namespace="DepartmentAccess" xmlns="http://ibatis.apache.org/mapping"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <resultMaps>
+    <resultMap id="DepartmentResult" class="WebHis.Model.Department">
+      <result property="Id" column="Id" />
+      <result property="DepartmentName" column="DepartmentName" />
+      <result property="ManagerName" column="ManagerName" />
+      <result property="Description" column="Description" />
+    </resultMap>
+  </resultMaps>
+  <statements>
+    <select id="GetAllDepartment" parameterClass="System.Collections.IDictionary" resultMap="DepartmentResult">
+      SELECT top $PageSize$ * from [Department] where Id in (SELECT top $Next$ Id from [Department] where DepartmentName like '$Condition$%' order by Id desc) order by Id
+    </select>
+    <select id="GetDepartmentCount" parameterClass="String" resultClass="int">
+      SELECT count(*) from [Department]
+      <dynamic prepend="where">
+        <isNotEmpty prepend="and">
+          DepartmentName like '$Condition$%'
+        </isNotEmpty>
+      </dynamic>
+    </select>
+    <select id="GetDepartmentById" paramterClass="int" resultMap="DepartmentResult">
+      SELECT * from [Department] where Id =#id#
+    </select>
+    <select id="SuggestDepartment" resultMap="DepartmentResult">
+      SELECT * from [Department]
+    </select>
+    <insert id="AddDepartment" parameterClass="WebHis.Model.Department">
+      insert into Department(DepartmentName,ManagerName,Description) values(#DepartmentName#,#ManagerName#,#Description#)
+    </insert>
+    <update id="UpdateDepartment" parameterClass="WebHis.Model.Department">
+      update [Department] set DepartmentName=#DepartmentName#,ManagerName=#ManagerName#,Description=#Description# where Id=#Id#
+    </update>
+    <delete id="DeleteDepartment" parameterClass="int">
+      delete from [Department] where Id =#id#
+    </delete>
+  </statements>
+</sqlMap>

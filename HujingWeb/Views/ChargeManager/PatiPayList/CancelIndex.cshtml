@@ -1,0 +1,207 @@
+﻿@{
+    ViewBag.Title = "老人交款记录";
+    Layout = null;
+}
+<head>
+    <script src="~/Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+    <script src="~/Scripts/MiniUI/core.js" type="text/javascript"></script>
+    <script src="~/Scripts/moment.min.js"></script>
+    <script type="text/javascript">
+        var grid;
+        $(document).ready(function () {
+            mini.parse();
+            grid = mini.get("grid1");
+            gridPerson = mini.get("SelPerson");
+        });
+
+        function RemoveRow() {
+            var senumber = $("#PSerialNum").val();
+            var rows = grid.getSelecteds();
+            if (rows.length <= 0) {
+                mini.showTips({ content: "请选择一条数据！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+            if (rows.length > 1) {
+                mini.showTips({ content: "请选择一条数据！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+            var payId = rows[0].PayId;
+            mini.prompt("作废原因：", "确认作废？",
+                    function (action, value) {
+                        if (action == "ok") {
+                            $.ajax({
+                                type: 'POST',
+                                url: '@Url.Action("CancelPayment")',
+                                data: { "payid": payId , CNote: value},
+                                cache: false,
+                                success: function (result) {
+                                    if (result == true) {
+                                        mini.showTips({ content: "操作成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                                        grid.load({ SerialNum: senumber });
+                                    }
+                                    else {
+                                        mini.showTips({ content: "操作失败！", state: "danger", x: "center", y: "top", timeout: 3000 });
+                                    }
+                                }
+                            });
+                        } 
+                    }
+                );
+
+        }
+
+
+    </script>
+</head>
+<div>
+    <ul class="mnbreadcrumb">
+        <li>
+            <a href="#">入院收费</a> <span class="divider"></span>
+        </li>
+        <li>
+            <a href="#">预交金作废</a>
+        </li>
+    </ul>
+</div>
+<div showcollapsebutton="true">
+    <div style="width: 720px; padding: 5px; height: 27%; border: 1px gray solid">
+        <div>
+            <div style="float: left; margin-left: 10px;font-size:13px;">
+                选择老人:
+            </div>
+            <div style="float: left; margin-left: 5px;font-size:13px;">
+                <div style="float: left; margin-left: 5px">
+                    <div id="SelPerson" name="SelPerson" class="mini-combobox" style="width:120px;" popupwidth="360px" textfield="PatiName" valuefield="SerialNum"
+                         url='@Url.Action("GetInPatiPerson", "Common")' value="" allowinput="true" onvaluechanged="RefreshPerson" onvalidation="onComboValidation" onitemclick="ClickSelPerson">
+                        <div property="columns">
+                            <div header="床位号" field="BedName"></div>
+                            <div header="入院编号" field="SerialNum"></div>
+                            <div header="姓名" field="PatiName"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="float: left; margin-left: 5px; color:red">
+                提示：请在左侧输入框中输入入院号,然后回车！
+            </div>
+            <div><input type="hidden" id="PSerialNum" /></div>
+            <div style="font-size:13px;  font-weight:bold">
+                <div style="position:absolute; left:25px; top:100px">病人姓名：</div>
+                <div style="position:absolute; left:110px; top:100px"><u id="divPatiName"></u></div>
+                <div style="position:absolute; left:300px; top:100px">年龄：</div>
+                <div style="position:absolute; left:360px; top:100px"><u id="divAge"></u></div>
+                <div style="position:absolute; left:25px; top:140px">入院日期：</div>
+                <div style="position:absolute; left:110px; top:140px"><u id="divAdmitDate"></u></div>
+                <div style="position:absolute; left:300px; top:140px">性别：</div>
+                <div style="position:absolute; left:360px; top:140px"><u id="divSex"></u></div>
+                <div style="position:absolute; left:25px; top:180px">预交金：</div>
+                <div style="position:absolute; left:110px; top:180px"><u id="divPreAmount"></u></div>
+                <div style="position:absolute; left:300px; top:180px">消费金额：</div>
+                <div style="position:absolute; left:390px; top:180px"><u id="divFeeAmount"></u></div>
+                <div style="position:absolute; left:585px; top:180px;color:red">余额：</div>
+                <div style="position:absolute; left:635px; top:180px; color:red"><u id="divLeftAmount"></u></div>
+            </div>
+        </div>
+
+
+    </div>
+    <div style="clear: both; margin-top: 5px; width: 100%; height: 30px">
+        <div class="mini-toolbar" style="border-bottom: 0; padding: 0px;">
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 100%;">
+                        <a class="mini-button" iconcls="icon-del" onclick="RemoveRow()">作废</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div id="grid1" class="mini-datagrid" style="width: 100%; height:53%;" allowresize="true"
+         url="@Url.Action("GetPersonPayListVM")" idfield="PayId" pagesize="100">
+        <div property="columns">
+            <div type="checkcolumn" width="25">
+            </div>
+            <div field="SerialNum" width="80" headeralign="center" align="center" allowsort="true">
+                入住编号
+            </div>
+            <div field="PatiName" width="70" headeralign="center" align="center" allowsort="true">
+                老人姓名
+            </div>
+            <div field="PayAmount" width="70" headeralign="center" align="center" allowsort="true">
+                交款金额
+            </div>
+            <div field="InvoiceId" width="70" headeralign="center" align="center" allowsort="true">
+                单据号
+            </div>
+            <div field="CreateDate" width="70" headeralign="center" align="center" allowsort="true" dateformat="yyyy-MM-dd">
+                交款日期
+            </div>
+            <div field="PayModeType" width="70" headeralign="center" align="center" allowsort="true" renderer="paymodeselect">
+                交款方式
+            </div>
+            <div field="CreateUser" width="70" headeralign="center" align="center" allowsort="true">
+                操作员
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+
+        function ClickSelPerson(e) {
+            var result = e.item;
+            if (result.StatusName != "已入院") {
+                mini.showTips({ content: "此人未入院！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+            var admitdate = moment(result.AdmitDate).format('YYYY-MM-DD');
+            var yjAmount = parseInt(result.PreAmount);
+            var yeAmount = parseInt(yjAmount - result.FeeAmount);
+
+            $("#PSerialNum").val(result.SerialNum);
+            $("#divPatiName").html(result.PatiName);
+            $("#divAge").html(result.Age);
+            $("#divAdmitDate").html(admitdate);
+            $("#divSex").html(result.SexName);
+            $("#divPreAmount").html(result.PreAmount);
+            $("#divLeftAmount").html(yeAmount);
+            $("#divFeeAmount").html(result.FeeAmount);
+            grid.load({ "SerialNum": result.SerialNum, "IsOnly": "yes" });
+        }
+
+        function onComboValidation(e) {
+
+            var items = this.findItems(e.value);
+            if (!items || items.length == 0) {
+                e.isValid = false;
+                e.errorText = "输入值不在下拉数据中";
+
+                $("#PSerialNum").val("");
+                $("#divPatiName").html("");
+                $("#divAge").html("");
+                $("#divAdmitDate").html("");
+                $("#divSex").html("");
+                $("#divPreAmount").html("");
+                $("#divLeftAmount").html("");
+                $("#divFeeAmount").html("");
+                grid.load({ SerialNum: "0101S" });
+            }
+        }
+
+        function RefreshPerson(e) {
+            if (e.value.length >= 1) {
+                var url = '@Url.Action("GetInPatiPerson", "Common")?input=' + e.value;
+                gridPerson.load(url);
+            }
+        }
+
+
+        var data = [{ CodeId: '0', CodeName: '现金' }, { CodeId: '1', CodeName: '刷卡' }, { CodeId: '2', CodeName: '现金+刷卡' }];
+        function paymodeselect(e) {
+            for (var i = 0, l = data.length; i < l; i++) {
+                var g = data[i];
+                if (g.CodeId == e.value) return g.CodeName;
+            }
+            return "";
+        }
+
+    </script>

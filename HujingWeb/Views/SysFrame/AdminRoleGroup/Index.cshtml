@@ -1,0 +1,99 @@
+﻿@{
+    ViewBag.Title = "角色模块管理";
+    Layout = null;
+}
+<head>
+    <script src="~/Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+    <script src="~/Scripts/MiniUI/core.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var grid;
+        $(document).ready(function () {
+            mini.parse();
+            grid = mini.get("grid1");
+            grid.load();
+        });
+
+
+        function Edit() {
+            var rows = grid.getSelecteds();
+            if (rows.length <= 0) {
+                mini.showTips({ content: "请选择要编辑的角色！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+            if (rows.length > 1) {
+                mini.showTips({ content: "只能选择一个角色！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+
+            var url = '@Url.Action("Edit")?roleid=' + rows[0].RoleId;
+            if (rows.length == 1) {
+                mini.open({
+                    url: url,
+                    title: "模块授权", width: 260, height: 300,
+                    onload: function () {
+                    },
+                    ondestroy: function (action) {
+                        if (action == "save") {
+                            mini.showTips({ content: "操作成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                        }
+                    }
+                });
+
+            }
+
+        }
+
+
+        function search() {
+            var key = $("#key").val();
+            grid.load({ rolename: key });
+        }
+        function onKeyEnter(e) {
+            search();
+        }
+
+    </script>
+</head>
+<div>
+    <ul class="mnbreadcrumb">
+        <li>
+            <a href="#">系统管理</a> <span class="divider"></span>
+        </li>
+        <li>
+            <a href="#">角色模块管理</a>
+        </li>
+    </ul>
+</div>
+<div showcollapsebutton="true">
+    <div style="width: 100%; height: 30px">
+        <div class="mini-toolbar" style="border-bottom: 0; padding: 0px;">
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 100%;">
+                        <a class="mini-button" iconcls="icon-edit" onclick="Edit()">模块授权</a>
+                    </td>
+                    <td style="white-space: nowrap;">
+                        <input id="key" placeholder="请输入角色" style="width: 150px;" onenter="onKeyEnter" />
+                        <a class="mini-button" onclick="search()">查询</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div id="grid1" class="mini-datagrid" style="width: 100%; height: 85%;" allowresize="true"
+         url="@Url.Action("GetList", "Role")" idfield="RoleId" pagesize="15" multiselect="true">
+        <div property="columns">
+            <div type="checkcolumn" width="10">
+            </div>
+            <div field="RoleId" width="80" headeralign="center" align="center">
+                角色编码
+            </div>
+            <div field="RoleName" width="70" headeralign="center" align="center">
+                角色名称
+            </div>
+            <div field="Memo" width="70" headeralign="center" align="center">
+                备注
+            </div>
+        </div>
+    </div>
+</div>

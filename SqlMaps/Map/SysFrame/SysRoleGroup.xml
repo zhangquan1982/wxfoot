@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sqlMap namespace="SysRoleGroupMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="SysRoleGroup" type="HujingModel.SysRoleGroupEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+
+
+    <resultMap id="SelectResult" class="SysRoleGroup">
+      <result property="RoleId" column="roleid" />
+      <result property="GroupId" column="groupid" />
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+
+    <select id="Count" parameterClass="string" resultClass="int">
+      Select count(groupid) From SysRoleGroup where 1=1 $Condition$
+    </select>
+
+
+    <select id="LoadAllRoleGroup" parameterClass="string" resultMap="SelectResult">
+      Select
+      roleid,
+      groupid
+      from SysRoleGroup
+      where 1=1 $Condition$
+    </select>
+
+
+    <insert id="SaveRoleGroup" parameterClass="SysRoleGroup">
+      Insert Into SysRoleGroup (
+      roleid,
+      groupid
+      )Values(
+      #RoleId#,
+      #GroupId#
+      )
+    </insert>
+
+    <delete id="Delete" parameterClass="int">
+      Delete From SysRoleGroup
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          roleid=#RoleId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+    <delete id="DeleteRoleGroup" parameterClass="int">
+      Delete From SysRoleGroup
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          groupid=#GroupID# and roleid=#RoleId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+  </statements>
+</sqlMap>

@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="OldPersonVisitCollectMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="OldPersonInVisitCollect" type="HujingModel.OldPersonVisitListCollect, HujingModel" />
+  </alias>
+  <resultMaps>
+
+    <resultMap id="SelectResult" class="OldPersonInVisitCollect">
+      <result property="SerialNum" column="SerialNum"/>
+      <result property="PatiID" column="PatiID"/>
+      <result property="StatusName" column="StatusName"/>
+      <result property="SexId" column="SexId"/>
+      <result property="SexName" column="SexName"/>
+      <result property="MediaChannelName" column="MediaChannelName"/>
+      <result property="PatiName" column="PatiName"/>
+      <result property="BirthDate" column="BirthDate"/>
+      <result property="Age" column="Age"/>
+      <result property="AdmitDate" column="AdmitDate"/>
+      <result property="CareType" column="CareType"/>
+      <result property="CareTypeName" column="CareTypeName"/>
+      <result property="NationId" column="NationId"/>
+      <result property="NationName" column="NationName"/>
+      <result property="Religion" column="Religion"/>
+      <result property="Address" column="Address"/>
+      <result property="LeaveDate" column="LeaveDate"/>
+      <result property="CreateUser" column="CreateUser"/>
+      <result property="NurseGrade" column="NurseGrade"/>
+      <result property="NurseUser" column="NurseUser"/>
+      <result property="NurseUserName" column="NurseUserName"/>
+      <result property="BedId" column="BedId"/>
+      <result property="BedName" column="BedName"/>
+      <result property="BuildName" column="BuildName"/>
+      <result property="RoomName" column="RoomName"/>
+      <result property="FloorName" column="FloorName"/>
+      <result property="DepId" column="DepId"/>
+      <result property="DepName" column="DepName"/>
+      <result property="Eatinghabits" column="Eatinghabits"/>
+      <result property="Character" column="Character"/>
+      <result property="Deviant" column="Deviant"/>
+      <result property="Hobby" column="Hobby"/>
+      <result property="CertNum" column="CertNum"/>
+      <result property="CertTypeId" column="CertTypeId"/>
+      <result property="HCardId" column="HCardId"/>
+      <result property="HCardTypeId" column="HCardTypeId"/>
+      <result property="WorkType" column="WorkType"/>
+      <result property="Marriage" column="Marriage"/>
+      <result property="MarriageName" column="MarriageName"/>
+      <result property="PreAmount" column="PreAmount"/>
+      <result property="FeeAmount" column="FeeAmount"/>
+      <result property="LeaveAmount" column="LeaveAmount"/>
+      
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+
+
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      SELECT SerialNum
+      ,PatiID ,StatusName ,SexId ,SexName ,MediaChannelName ,PatiName ,BirthDate,
+      Age ,AdmitDate ,CareType ,CareTypeName ,NationId ,NationName ,Religion ,Address ,LeaveDate ,
+      CreateUser ,BedId ,BedName ,BuildName ,RoomName ,Eatinghabits ,Character ,Deviant ,Hobby ,
+      CertNum ,CertTypeId ,HCardId ,HCardTypeId ,WorkType ,Marriage ,MarriageName ,FloorName ,NurseGrade,NurseUser,NurseUserName,
+      PreAmount ,FeeAmount,LeaveAmount,DepId,DepName
+      from vOldPersonVisitList
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          serialnum=#SerialNum#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+
+    <select id="LoadAll" parameterClass="System.Collections.IDictionary" resultMap="SelectResult">
+      select * from
+      (
+      SELECT SerialNum ,PatiID ,StatusName ,SexId ,SexName ,MediaChannelName ,PatiName ,BirthDate ,
+      Age ,AdmitDate ,CareType ,CareTypeName ,NationId ,NationName ,Religion ,Address ,LeaveDate ,
+      CreateUser ,BedId ,BedName ,BuildName ,RoomName ,Eatinghabits ,Character ,Deviant ,Hobby ,
+      CertNum ,CertTypeId ,HCardId ,HCardTypeId ,WorkType ,Marriage ,MarriageName ,FloorName ,
+      PreAmount ,FeeAmount,NurseGrade,NurseUser,NurseUserName,LeaveAmount,DepId,DepName,
+      ROW_NUMBER() over(order by $sortField$ $sortOrder$) rowNumber
+      from vOldPersonVisitList
+      where 1=1  $Condition$
+      ) aa
+      where rowNumber  BETWEEN #Next# and #Prev#
+    </select>
+
+  </statements>
+</sqlMap>

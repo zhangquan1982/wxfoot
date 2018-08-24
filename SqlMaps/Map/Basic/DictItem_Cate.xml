@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="DictItem_CateMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="DictItem_Cate" type="HujingModel.DictItem_CateEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="DictItem_Cate">
+      <result property="CateId" column="cateid" />
+      <result property="CateName" column="catename" />
+      <result property="CateType" column="catetype" />
+      <result property="UpperId" column="upperid" />
+      <result property="InputStr" column="inputstr" />
+      <result property="Flag" column="flag" />
+      <result property="CreateDate" column="createdate" />
+      <result property="UpdateDate" column="updatedate" />
+      <result property="CreateUser" column="createuser" />
+      <result property="UpdateUser" column="updateuser" />
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+    
+    <select id="Count" parameterClass="string" resultClass="int">
+      Select count(cateid) From DictItem_Cate where 1=1 $Condition$
+    </select>
+
+    <select id="GetMaxCateId"  resultClass="string">
+      Select max(cateid) From DictItem_Cate where 1=1 $Condtion$
+    </select>
+    
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      cateid,
+      catetype,
+      catename,
+      upperid,
+      inputstr,
+      flag,
+      createdate,
+      updatedate,
+      createuser,
+      updateuser
+      From DictItem_Cate
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          flag=0 and cateid=#CateId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+    <select id="LoadAll" parameterClass="int" resultMap="SelectResult">
+      select * from
+      ( Select
+      cateid,
+      catetype,
+      catename,
+      upperid,
+      inputstr,
+      flag,
+      createdate,
+      updatedate,
+      createuser,
+      updateuser,
+      ROW_NUMBER() over(order by $OrderBy$ ) rowNumber
+      From DictItem_Cate
+      where flag=0 $Condition$
+      ) aa
+      where rowNumber BETWEEN  #Next# and #Prev#
+    </select>
+
+
+    <insert id="Save" parameterClass="DictItem_Cate">
+      Insert Into DictItem_Cate (
+      cateid,
+      catename,
+      catetype,
+      upperid,
+      inputstr,
+      flag,
+      createdate,
+      updatedate,
+      createuser,
+      updateuser
+      )Values(
+      #CateId#,
+      #CateName#,
+      #CateType#,
+      #UpperId#,
+      #InputStr#,
+      #Flag#,
+      #CreateDate#,
+      #UpdateDate#,
+      #CreateUser#,
+      #UpdateUser#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="DictItem_Cate">
+      Update DictItem_Cate Set
+      catename=#CateName#,
+      inputstr=#InputStr#,
+      catetype=#CateType#,
+      updatedate=#UpdateDate#,
+      updateuser=#UpdateUser#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          cateid=#CateId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="string">
+      Update DictItem_Cate Set flag=1
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          cateid=#CateId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+  </statements>
+</sqlMap>

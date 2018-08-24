@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="RefundsApplyMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="RefundsApply" type="HujingModel.RefundsApplyEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="RefundsApply">
+      <result property="ApplyId" column="applyid" />
+      <result property="UserId" column="userid" />
+      <result property="Amount" column="amount" />
+      <result property="Reason" column="reason" />
+      <result property="ApplyDate" column="applydate" />
+      <result property="IsBack" column="isback" />
+      <result property="PayId" column="payid" />
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      applyid,
+      userid,
+      amount,
+      reason,
+      applydate,
+      isback,
+      payid
+      From RefundsApply
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          applyid=#ApplyId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+    <select id="LoadAll" parameterClass="System.Collections.IDictionary" resultMap="SelectResult">
+      select * from
+      ( Select
+      applyid,
+      userid,
+      amount,
+      reason,
+      applydate,
+      isback,
+      payid,
+      ROW_NUMBER() over(order by applydate desc ) rowNumber
+      From RefundsApply
+      where 1=1 $Condition$
+      ) aa
+      where rowNumber BETWEEN  #Next# and #Prev#
+    </select>
+
+    <insert id="Insert" parameterClass="RefundsApply">
+      Insert Into RefundsApply (
+      applyid,
+      userid,
+      amount,
+      reason,
+      applydate,
+      isback,
+      payid
+      )Values(
+      #ApplyId#,
+      #UserId#,
+      #Amount#,
+      #Reason#,
+      #ApplyDate#,
+      #IsBack#,
+      #PayId#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="RefundsApply">
+      Update RefundsApply Set
+      applyid=#ApplyId#,
+      userid=#UserId#,
+      amount=#Amount#,
+      reason=#Reason#,
+      applydate=#ApplyDate#,
+      isback=#IsBack#,
+      payid=#PayId#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          applyid=#ApplyId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="int">
+      Delete From RefundsApply
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          applyid=#ApplyId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+  </statements>
+</sqlMap>

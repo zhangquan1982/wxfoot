@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="PackageTypeMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="PackageType" type="HujingModel.PackageTypeEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="PackageType">
+      <result property="PackAgeTypeId" column="packagetypeid" />
+      <result property="PackAgeTypeName" column="packagetypename" />
+      <result property="Flag" column="flag" />
+      <result property="CreateUser" column="createuser" />
+      <result property="CreateDate" column="createdate" />
+      <result property="UpdateUser" column="updateuser" />
+      <result property="UpdateDate" column="updatedate" />
+      <result property="OrgId" column="orgid" />
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+
+
+    <select id="Count" parameterClass="string" resultClass="int">
+      Select count(PackAgeTypeId) From PackageType where flag=0 $Condition$
+    </select>
+    
+    
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      packagetypeid,
+      packagetypename,
+      flag,
+      createuser,
+      createdate,
+      updateuser,
+      updatedate,
+      orgid
+      From PackageType
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          packagetypeid=#PackAgeTypeId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+    <select id="LoadAll" parameterClass="string" resultMap="SelectResult">
+      Select
+      packagetypeid,
+      packagetypename,
+      flag,
+      createuser,
+      createdate,
+      updateuser,
+      updatedate,
+      orgid
+      From PackageType
+      where flag=0 $Condition$
+    </select>
+
+
+    <insert id="Save" parameterClass="PackageType">
+      Insert Into PackageType (
+      packagetypeid,
+      packagetypename,
+      flag,
+      createuser,
+      createdate,
+      orgid
+      )Values(
+      #PackAgeTypeId#,
+      #PackAgeTypeName#,
+      #Flag#,
+      #CreateUser#,
+      #CreateDate#,
+      #OrgId#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="PackageType">
+      Update PackageType Set
+      packagetypename=#PackAgeTypeName#,
+      flag=#Flag#,
+      updateuser=#UpdateUser#,
+      updatedate=#UpdateDate#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          packagetypeid=#PackAgeTypeId#,
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="int">
+      update  PackageType set flag=1 
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          packagetypeid=#PackAgeTypeId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+  </statements>
+</sqlMap>

@@ -1,0 +1,249 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="OldPersonInvisitMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="OldPersonInvisit" type="HujingModel.OldPersonInvisitEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="OldPersonInvisit">
+      <result property="SerialNum" column="serialnum" />
+      <result property="PatiID" column="patiid" />
+      <result property="MediaChannel" column="mediachannel" />
+      <result property="Status" column="status" />
+      <result property="BedId" column="bedid" />
+      <result property="NurseGrade" column="nursegrade" />
+      <result property="NurseUser" column="nurseuser" />
+      <result property="OrgId" column="orgid" />
+      <result property="DepId" column="depid" />
+      <result property="AppointDate" column="appointdate" />
+      <result property="LeaveDate" column="leavedate" />
+      <result property="AdmitDate" column="admitdate" />
+      <result property="PreAmount" column="preamount" />
+      <result property="FeeAmount" column="feeamount" />
+      <result property="CreateDate" column="createdate" />
+      <result property="CreateUser" column="createuser" />
+      <result property="UpdateUser" column="updateuser" />
+      <result property="UpdateDate" column="updatedate" />
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+
+    <select id="Count" parameterClass="string" resultClass="int">
+      Select count(serialnum) From vOldPersonVisitList where 1=1 $Condition$
+    </select>
+
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      serialnum,
+      patiid,
+      mediachannel,
+      status,
+      bedid,
+      nursegrade,
+      nurseuser,
+      depid,
+      orgid,
+      appointdate,
+      leavedate,
+      admitdate,
+      preamount,
+      feeamount,
+      createdate,
+      createuser,
+      updateuser,
+      updatedate
+      From OldPersonInvisit
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          serialnum=#SerialNum#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+
+    <select id="LoadAll" parameterClass="System.Collections.IDictionary" resultMap="SelectResult">
+      select * from
+      ( Select
+      serialnum,
+      patiid,
+      mediachannel,
+      status,
+      bedid,
+      nursegrade,
+      nurseuser,
+      depid,
+      orgid,
+      appointdate,
+      leavedate,
+      admitdate,
+      preamount,
+      feeamount,
+      createdate,
+      createuser,
+      updateuser,
+      updatedate,
+      ROW_NUMBER() over(order by $OrderBy$ ) rowNumber
+      From OldPersonInvisit
+      where 1=1 $Condition$
+      ) aa
+      where rowNumber BETWEEN  #Next# and #Prev#
+    </select>
+
+
+    <insert id="Insert" parameterClass="OldPersonInvisit">
+      Insert Into OldPersonInvisit (
+      serialnum,
+      patiid,
+      mediachannel,
+      status,
+      bedid,
+      nursegrade,
+      nurseuser,
+      depid,
+      orgid,
+      appointdate,
+      admitdate,
+      preamount,
+      feeamount,
+      createdate,
+      createuser
+      )Values(
+      #SerialNum#,
+      #PatiID#,
+      #MediaChannel#,
+      #Status#,
+      #BedId#,
+      #NurseGrade#,
+      #NurseGrade#,
+      #DepId#,
+      #OrgId#,
+      #AppointDate#,
+      #AdmitDate#,
+      #PreAmount#,
+      #FeeAmount#,
+      #CreateDate#,
+      #CreateUser#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="OldPersonInvisit">
+      Update OldPersonInvisit Set
+      mediachannel=#MediaChannel#,
+      status=#Status#,
+      bedid=#BedId#,
+      depid=#DepId#,
+      nursegrade=#NurseGrade#,
+      appointdate=#AppointDate#,
+      admitdate=#AdmitDate#,
+      leavedate=#LeaveDate#,
+      preamount=#PreAmount#,
+      feeamount=#FeeAmount#,
+      updateuser=#UpdateUser#,
+      updatedate=#UpdateDate#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          serialnum=#SerialNum#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <update id="UpdateNurse" parameterClass="OldPersonInvisit">
+      Update OldPersonInvisit Set
+      nursegrade=#NurseGrade#,
+      updateuser=#UpdateUser#,
+      updatedate=#UpdateDate#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          serialnum=#SerialNum#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="int">
+      Delete From OldPersonInvisit
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+
+    <select id="GetOldPersonVisitListCondition" parameterClass="System.Collections.IDictionary" resultClass="System.Data.DataTable">
+      select * from
+      (
+      select
+      SerialNum,
+      PatiID,
+      Status,
+      StatusName,
+      SexId,
+      SexName,
+      MediaChannelName,
+      PatiName,
+      Age,
+      Birthdate,
+      AppointDate,
+      AdmitDate,
+      CareType,
+      CareTypeName,
+      NationId,
+      NationName,
+      Religion,
+      ReligionName,
+      Address,
+      LeaveDate,
+      CreateUser,
+      DepId,
+      DepName,
+      BedId,
+      BedName,
+      BuildName,
+      FloorName,
+      RoomName,
+      WorkType,
+      Eatinghabits,
+      Character,
+      Deviant,
+      Hobby,
+      CertNum,
+      CertTypeId,
+      HCardId,
+      HCardTypeId,
+      Marriage,
+      MarriageName,
+      PreAmount,
+      FeeAmount,
+      ROW_NUMBER() over(order by admitdate) rowNumber
+      from vOldPersonVisitList
+      where 1=1  $Condition$
+      ) aa
+      where rowNumber  BETWEEN #Next# and #Prev#
+    </select>
+
+
+    <select id="GetPersonPatiContacts" parameterClass="System.Collections.IDictionary" resultClass="System.Data.DataTable">
+      select
+      ContactId,
+      PatiId,
+      ConName,
+      Address as Address2,
+      CodeId,
+      ltrim(rtrim(Phone)) as Phone,
+      ltrim(rtrim(Memo)) as Memo
+      from PatiContacts
+      where 1=1  $Condition$
+    </select>
+
+
+    <select id="GetOldPersonOutVisitList" parameterClass="System.Collections.IDictionary" resultClass="System.Data.DataTable">
+      select
+      *
+      from vOldPersonVisitOut
+      where 1=1  $Condition$
+    </select>
+    
+  </statements>
+
+ 
+
+</sqlMap>

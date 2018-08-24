@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="PackageItemMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="PackageItem" type="HujingModel.PackageItemEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="PackageItem">
+      <result property="PackItemId" column="PackItemId"/>
+      <result property="PackTypeId" column="PackTypeId"/>
+      <result property="PackTypeName" column="PackTypeName"/>
+      <result property="ItemID" column="ItemID"/>
+      <result property="ItemName" column="ItemName"/>
+      <result property="Flag" column="Flag"/>
+      <result property="UnitTypeId" column="UnitTypeId"/>
+      <result property="UnitName" column="UnitName"/>
+      <result property="SalesPrice" column="SalesPrice"/>
+      <result property="Quantity" column="Quantity"/>
+      <result property="SalesAmount" column="SalesAmount"/>
+      <result property="CreateDate" column="CreateDate"/>
+      <result property="CreateUser" column="CreateUser"/>
+      <result property="OrgId" column="OrgId"/>
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+
+    <select id="Count" parameterClass="string" resultClass="int">
+      Select count(packitemid) From PackageItem where 1=1 $Condition$
+    </select>
+
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      PackItemId ,PackTypeId ,PackTypeName ,PackageItem.ItemID ,PackageItem.ItemName ,Flag ,PackageItem.UnitTypeId,
+      PackageItem.UnitName ,SalesPrice ,Quantity ,SalesAmount ,PackageItem.CreateDate ,PackageItem.CreateUser,PackageItem.OrgId
+      From PackageItem
+      inner join dictitem on dictitem.itemid = PackageItem.itemid
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          packitemid=#PackItemId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+    <select id="LoadAll" parameterClass="string" resultMap="SelectResult">
+      Select
+      PackItemId ,PackTypeId ,PackTypeName ,PackageItem.ItemID ,PackageItem.ItemName ,Flag ,PackageItem.UnitTypeId,
+      PackageItem.UnitName ,SalesPrice ,Quantity ,SalesAmount ,PackageItem.CreateDate ,PackageItem.CreateUser,PackageItem.OrgId
+      From PackageItem
+      inner join dictitem on dictitem.itemid = PackageItem.itemid
+      where flag=0 $Condition$
+    </select>
+
+    <insert id="Save" parameterClass="PackageItem">
+      INSERT INTO PackageItem(PackItemId ,PackTypeId ,PackTypeName ,ItemID ,ItemName ,Flag ,UnitTypeId,UnitName ,Quantity ,SalesAmount ,CreateDate ,CreateUser,OrgId)
+      VALUES(#PackItemId# ,#PackTypeId# ,#PackTypeName# ,#ItemID# ,#ItemName# ,#Flag# ,#UnitTypeId#,#UnitName# ,#Quantity# ,#SalesAmount# ,#CreateDate# ,#CreateUser#,#OrgId#)
+    </insert>
+
+    <update id="Update" parameterClass="PackageItem">
+      UPDATE PackageItem 
+      SET PackItemId = #PackItemId# ,
+      PackTypeId = #PackTypeId# ,
+      PackTypeName = #PackTypeName# ,
+      ItemID = #ItemID# ,
+      ItemName = #ItemName# ,
+      Flag = #Flag# ,
+      UnitName = #UnitName# ,
+      Quantity = #Quantity# ,
+      SalesAmount = #SalesAmount# 
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          packitemid=#PackItemId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="int">
+      update  PackageItem set flag=1
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          packitemid=#PackItemId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+  </statements>
+</sqlMap>

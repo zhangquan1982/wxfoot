@@ -1,0 +1,189 @@
+﻿
+@{
+    ViewBag.Title = "卡充值记录";
+    Layout = null;
+}
+<head>
+    <script src="~/Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+    <script src="~/Scripts/MiniUI/core.js" type="text/javascript"></script>
+    <script src="~/Scripts/moment.min.js"></script>
+    <script type="text/javascript">
+        var grid;
+        var gridPerson;
+        var mini;
+        $(document).ready(function () {
+            mini.parse();
+            grid = mini.get("grid1");
+            gridPerson = mini.get("SelPerson");
+        });
+
+
+        function AddRow() {
+            var userid = $("#PUserId").val();
+            if (userid == "") {
+                mini.showTips({ content: "请输入用户信息！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+
+            var url = '@Url.Action("Refunds")?UserId=' + userid;
+            mini.open({
+                url: url,
+                title: "卡退费", width: 480, height: 280,
+                onload: function () {
+                },
+                ondestroy: function (action) {
+                    grid.load({ UserId: userid });
+                    if (action == "save") {
+                        mini.showTips({ content: "操作成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                        grid.load({ UserId: userid });
+                    }
+                }
+            });
+        }
+
+
+        function onComboValidation(e) {
+
+            var items = this.findItems(e.value);
+            if (!items || items.length == 0) {
+                e.isValid = false;
+                e.errorText = "输入值不在下拉数据中";
+                $("#PCardId").val("");
+                $("#PUserId").val("");
+                $("#divUserName").html("");
+                $("#divAge").html("");
+                $("#divAdmitDate").html("");
+                $("#divSex").html("");
+                $("#divPreAmount").html("");
+                $("#divLeftAmount").html("");
+                $("#divFeeAmount").html("");
+                grid.load({ UserId: "0101S" });
+            }
+        }
+
+
+        function RefreshPerson(e) {
+            debugger;
+            if (e.value.length >= 1) {
+                var url = '@Url.Action("GetUserSelect", "UserCardChager")?input=' + e.value;
+                gridPerson.load(url);
+            }
+        }
+
+        var dirnames = [{ id: -1, text: '退费' }, { id: 1, text: '充值' }];
+        function OnDirectName(e) {
+            for (var i = 0, l = dirnames.length; i < l; i++) {
+                var g = dirnames[i];
+                if (g.id == e.value) return g.text;
+            }
+            return "";
+        }
+
+    </script>
+</head>
+
+<div>
+    <ul class="mnbreadcrumb">
+        <li>
+            <a href="#">卡管理</a> <span class="divider"></span>
+        </li>
+        <li>
+            <a href="#">卡充值</a>
+        </li>
+    </ul>
+</div>
+<div showcollapsebutton="true">
+    <div style="width: 720px; padding: 10px; height:20%; border: 1px gray solid">
+        <div>
+            <div style="float: left; margin-left: 5px;font-size:13px;">
+                选择用户:
+            </div>
+            <div style="float: left; margin-left: 5px;font-size:13px;">
+                <div style="float: left; margin-left: 5px">
+                    <div id="SelPerson" name="SelPerson" class="mini-combobox" style="width:120px;" popupwidth="360px" textfield="UserName" valuefield="UserId"
+                         url='@Url.Action("GetUserSelect", "UserCardChager")' value="" allowinput="true" onvaluechanged="RefreshPerson" onvalidation="onComboValidation" onitemclick="ClickSelPerson">
+                        <div property="columns">
+                            <div header="用户编号" field="UserId"></div>
+                            <div header="姓名" field="UserName"></div>
+                            <div header="性别" field="SexName"></div>
+                            <div header="卡号" field="CardId"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="float: left; font-size:16px; margin-left: 5px; color:red">
+                提示：请在左侧输入框中输入姓名、卡号然后回车，或者扫码枪
+            </div>
+            <div style="font-size:14px;  font-weight:bold">
+                <div style="position:absolute; left:25px; top:110px">用户姓名：</div>
+                <div style="position:absolute; left:110px; top:110px"><u id="divUserName"></u></div>
+                <div style="position:absolute; left:300px; top:110px">年龄：</div>
+                <div style="position:absolute; left:360px; top:110px"><u id="divAge"></u></div>
+                <div style="position:absolute; left:585px; top:110px">性别：</div>
+                <div style="position:absolute; left:635px; top:110px"><u id="divSex"></u></div>
+                <div style="position:absolute; left:25px; top:150px">预交金：</div>
+                <div style="position:absolute; left:110px; top:150px"><u id="divPreAmount"></u></div>
+                <div style="position:absolute; left:300px; top:150px">消费金额：</div>
+                <div style="position:absolute; left:390px; top:150px"><u id="divFeeAmount"></u></div>
+                <div style="position:absolute; left:585px; top:150px;color:red">余额：</div>
+                <div style="position:absolute; left:635px; top:150px; color:red"><u id="divLeftAmount"></u></div>
+                <input type="hidden" id="PCardId" name="PCardId" />
+                <input type="hidden" id="PUserId" name="PUserId" />
+            </div>
+        </div>
+    </div>
+    <div style="clear: both; margin-top: 5px; width: 100%; height:45px">
+        <div class="mini-toolbar" style="border-bottom: 0; padding: 0px;">
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 100%;">
+                        <a class="mini-button" iconcls="icon-del" onclick="AddRow()">卡退费</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div id="grid1" class="mini-datagrid" style="width: 100%; height:50%;" allowresize="true"
+         url="@Url.Action("GetUserPayListByUserId")" idfield="UserId" pagesize="100">
+        <div property="columns">
+            <div type="checkcolumn" width="25">
+            </div>
+            <div field="UserId" width="80" headeralign="center" align="center" allowsort="true">
+                用户编号
+            </div>
+            <div field="Direction" width="70" headeralign="center" align="center" allowsort="true" renderer="OnDirectName">
+                充值/退费
+            </div>
+            <div field="PayAmount" width="70" headeralign="center" align="center" allowsort="true">
+                金额
+            </div>
+            <div field="CreateDate" width="70" headeralign="center" align="center" allowsort="true" dateformat="yyyy-MM-dd">
+                交款日期
+            </div>
+            <div field="CreateUser" width="70" headeralign="center" align="center" allowsort="true">
+                操作员
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+
+    function ClickSelPerson(e) {
+        var result = e.item;
+        debugger;
+        var yjAmount = parseInt(result.PreAmount);
+        var yeAmount = parseInt(yjAmount - result.FeeAmount);
+        $("#PCardId").val(result.CardId);
+        $("#PUserId").val(result.UserId);
+        $("#divUserName").html(result.UserName);
+        $("#divAge").html(result.AgeName);
+        $("#divSex").html(result.SexName);
+        $("#divPreAmount").html(result.PreAmount);
+        $("#divLeftAmount").html(yeAmount);
+        $("#divFeeAmount").html(result.FeeAmount);
+        grid.load({ "UserId": result.UserId, "IsOnly": "yes" });
+    }
+
+</script>

@@ -1,0 +1,217 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="ConsultInfoMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="ConsultInfo" type="HujingModel.ConsultInfoEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="ConsultInfo">
+      <result property="ConsultId" column="consultid" />
+      <result property="ConMethod" column="conmethod" />
+      <result property="ConPeople" column="conpeople" />
+      <result property="ConDate" column="condate" />
+      <result property="ConPhone" column="conphone" />
+      <result property="Nexus" column="nexus" />
+      <result property="PatiName" column="patiname" />
+      <result property="MediaChannel" column="mediachannel" />
+      <result property="Sex" column="sex" />
+      <result property="Birthday" column="birthday" />
+      <result property="CareType" column="caretype" />
+      <result property="WorkType" column="worktype" />
+      <result property="Address" column="address" />
+      <result property="Intention" column="intention" />
+      <result property="BedId" column="bedid" />
+      <result property="PlanInDate" column="planindate" />
+      <result property="Memo" column="memo" />
+      <result property="Status" column="status" />
+      <result property="CreateDate" column="createdate" />
+      <result property="CreateUser" column="createuser" />
+      <result property="UpdateDate" column="updatedate" />
+      <result property="UpdateUser" column="updateuser" />
+      <result property="SerialNum" column="serialnum" />
+      <result property="OrgId" column="orgid" />
+      
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+
+    <select id="Count" parameterClass="string" resultClass="int">
+      Select count(ConsultId) From ConsultInfo aa where 1=1 $Condition$
+    </select>
+    
+    
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      orgid,
+      consultid,
+      conmethod,
+      conpeople,
+      condate,
+      conphone,
+      nexus,
+      patiname,
+      mediachannel,
+      sex,
+      birthday,
+      caretype,
+      worktype,
+      address,
+      intention,
+      bedid,
+      planindate,
+      memo,
+      status,
+      createdate,
+      createuser,
+      updatedate,
+      updateuser,
+      serialnum
+      From ConsultInfo
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          consultid=#ConsultId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+    
+    
+    <select id="LoadAll" parameterClass="System.Collections.IDictionary" resultMap="SelectResult">
+      select * from
+      ( Select
+      aa.orgid,
+      consultid,
+      conmethod,
+      conpeople,
+      condate,
+      cc.codename as nexus,
+      patiname,
+      bb.codename as mediachannel,
+      sex,
+      birthday,
+      caretype,
+      worktype,
+      address,
+      intention,
+      bedid,
+      planindate,
+      conphone,
+      aa.memo,
+      status,
+      aa.createdate,
+      aa.createuser,
+      aa.updatedate,
+      updateuser,
+      serialnum,
+      ROW_NUMBER() over(order by aa.createdate ) rowNumber
+      From ConsultInfo aa left join dictcode bb on  bb.codetypeid='10003' and  aa.MediaChannel = bb.codeid and aa.OrgId=bb.OrgId
+      left join dictcode cc on  cc.codetypeid='10001' and  aa.nexus = cc.codeid and cc.OrgId=aa.OrgId
+      where 1=1 $Condition$
+      ) aa
+      where rowNumber BETWEEN  #Next# and #Prev#
+    </select>
+
+
+
+    <insert id="Insert" parameterClass="ConsultInfo">
+      Insert Into ConsultInfo (
+      orgid,
+      consultid,
+      conmethod,
+      conpeople,
+      condate,
+      conphone,
+      nexus,
+      patiname,
+      mediachannel,
+      sex,
+      birthday,
+      caretype,
+      worktype,
+      address,
+      intention,
+      bedid,
+      planindate,
+      memo,
+      status,
+      createdate,
+      createuser,
+      updatedate,
+      updateuser
+      )Values(
+      #OrgId#,
+      #ConsultId#,
+      #ConMethod#,
+      #ConPeople#,
+      #ConDate#,
+      #ConPhone#,
+      #Nexus#,
+      #PatiName#,
+      #MediaChannel#,
+      #Sex#,
+      #Birthday#,
+      #CareType#,
+      #WorkType#,
+      #Address#,
+      #Intention#,
+      #BedId#,
+      #PlanInDate#,
+      #Memo#,
+      #Status#,
+      #CreateDate#,
+      #CreateUser#,
+      #UpdateDate#,
+      #UpdateUser#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="ConsultInfo">
+      Update ConsultInfo Set
+      conmethod=#ConMethod#,
+      conpeople=#ConPeople#,
+      nexus=#Nexus#,
+      condate=#ConDate#,
+      conphone=#ConPhone#,
+      patiname=#PatiName#,
+      mediachannel=#MediaChannel#,
+      sex=#Sex#,
+      birthday=#Birthday#,
+      caretype=#CareType#,
+      worktype=#WorkType#,
+      address=#Address#,
+      intention=#Intention#,
+      planindate=#PlanInDate#,
+      memo=#Memo#,
+      updatedate=#UpdateDate#,
+      updateuser=#UpdateUser#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          consultid=#ConsultId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <update id="UpdateInVisit" parameterClass="ConsultInfo">
+      Update ConsultInfo Set
+      serialnum=#SerialNum#,
+      status=#Status#,
+      updatedate=#UpdateDate#,
+      updateuser=#UpdateUser#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          consultid=#ConsultId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="int">
+      Delete From ConsultInfo
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          consultid=#ConsultId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+  </statements>
+</sqlMap>

@@ -1,0 +1,230 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="OrganizationMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="Organization" type="HujingModel.OrganizationEntity, HujingModel" />
+    <typeAlias alias="NameCount" type="HujingModel.CommonNameCount, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="Organization">
+      <result property="OrgId" column="orgid" />
+      <result property="OrgName" column="orgname" />
+      <result property="UpperId" column="upperid" />
+      <result property="InputStr" column="inputstr" />
+      <result property="OrgType" column="orgtype" />
+      <result property="OrgTypeName" column="orgtypename" />
+      <result property="Flag" column="flag" />
+      <result property="Memo" column="memo" />
+      <result property="CreateDate" column="createdate" />
+      <result property="UpdateDate" column="updatedate" />
+      <result property="CreateUser" column="createuser" />
+      <result property="UpdateUser" column="updateuser" />
+      <result property="ImgUrl" column="imgurl" />
+      <result property="SetupTime" column="setuptime" />
+      <result property="BedNum" column="bednum" />
+      <result property="Area" column="area" />
+      <result property="RelationPeople" column="relationpeople" />
+      <result property="Address" column="address" />
+      <result property="TelPhone" column="telphone" />
+      <result property="Mobile" column="mobile" />
+      <result property="OrgEmail" column="orgemail" />
+      <result property="LoginName" column="loginname" />
+      <result property="Password" column="password" />
+    </resultMap>
+
+    <resultMap id="orgmap" class="NameCount">
+      <result property="cId" column="cId" />
+      <result property="cName" column="cName" />
+      <result property="cAttr1" column="cAttr1" />
+      <result property="cAttr2" column="cAttr2" />
+      <result property="cNum" column="cNum" />
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+
+    <select id="Count" parameterClass="string" resultClass="int">
+      Select count(OrgId)
+      From Organization where 1=1 $Condition$
+    </select>
+    
+    
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      orgid,
+      orgname,
+      upperid,
+      inputstr,
+      orgtype,
+      orgtypename,
+      flag,
+      memo,
+      createdate,
+      updatedate,
+      createuser,
+      updateuser,
+      imgurl,
+      setuptime,
+      bednum,
+      area,
+      relationpeople,
+      address,
+      telphone,
+      mobile,
+      orgemail,
+      loginname,
+      password
+      From Organization
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          orgid=#OrgId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+    <select id="LoadAll" parameterClass="System.Collections.IDictionary" resultMap="SelectResult">
+      select * from
+      ( Select
+      Organization.orgid,
+      orgname,
+      upperid,
+      Organization.inputstr,
+      orgtype,
+      DictCode.codename as orgtypename,
+      Organization.flag,
+      Organization.memo,
+      Organization.createdate,
+      Organization.updatedate,
+      Organization.createuser,
+      Organization.updateuser,
+      imgurl,
+      setuptime,
+      bednum,
+      area,
+      relationpeople,
+      address,
+      telphone,
+      mobile,
+      orgemail,
+      loginname,
+      password,
+      ROW_NUMBER() over(order by $OrderBy$ ) rowNumber
+      From Organization  inner join DictCode on DictCode.CodeTypeId='10006'
+      and  Organization.OrgId=DictCode.OrgId
+      and Organization.orgtype=DictCode.codeid
+      where  1=1 $Condition$
+      ) aa
+      where rowNumber BETWEEN  #Next# and #Prev#
+    </select>
+
+    <select id="LoadOrgBedList" parameterClass="System.Collections.IDictionary" resultMap="orgmap">
+      select * from
+      (
+      select Organization.OrgId as cId,OrgName as cName,RegionArea.RegId as cAttr1,
+      RegionArea.RegName as cAttr2,  COUNT(BedId) as cNum,
+      ROW_NUMBER() over(order by $sortField$ $sortOrder$) rowNumber
+      from Organization
+      left join Bed on Organization.OrgId = Bed.OrgId
+      inner join RegionArea on Organization.UpperId = RegionArea.RegId
+      where 1=1  $Condition$
+      group by Organization.OrgId,OrgName,RegionArea.RegId,RegionArea.RegName
+      ) aa
+      where rowNumber  BETWEEN #Next# and #Prev#
+    </select>
+
+
+
+    <insert id="Save" parameterClass="Organization">
+      Insert Into Organization (
+      orgid,
+      orgname,
+      upperid,
+      inputstr,
+      orgtype,
+      orgtypename,
+      flag,
+      memo,
+      createdate,
+      updatedate,
+      createuser,
+      updateuser,
+      imgurl,
+      setuptime,
+      bednum,
+      area,
+      relationpeople,
+      address,
+      telphone,
+      mobile,
+      orgemail,
+      loginname,
+      password
+      )Values(
+      #OrgId#,
+      #OrgName#,
+      #UpperId#,
+      #InputStr#,
+      #OrgType#,
+      #OrgTypeName#,
+      #Flag#,
+      #Memo#,
+      #CreateDate#,
+      #UpdateDate#,
+      #CreateUser#,
+      #UpdateUser#,
+      #ImgUrl#,
+      #SetupTime#,
+      #BedNum#,
+      #Area#,
+      #RelationPeople#,
+      #Address#,
+      #TelPhone#,
+      #Mobile#,
+      #OrgEmail#,
+      #LoginName#,
+      #Password#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="Organization">
+      Update Organization Set
+      inputstr=#InputStr#,
+      orgtype=#OrgType#,
+      orgtypename=#OrgTypeName#,
+      flag=#Flag#,
+      memo=#Memo#,
+      updatedate=#UpdateDate#,
+      updateuser=#UpdateUser#,
+      setuptime=#SetupTime#,
+      bednum=#BedNum#,
+      area=#Area#,
+      relationpeople=#RelationPeople#,
+      address=#Address#,
+      telphone=#TelPhone#,
+      mobile=#Mobile#,
+      orgemail=#OrgEmail#,
+      loginname=#LoginName#,
+      password=#Password#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          orgid=#OrgId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="int">
+      update Organization set flag=1
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          orgid=#OrgId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+
+    <select id="GetMaxOrgId" parameterClass="string" resultClass="string">
+      Select max(orgid)
+      From Organization where 1=1 $Condition$
+    </select>
+    
+  </statements>
+</sqlMap>

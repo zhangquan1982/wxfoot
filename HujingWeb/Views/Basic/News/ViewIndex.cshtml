@@ -1,0 +1,150 @@
+﻿@{
+    ViewBag.Title = "ViewIndex";
+    Layout = null;
+}
+<link href="~/Scripts/MiniUI/demo.css" rel="stylesheet" type="text/css" />
+<script src="~/Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+<script src="~/Scripts/MiniUI/core.js" type="text/javascript"></script>
+<style type="text/css">
+    .myrow {
+        background-color: blue;
+    }
+
+    a.color1:link {
+        color: #FFFFFF;
+        text-decoration: none;
+    }
+    /*常规时候的样式*/
+    a.color1:visited {
+        color: #FFFFFF;
+        text-decoration: none;
+    }
+    /*鼠标指上去的样式*/
+    a.color1:hover {
+        color: #FFFFFF;
+        text-decoration: underline;
+    }
+    /*访问过后的样式*/
+</style>
+
+
+
+<script type="text/javascript">
+    var grid;
+    $(document).ready(function () {
+        mini.parse();
+        grid = mini.get("gridView");
+        grid.load();
+        grid.on("drawcell", function (e) {
+            var record = e.record,
+                column = e.column,
+                field = e.field,
+                value = e.value;
+            //设置行样式
+
+            //action列，超连接操作按钮
+            if (column.field == "NewTitle") {
+                if (record.ViewCount > 0) {
+                    e.cellStyle = " color:red;text-decoration: underline;";
+                } else {
+                    e.cellStyle = "color:red;text-decoration: none;";
+                }
+                var newsid = "'"+ record.NewsId + "'";
+                e.cellHtml = '<a  href="javascript:ViewData(' + newsid + ')" target=_blank>' + record.NewTitle + '</a>&nbsp; ';
+
+            }
+        });
+
+    });
+
+    function ViewData(newsId) {
+        var url = '@Url.Action("ViewDetail")?newsId=' + newsId;
+        this.location = url;
+        //mini.open({
+        //    url: url,
+        //    title: "公告详情", width: 800, height: 680,
+        //    onload: function () {
+        //    },
+        //    ondestroy: function (action) {
+        //        if (action != "cancel") {
+        //            grid.load();
+        //        }
+        //    }
+        //});
+    }
+
+    function search() {
+        var NewTitle = mini.getbyName("NewTitle").getValue();
+        var DateBegin = mini.getbyName("dateBegin").text;
+        var DateEnd = mini.getbyName("dateEnd").text;
+        grid.load({ "NewTitle": NewTitle, "dateBegin": DateBegin, "dateEnd": DateEnd });
+    }
+    function onKeyEnter(e) {
+        search();
+    }
+</script>
+<body style="overflow-y:auto">
+    <div>
+        <ul class="mnbreadcrumb">
+            <li>
+                <a href="#">公告</a> <span class="divider"></span>
+            </li>
+            <li>
+                <a href="#">公告查看</a>
+            </li>
+        </ul>
+    </div>
+    <div showcollapsebutton="true">
+        <div>
+            <fieldset id="fd1" style="width: 98%; height:80px">
+                <legend><span>查询条件</span></legend>
+                <div class="fieldset-body">
+                    <div>
+                        <div style="float: left; margin-left: 5px">
+                            公告标题:
+                        </div>
+                        <div style="float: left; margin-left: 5px">
+                            <input id="NewTitle" name="NewTitle" class="mini-textbox" style="width: 120px" />
+                        </div>
+                    </div>
+                    <div style="clear: both; height: 5px">
+                    </div>
+                    <div style="">
+                        <div style="float: left; margin-left: 5px">
+                            创建日期:
+                        </div>
+                        <div style="float: left; margin-left: 5px">
+                            <input id="dateBegin" name="dateBegin" class="mini-datepicker" style="width: 120px;" value="2000-01-01" />
+                        </div>
+                        <div style="float: left;margin-left: 5px">
+                            ~<input id="dateEnd" name="dateEnd" class="mini-datepicker" style="width: 120px;" />
+                        </div>
+                    </div>
+                    <div style="position: absolute; left:34%; top:17%">
+                        <a class="mini-button" onclick="search()">查询</a>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div id="gridView" class="mini-datagrid" style="width: 100%; height: 70%;"
+             allowresize="true" url="@Url.Action("GetList", new { isManager=1})" idfield="NewsId" pagesize="15">
+            <div property="columns">
+
+                <div field="NewTitle" width="180" headeralign="center" align="center" allowsort="true">
+                    公告标题
+                </div>
+
+                <div field="CreateUser" width="50" headeralign="center" align="center" allowsort="true">
+                    创建人
+                </div>
+                <div field="CreateDate" width="50" headeralign="center" align="center" allowsort="true" dateformat="yyyy-MM-dd">
+                    创建时间
+                </div>
+                <div field="ViewCount" width="50" headeralign="center" align="center" showcolumns="true">
+                    访问次数
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>

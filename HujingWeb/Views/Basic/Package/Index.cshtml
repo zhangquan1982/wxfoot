@@ -1,0 +1,223 @@
+﻿@{
+    ViewBag.Title = "数据字典";
+    Layout = null;
+}
+<head>
+    <script src="~/Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+    <script src="~/Scripts/MiniUI/core.js" type="text/javascript"></script>
+
+</head>
+<form id="frmPackage">
+    <div>
+        <ul class="mnbreadcrumb">
+            <li>
+                <a href="#">基本信息</a> <span class="divider"></span>
+            </li>
+            <li>
+                <a href="#">套餐维护</a>
+            </li>
+        </ul>
+    </div>
+    <div class="mini-splitter" style="width: 100%; height:85%;">
+        <div size="180" showcollapsebutton="true">
+            <div class="mini-toolbar" style="padding: 2px; border-top: 0; border-left: 0; border-right: 0;">
+                <span style="padding-left: 5px;">套餐类别</span>
+            </div>
+            <div class="mini-fit">
+                <ul id="tree1" class="mini-tree" url="@Url.Action("GetTypeTree")" style="width: 100%;"
+                    showtreeicon="true" textfield="name" idfield="id" parentfield="pid" resultastree="false"></ul>
+            </div>
+        </div>
+        <div showcollapsebutton="true">
+            <div style="width: 100%; height: 30px">
+                <div class="mini-toolbar" style="border-bottom: 0; padding: 0px;">
+                    <table style="width: 100%;">
+                        <tr>
+                            <td style="width: 100%;">
+                                <a class="mini-button" iconcls="icon-add" onclick="AddRow()">新增套餐</a>
+                                <span class="separator"></span>
+                                <a class="mini-button" iconcls="icon-del" onclick="Remove()">删除</a>
+                                <span class="separator"></span>
+                                <a class="mini-button" iconcls="icon-save" id="btnSave" plain="true">保存</a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <input id="selTypeId" property="editor" class="mini-textbox" visible="false" />
+            <input id="selTypeName" property="editor" class="mini-textbox" visible="false" />
+            <div id="grid1" class="mini-datagrid" style="width:980px;height:400px;"
+                 url="@Url.Action("GetList")" idfield="PackItemId"
+                 allowresize="true" allowcellselect="true"
+                 allowcelledit="true" editnextonenterkey="true" editnextrowcell="true"
+                 showpager="false">
+                <div property="columns">
+                    <div type="indexcolumn"></div>
+                    <div field="InputStr" align="center" width="100" headeralign="center" allowsort="false">
+                        助记符
+                        <div class="mini-autocomplete" style="width:250px;" property="editor"
+                             popupwidth="600" value="" text="" textfield="InputStr" valuefield="ItemID" searchfield="inputStr"
+                             url="@Url.Action("GetDictItemList", "InOutStore")" onvaluechanged="onValueChanged">
+                            <div property="columns">
+                                <div header="助记符" field="InputStr" width="100"></div>
+                                <div header="项目编码" field="ItemID" width="60" visible="false"></div>
+                                <div header="项目名称" field="ItemName" width="80"></div>
+                                <div type="comboboxcolumn" autoshowpopup="true" field="UnitTypeId" width="100" allowsort="true"
+                                     align="center" headeralign="center">
+                                    默认单位
+                                    <input property="editor" class="mini-combobox" valuefield="CodeId" textfield="CodeName" url='@Url.Action("GetCommonDictCode", "Common", new { codeType = @HujingCommon.DictCodeTypeClass.UnitType })' required="true" />
+                                </div>
+                                <div header="零售价" field="SalesPrice" width="60"></div>
+                                <div header="批次号" field="BatchCode" width="60"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div name="ItemID" field="ItemID" width="80" headeralign="center" allowsort="false" visible="false">
+                        项目编码
+                    </div>
+                    <div name="ItemName" field="ItemName" width="80" headeralign="center" allowsort="false">
+                        项目名称
+                    </div>
+                    <div name="UnitName" align="center" field="UnitName" width="40" headeralign="center" allowsort="false">
+                        单位
+                    </div>
+                    <div field="Quantity" align="center" width="40" headeralign="center" allowsort="false">
+                        数量
+                        <input property="editor" vtype="float" class="mini-textbox" style="width: 100%;" />
+                    </div>
+                    <div field="SalesPrice" align="right" width="60" headeralign="center" datatype="float" allowsort="false">价格</div>
+                    <div field="SalesAmount" align="right" width="60" headeralign="center" allowsort="false">总金额</div>
+                    <div field="EnterpriseName" width="100" headeralign="center" allowsort="false">生产厂家</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script type="text/javascript">
+    mini.parse();
+    var tree = mini.get("tree1");
+    var grid = mini.get("grid1");
+    $(document).ready(function () {
+        tree.on("nodeselect", function (e) {
+            mini.get("selTypeId").setValue(e.node.id);
+            mini.get("selTypeName").setValue(e.node.name);
+            grid.load({ TypeId: e.node.id });
+        });
+        var form = new mini.Form("frmPackage");
+        $("#btnSave").click(function (event) {
+            var o = form.getData();
+            form.validate();
+            if (form.isValid() == false) {
+                return;
+            }
+
+            var strTypeId = mini.get("selTypeId").getValue();
+            var strTypeName = mini.get("selTypeName").getValue();
+            var changes = grid.getChanges();
+            $.ajax({
+                url: "@Url.Action("SavePackItem")?TypeId=" + strTypeId + "&strTypeName=" + strTypeName,
+                type: 'post',
+                dataType: "json",
+                contentType: 'application/json',
+                data: mini.encode(changes),
+                cache: false,
+                success: function (text) {
+                    if (text == "ok") {
+                        mini.showTips({ content: "操作成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                        grid.load({ TypeId: strTypeId });
+                    } else {
+
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert(jqXHR.responseText);
+                    CloseWindow();
+                }
+            });
+
+        });
+
+    });
+
+
+
+    function AddRow() {
+        var tree = mini.get("tree1");
+        var node = tree.getSelectedNode();
+        var parentid = "";
+        if (node) {
+            parentid = node.id;
+        }
+        if (parentid == "") {
+            mini.showTips({
+                content: "请选择项目大类！", state: "warning", x: "center", y: "top", timeout: 3000
+            });
+            return;
+        }
+
+        var newRow = {};
+        grid.addRow(newRow, 0);
+    }
+
+
+    function onValueChanged(e) {
+        var item = e.selected;
+        var row = grid.getSelected();
+        item.Quantity = 1;
+        item.SalesAmount = item.SalesPrice * item.Quantity;
+        grid.updateRow(row, item);
+    }
+
+    grid.on("celleditenter", function (e) {
+        var index = grid.indexOf(e.record);
+        if (index == grid.getData().length - 1) {
+            var row = {};
+            grid.addRow(row);
+        }
+    });
+
+    grid.on("cellendedit", function (sender) {
+        if (sender.field == "Quantity") {
+            var row = grid.getRow(sender.rowIndex);
+            row.SalesAmount = row.SalesPrice * row.Quantity;
+            grid.updateRow(row, row);
+        }
+    });
+
+
+
+    function Remove() {
+        var node = tree.getSelectedNode();
+        var parentid = "";
+        if (node) {
+            parentid = node.id;
+        }
+
+        var row = grid.getSelected();
+        if (row.CodeId == "") {
+            mini.showTips({ content: "请选择需要删除的项目！", state: "warning", x: "center", y: "top", timeout: 3000 });
+            return;
+        }
+        mini.confirm("确定删除此项目吗？", "确定信息",
+            function (action) {
+                if (action == "ok") {
+                    $.ajax({
+                        type: 'POST',
+                        dataType: "json",
+                        url: "@Url.Action("DeletePackageItem")?itemid=" + row.PackItemId,
+                        cache: false,
+                        success: function (result) {
+                            if (result == "ok") {
+                                mini.showTips({ content: "删除成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                                grid.load({ TypeId: parentid });
+                            }
+                            else {
+                                mini.showTips({ content: "操作失败！", state: "danger", x: "center", y: "top", timeout: 3000 });
+                            }
+                        }
+                    });
+                }
+            });
+    }
+
+</script>

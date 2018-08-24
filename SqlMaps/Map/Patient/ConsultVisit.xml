@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="ConsultVisitMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="ConsultVisit" type="HujingModel.ConsultVisitEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="ConsultVisit">
+      <result property="VisitId" column="visitid" />
+      <result property="VisitPersonName" column="visitpersonname" />
+      <result property="IDCard" column="idcard" />
+      <result property="CardType" column="cardtype" />
+      <result property="PersonNum" column="personnum" />
+      <result property="Telephone" column="telephone" />
+      <result property="VisitDate" column="visitdate" />
+      <result property="LeaveDate" column="leavedate" />
+      <result property="PatiId" column="patiid" />
+      <result property="Purpose" column="purpose" />
+      <result property="CreateUser" column="createuser" />
+      <result property="CreateDate" column="createdate" />
+      <result property="Flag" column="flag" />
+      
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+
+    <select id="Count" parameterClass="string" resultClass="int">
+      Select count(visitid) From ConsultVisit where 1=1 $Condition$
+    </select>
+    
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      visitid,
+      visitpersonname,
+      idcard,
+      cardtype,
+      personnum,
+      telephone,
+      visitdate,
+      leavedate,
+      patiid,
+      purpose,
+      createuser,
+      createdate,
+      flag
+      From ConsultVisit
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          visitid=#VisitId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+
+    <select id="LoadAll" parameterClass="System.Collections.IDictionary" resultMap="SelectResult">
+      select * from
+      ( Select
+      visitid,
+      visitpersonname,
+      idcard,
+      cardtype,
+      personnum,
+      telephone,
+      visitdate,
+      leavedate,
+      patiid,
+      purpose,
+      createuser,
+      createdate,
+      flag,
+      ROW_NUMBER() over(order by createdate ) rowNumber
+      From ConsultVisit
+      where 1=1 $Condition$
+      ) aa
+      where rowNumber BETWEEN  #Next# and #Prev#
+    </select>
+
+    <insert id="Save" parameterClass="ConsultVisit">
+      Insert Into ConsultVisit (
+      visitid,
+      visitpersonname,
+      idcard,
+      cardtype,
+      personnum,
+      telephone,
+      visitdate,
+      leavedate,
+      patiid,
+      purpose,
+      createuser,
+      createdate,
+      flag
+      )Values(
+      #VisitId#,
+      #VisitPersonName#,
+      #IDCard#,
+      #CardType#,
+      #PersonNum#,
+      #Telephone#,
+      #VisitDate#,
+      #LeaveDate#,
+      #PatiId#,
+      #Purpose#,
+      #CreateUser#,
+      #CreateDate#,
+      #Flag#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="ConsultVisit">
+      Update ConsultVisit Set
+      visitid=#VisitId#,
+      visitpersonname=#VisitPersonName#,
+      idcard=#IDCard#,
+      cardtype=#CardType#,
+      personnum=#PersonNum#,
+      telephone=#Telephone#,
+      visitdate=#VisitDate#,
+      leavedate=#LeaveDate#,
+      patiid=#PatiId#,
+      purpose=#Purpose#,
+      createuser=#CreateUser#,
+      createdate=#CreateDate#,
+      flag=#Flag#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          visitid=#VisitId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="int">
+      Delete From ConsultVisit
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          visitid=#VisitId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+  </statements>
+</sqlMap>

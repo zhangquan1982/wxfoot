@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="PatiInLeaveMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="PatiInLeave" type="HujingModel.PatiInLeaveEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="PatiInLeave">
+      <result property="LeaveId" column="leaveid" />
+      <result property="SerialNum" column="serialnum" />
+      <result property="LeaveDate" column="leavedate" />
+      <result property="BackDate" column="backdate" />
+      <result property="Memo" column="memo" />
+      <result property="CreateDate" column="createdate" />
+      <result property="CreateUser" column="createuser" />
+      <result property="Status" column="status" />
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+
+    <select id="Count" parameterClass="string" resultClass="int">
+      Select count(serialnum) From PatiInLeave where 1=1 $Condition$
+    </select>
+    
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      leaveid,
+      serialnum,
+      leavedate,
+      backdate,
+      memo,
+      createdate,
+      createuser,
+      status
+      From PatiInLeave
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          leaveid=#LeaveId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+    <select id="LoadAll" parameterClass="System.Collections.IDictionary" resultMap="SelectResult">
+      select * from
+      ( Select
+      leaveid,
+      s1.serialnum,
+      s1.leavedate,
+      backdate,
+      memo,
+      s1.createdate,
+      s1.createuser,
+      s1.status,
+      ROW_NUMBER() over(order by s1.CreateDate ) rowNumber
+      From PatiInLeave s1
+      inner join vOldPersonVisitList s2 on s1.serialnum=s2.serialnum
+      where 1=1 $Condition$
+      ) aa
+      where rowNumber BETWEEN  #Next# and #Prev#
+    </select>
+
+
+    <insert id="Save" parameterClass="PatiInLeave">
+      Insert Into PatiInLeave (
+      leaveid,
+      serialnum,
+      leavedate,
+      backdate,
+      memo,
+      createdate,
+      createuser,
+      status
+      )Values(
+      #LeaveId#,
+      #SerialNum#,
+      #LeaveDate#,
+      #BackDate#,
+      #Memo#,
+      #CreateDate#,
+      #CreateUser#,
+      #Status#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="PatiInLeave">
+      Update PatiInLeave Set
+      serialnum=#SerialNum#,
+      leavedate=#LeaveDate#,
+      backdate=#BackDate#,
+      memo=#Memo#,
+      createdate=#CreateDate#,
+      createuser=#CreateUser#,
+      status=#Status#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          leaveid=#LeaveId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="int">
+      Delete From PatiInLeave
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          leaveid=#LeaveId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+  </statements>
+</sqlMap>

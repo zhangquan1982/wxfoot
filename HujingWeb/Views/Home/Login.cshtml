@@ -1,0 +1,65 @@
+﻿
+@model HujingWeb.Models.UserInfoModel
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>食堂饭卡管理系统</title>
+    <meta name="keywords" content="食堂饭卡管理系统.">
+    <meta name="description" content="食堂饭卡管理系统.">
+    <link href="~/Scripts/Weixin/page_login.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.7.1.min.js"></script>
+    <script src="~/Scripts/jquery.form.js"></script>
+</head>
+<body class="zh_CN">
+    <div class="head" id="header">
+        <div class="head_box">
+            <div class="inner wrp" style="margin-left:20px;">
+                <h1 class="logo2">
+                    <a href="#" title="">食堂饭卡管理系统</a>
+                </h1>
+            </div>
+        </div>
+        <div class="banner">
+            <div class="inner wrp">
+                <div class="login_frame input_login" id="input_login" >
+                    <h3>登录</h3><div class="login_err_panel" id="err" >@Model.Msg</div>
+                    <form class="login_form" id="loginForm" action="/Home/Login">
+                        <div class="login_input_panel" id="js_mainContent">
+                            <div class="login_input">
+                                <i class="icon_login un"> </i>
+                                <input type="text" placeholder="" id="LoginName" name="LoginName" value="@Model.LoginName">
+                            </div>
+                            <div class="login_input">
+                                <i class="icon_login pwd"> </i>
+                                <input type="password" placeholder="密码" id="Password" name="Password" value="@Model.Password">
+                            </div>
+                        </div>
+                        <div class="login_help_panel">
+                            <input class="btn_login" type="submit" value="登录" />
+                            <a class="login_forget_pwd" href="#">忘记密码</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="foot" id="footer">
+        <ul class="links ft">
+            <li class="links_item no_extra">
+                <a href="#" target="_blank">关于瑚景软件</a>
+            </li>
+            <li class="links_item"><a href="#" target="_blank">服务协议</a></li>
+            <li class="links_item"><a href="#" target="_blank">客服中心</a></li>
+            <li class="links_item"><a href="1621733004@qq.com" target="_blank">联系邮箱</a></li>
+            <li class="links_item"><a href="#" target="_blank">侵权投诉</a></li>
+            <li class="links_item"><p class="copyright">Copyright 南京瑚景软件有限公司</p> </li>
+            <li class="links_item"><a class="copyright" href="http://www.miitbeian.gov.cn" target="_blank">备案号：苏ICP备18005367号-2</a> </li>
+        </ul>
+    </div>
+
+</body>
+</html>

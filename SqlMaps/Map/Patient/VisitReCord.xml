@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="VisitReCordMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="VisitReCord" type="HujingModel.VisitReCordEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="VisitReCord">
+      <result property="ReVisitId" column="revisitid" />
+      <result property="ConsultId" column="consultid" />
+      <result property="RContent" column="rcontent" />
+      <result property="VisitDate" column="visitdate" />
+      <result property="CreateDate" column="createdate" />
+      <result property="CreateUser" column="createuser" />
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+    
+    
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      revisitid,
+      consultid,
+      rcontent,
+      visitdate,
+      createdate,
+      createuser
+      From VisitReCord
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          revisitid=#ReVisitId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+    <select id="LoadAll" parameterClass="int" resultMap="SelectResult">
+      Select
+      revisitid,
+      consultid,
+      rcontent,
+      visitdate,
+      createdate,
+      createuser
+      From VisitReCord
+      where 1=1 $Condition$ order by createdate desc
+    </select>
+
+
+    <insert id="Save" parameterClass="VisitReCord">
+      Insert Into VisitReCord (
+      consultid,
+      rcontent,
+      visitdate,
+      createdate,
+      createuser
+      )Values(
+      #ConsultId#,
+      #RContent#,
+      #VisitDate#,
+      #CreateDate#,
+      #CreateUser#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="VisitReCord">
+      Update VisitReCord Set
+      rcontent=#RContent#,
+      visitdate=#VisitDate#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          revisitid=#ReVisitId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="int">
+      Delete From VisitReCord
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          revisitid=#ReVisitId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+  </statements>
+</sqlMap>

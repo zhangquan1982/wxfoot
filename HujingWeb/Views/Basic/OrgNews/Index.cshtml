@@ -1,0 +1,201 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <script src="~/Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+    <script src="~/Scripts/MiniUI/core.js" type="text/javascript"></script>
+    <style type="text/css">
+        .myrow {
+            background-color: #b3efef;
+        }
+    </style>
+    <script type="text/javascript">
+        var grid;
+        $(document).ready(function () {
+            mini.parse();
+            grid = mini.get("gridView");
+            grid.load();
+            grid.on("drawcell", function (e) {
+                var record = e.record,
+                    column = e.column,
+                    field = e.field,
+                    value = e.value;
+                //设置行样式
+                if (record.Statuss == "已审核") {
+                    e.rowCls = "myrow";
+                }
+            });
+        });
+
+
+        function AddRow() {
+            var url = '@Url.Action("Add")';
+            mini.open({
+                url: url,
+                title: "新增公告", width: 750, height: 650,
+                onload: function () {
+                    var iframe = this.getIFrameEl();
+                    var data = { action: "new" };
+                },
+                ondestroy: function (action) {
+                    if (action == "save") {
+                        grid.load();
+                    }
+                }
+            });
+        }
+
+        function Edit() {
+            var row = grid.getSelected();
+
+            if (row) {
+                var url = '@Url.Action("Edit")?newsId=' + row.NewsId;
+                mini.open({
+                    url: url,
+                    title: "编辑公告", width: 800, height: 680,
+                    onload: function () {
+                    },
+                    ondestroy: function (action) {
+                        if (action == "save") {
+                            search();
+                        }
+                    }
+                });
+
+            }
+            else {
+                mini.showTips({ content: "请选择一个公告！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+
+
+
+        }
+
+
+        function Remove() {
+
+            var row = grid.getSelected();
+            if (row) {
+
+            }
+            else {
+                mini.showTips({ content: "请选择需要删除的公告！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+
+
+            mini.confirm("确定删除此信息吗？", "确定信息",
+                function (action) {
+                    if (action == "ok") {
+                        $.ajax({
+                            type: 'POST',
+                            url: '@Url.Action("DeleteNews")',
+                            data: { "newsIds": row.NewsId },
+                            cache: false,
+                            success: function (result) {
+                                alert(result);
+                                if (result == true) {
+                                    mini.showTips({ content: "操作成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                                    search();
+                                }
+                                else {
+                                    mini.showTips({ content: "操作失败！", state: "danger", x: "center", y: "top", timeout: 3000 });
+                                }
+                            }
+                        });
+                    }
+                }
+            );
+        }
+
+        function search() {
+            var NewTitle = mini.getbyName("NewTitle").getValue();
+            var DateBegin = mini.getbyName("dateBegin").text;
+            var DateEnd = mini.getbyName("dateEnd").text;
+            grid.load({ "NewTitle": NewTitle, "dateBegin": DateBegin, "dateEnd": DateEnd });
+        }
+        function onKeyEnter(e) {
+            search();
+        }
+
+    </script>
+</head>
+<body style="">
+    <div style="width: 520px; padding: 10px; height: 70px; border: 1px gray solid">
+        <div>
+            <div style="float: left; margin-left: 5px">
+                公告标题:
+            </div>
+            <div style="float: left; margin-left: 5px">
+                <input id="NewTitle" name="NewTitle" class="mini-textbox" style="width: 120px" />
+            </div>
+        </div>
+        <div style="clear: both; height: 5px">
+        </div>
+        <div style="">
+            <div style="float: left; margin-left: 5px">
+                创建日期:
+            </div>
+            <div style="float: left; margin-left: 5px">
+                <input id="dateBegin" name="dateBegin" class="mini-datepicker" style="width: 120px;" value="2000-01-01" />
+            </div>
+            <div style="float: left;margin-left: 5px">
+                ~<input id="dateEnd" name="dateEnd" class="mini-datepicker" style="width: 120px;" />
+            </div>
+        </div>
+        <div style="position: absolute; left: 400px; top: 50px">
+            <a class="mini-button" onclick="search()">查询</a>
+        </div>
+    </div>
+    <div style="width:100%;">
+        <div class="mini-toolbar" style="border-bottom: 0; padding: 0px;">
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 100%;">
+                        <a class="mini-button" iconcls="icon-add" onclick="AddRow()">增加</a>
+                        <a class="mini-button" iconcls="icon-edit" onclick="Edit()">编辑</a>
+                        <a class="mini-button" iconcls="icon-del" onclick="Remove()">删除</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div id="gridView" class="mini-datagrid" style="width: 100%; height:400px;"
+         allowresize="true" url="@Url.Action("GetList")" idfield="NewsId" pagesize="15">
+        <div property="columns">
+            <div type="checkcolumn" width="10">
+            </div>
+            <div field="IsPublics" width="40" headeralign="center" align="center" allowsort="true">
+                是否公开
+            </div>
+            <div field="NewTitle" width="60" headeralign="center" align="center" allowsort="true">
+                公告标题
+            </div>
+            <div field="CreateUser" width="50" headeralign="center" align="center" allowsort="true">
+                创建人
+            </div>
+            <div field="CreateDates" width="50" headeralign="center" align="center" allowsort="true">
+                创建时间
+            </div>
+            <div field="Statuss" width="40" headeralign="center" align="center" allowsort="true">
+                审核状态
+            </div>
+            <div field="ViaUser" width="40" headeralign="center" align="center" allowsort="true">
+                审核人
+            </div>
+            <div field="ViaTimes" width="40" headeralign="center" align="center" allowsort="true">
+                审核时间
+            </div>
+            <div field="ViewCount" width="40" headeralign="center" align="center" allowsort="true">
+                访问次数
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

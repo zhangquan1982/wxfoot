@@ -1,0 +1,126 @@
+﻿@model HujingWeb.Model.OrgApply.BedSidyApplyModel
+@{
+    ViewBag.Title = "床位补贴申请";
+    Layout = null;
+}
+<head>
+    <title>床位补贴申请</title>
+    <link id="bs-css" href="~/Scripts/Charisma/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/Scripts/Charisma/css/charisma-app.css" rel="stylesheet">
+    <script src="~/Scripts/jquery-3.0.0.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            mini.parse();
+
+            //保存
+            $("#btnSave").click(function (event) {
+
+                $("#frmApplyFrm").ajaxSubmit({
+                    success: function (callback) {
+                        if (callback == "ok") {
+                            window.CloseOwnerWindow("save");
+                        }
+                        else {
+                            mini.showTips({ content: "保存失败！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                        }
+                    },
+                    error: function () {
+                        mini.showTips({ content: "保存失败！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                    }
+                });
+            });
+        });
+
+
+    </script>
+
+</head>
+<body>
+    <div>
+        <ul class="breadcrumb">
+            <li>
+                <a href="#">补贴申请</a> <span class="divider"></span>
+            </li>
+            <li>
+                <a href="#">床位补贴申请</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="ch-container">
+        <div class="row">
+            <div class="box col-md-12">
+                <div class="box-inner">
+                    <div class="box-content">
+                        <form id="frmApplyFrm" role="form" class="form-horizontal" action="/BedSidy/SaveApply">
+                            <div class="form-group">
+                                <label for="orgname" class="col-sm-3 control-label">年份</label>
+                                <div class="col-sm-3"><input type="text" class="form-control" name="Year" value="@Model.Year" placeholder="年份" required></div>
+                                <label for="orgname" class="col-sm-3 control-label">年份</label>
+                                <div class="col-sm-3"><input type="text" class="form-control" name="Year" value="@Model.Year" placeholder="年份" required></div>
+                                <label for="orgname" class="col-sm-3 control-label">年份</label>
+                                <div class="col-sm-3"><input type="text" class="form-control" name="Year" value="@Model.Year" placeholder="年份" required></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="orgname" class="col-sm-2 control-label">机构名称</label>
+                                <div class="col-md-2"><input type="text" class="form-control" name="OrgName" placeholder="机构名称" value="@Model.OrgName"></div>
+
+                                <label for="orgtype" class="col-sm-2 control-label">机构类型</label>
+                                <div class="col-md-2"><input type="text" class="form-control" name="OrgType" placeholder="Password" value="@Model.OrgType"></div>
+                            </div>
+                            <div class="form-group">
+
+                                <label for="orgname" class="col-sm-2 control-label">法人</label>
+                                <div class="col-md-2"><input type="text" class="form-control" name="RelationPeople" placeholder="法人" value="@Model.RelationPeople"></div>
+
+                                <label for="orgtype" class="col-sm-2 control-label">成立日期</label>
+                                <div class="col-md-2"><input type="text" class="form-control" name="SetupTime" placeholder="" value="@Model.SetupTime"></div>
+
+                            </div>
+                            <div class="form-group">
+                                <label for="orgname" class="col-sm-2 control-label">固定电话</label>
+                                <div class="col-md-2"><input type="text" class="form-control" name="TelePhone" placeholder="固定电话" value="@Model.TelPhone"></div>
+
+                                <label for="orgtype" class="col-sm-2 control-label">手机号码</label>
+                                <div class="col-md-2"><input type="text" class="form-control" name="Mobile" placeholder="" value="@Model.Mobile"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="orgname" class="col-sm-2 control-label">详细地址</label>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" name="Address" value="@Model.Address">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="orgname" class="col-sm-2 control-label">占地面积</label>
+                                <div class="col-md-2"><input type="text" class="form-control" name="Area" placeholder="占地面积" value="@Model.Area"></div>
+
+                                <label for="orgtype" class="col-sm-2 control-label">房间总数</label>
+                                <div class="col-md-2"><input type="text" class="form-control" name="RoomNum" placeholder="" value="@Model.RoomNum"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="orgname" class="col-sm-2 control-label">床位总数</label>
+                                <div class="col-md-2"><input type="text" class="form-control" name="BedNum" placeholder="床位总数" value="@Model.BedNum"></div>
+
+                                <label for="orgtype" class="col-sm-2 control-label">年平均入住率</label>
+                                <div class="col-md-2"><input type="text" class="form-control" name="BedRate" placeholder="" value="@Model.BedRate"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="orgname" class="col-sm-2 control-label">申请资金用途</label>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" name="ApplyContent" placeholder="请填写资金用途" value="@Model.ApplyContent" required>
+                                </div>
+                            </div>
+                            <button id="btnSave" class="btn btn-success">提交</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!--/span-->
+        </div><!--/row-->
+    </div>
+
+
+
+</body>

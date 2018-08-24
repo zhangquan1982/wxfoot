@@ -1,0 +1,66 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>瑚景HIS信息管理系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Charisma, a fully featured, responsive, HTML5, Bootstrap admin template.">
+    <meta name="author" content="hewei">
+
+    <style type="text/css">
+        body {
+            padding-bottom: 40px;
+        }
+
+        .sidebar-nav {
+            padding: 9px 0;
+        }
+    </style>
+
+
+   
+</head>
+
+<body>
+    <div class="navbar">
+        @Html.Partial("Top")
+    </div>
+    <!-- topbar ends -->
+    <div class="container-fluid">
+        <div class="row-fluid">
+
+            @Html.Partial("Menu")
+
+            <div id="content" class="span10">
+                <!-- content starts -->
+                @RenderBody()
+                <!-- content ends -->
+            </div><!--/#content.span10-->
+        </div><!--/fluid-row-->
+
+        <hr>
+
+        <div class="modal hide fade" id="myModal">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h3>Settings</h3>
+            </div>
+            <div class="modal-body">
+                <p>Here settings can be configured...</p>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn" data-dismiss="modal">Close</a>
+                <a href="#" class="btn btn-primary">Save changes</a>
+            </div>
+        </div>
+
+        <footer>
+            <p class="pull-left">&copy; <a href="http://usman.it" target="_blank">Muhammad Usman</a> 2012</p>
+            <p class="pull-right">Powered by: <a href="http://usman.it/free-responsive-admin-template">Charisma</a></p>
+        </footer>
+
+    </div><!--/.fluid-container-->
+
+</body>
+</html>

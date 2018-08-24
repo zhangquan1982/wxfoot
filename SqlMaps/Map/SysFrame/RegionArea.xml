@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="RegionAreaMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="RegionArea" type="HujingModel.RegionAreaEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="RegionArea">
+      <result property="RegId" column="regid" />
+      <result property="RegName" column="regname" />
+      <result property="UpperId" column="upperid" />
+      <result property="InputStr" column="inputstr" />
+      <result property="RegType" column="regtype" />
+      <result property="RegTypeName" column="regtypename" />
+      <result property="Flag" column="flag" />
+      <result property="Memo" column="memo" />
+      <result property="CreateDate" column="createdate" />
+      <result property="UpdateDate" column="updatedate" />
+      <result property="CreateUser" column="createuser" />
+      <result property="UpdateUser" column="updateuser" />
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      regid,
+      regname,
+      upperid,
+      inputstr,
+      regtype,
+      regtypename,
+      flag,
+      memo,
+      createdate,
+      updatedate,
+      createuser,
+      updateuser
+      From RegionArea
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          regid=#RegId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+    <select id="LoadAll" parameterClass="System.Collections.IDictionary" resultMap="SelectResult">
+      select * from
+      ( Select
+      regid,
+      regname,
+      upperid,
+      inputstr,
+      regtype,
+      regtypename,
+      flag,
+      memo,
+      createdate,
+      updatedate,
+      createuser,
+      updateuser,
+      ROW_NUMBER() over(order by $OrderBy$ ) rowNumber
+      From RegionArea
+      where 1=1 $Condition$
+      ) aa
+      where rowNumber BETWEEN  #Next# and #Prev#
+    </select>
+
+    <insert id="Save" parameterClass="RegionArea">
+      Insert Into RegionArea (
+      regid,
+      regname,
+      upperid,
+      inputstr,
+      regtype,
+      regtypename,
+      flag,
+      memo,
+      createdate,
+      updatedate,
+      createuser,
+      updateuser
+      )Values(
+      #RegId#,
+      #RegName#,
+      #UpperId#,
+      #InputStr#,
+      #RegType#,
+      #RegTypeName#,
+      #Flag#,
+      #Memo#,
+      #CreateDate#,
+      #UpdateDate#,
+      #CreateUser#,
+      #UpdateUser#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="RegionArea">
+      Update RegionArea Set
+      regid=#RegId#,
+      regname=#RegName#,
+      upperid=#UpperId#,
+      inputstr=#InputStr#,
+      regtype=#RegType#,
+      regtypename=#RegTypeName#,
+      flag=#Flag#,
+      memo=#Memo#,
+      createdate=#CreateDate#,
+      updatedate=#UpdateDate#,
+      createuser=#CreateUser#,
+      updateuser=#UpdateUser#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          regid=#RegId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="int">
+      Delete From RegionArea
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          regid=#RegId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+    <select id="GetMaxRegId" parameterClass="string" resultClass="string">
+      Select max(regid)
+      From RegionArea where 1=1 $Condition$
+    </select>
+
+  </statements>
+</sqlMap>

@@ -1,0 +1,40 @@
+﻿@model HujingModel.MenuModel
+<link href="~/css/frame/bootstrap.min.css" rel="stylesheet" />
+<link href="~/css/frame/app.css" rel="stylesheet" />
+<div class="leftbar">
+    <div class="leftbar-fold">
+        <i class="fa fa-bars leftbar-fold-icon leftbar-trans" aria-hidden="true"></i>
+    </div>
+    @{
+        var grouMenu = Model.Menus;
+        if ((grouMenu != null) && (grouMenu.Count > 0))
+        {
+            foreach (var item in @Model.Menus)
+            {
+                <div class="leftbar-nav" >
+                    <div class="leftbar-title leftbar-trans" >
+                        <div class="leftbar-title2-inner" >
+                            <i class="fa fa-chevron-circle-right leftbar-title-icon" aria-hidden="true"></i>
+                            <span class="leftbar-title-text">@item.text</span>
+                        </div>
+                    </div>
+                    <ul class="leftbar-trans">
+                        @foreach (var subItem in @item.subList)
+                        {
+                            <li class="nav-item">
+                                <a href="@subItem.URL" class="left-a-nav" data-type="iframe" target="iframe">
+                                    <div class="nav-icon"><i class="@subItem.IconClass" aria-hidden="true"></i></div>
+                                    <span class="nav-title">@subItem.GroupName</span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+        }
+    }
+</div>
+
+<script src="~/Scripts/jquery-3.0.0.min.js"></script>
+<script src="~/Scripts/bootstrap.3.3/js/bootstrap.min.js"></script>
+<script src="~/css/frame/admin_leftbar.js"></script>

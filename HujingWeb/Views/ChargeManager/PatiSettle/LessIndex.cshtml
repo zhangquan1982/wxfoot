@@ -1,0 +1,478 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+<link href="~/Scripts/MiniUI/demo.css" rel="stylesheet" type="text/css" />
+<script src="~/Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+<script src="~/Scripts/MiniUI/core.js" type="text/javascript"></script>
+<script src="~/Scripts/moment.min.js"></script>
+<script src="~/Scripts/Print/jquery.jqprint-0.3.js"></script>
+
+<style type="text/css">
+    html, body {
+        padding: 0;
+        margin: 0;
+        border: 0;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    table td {
+        font-size: 12px;
+    }
+</style>
+<head>
+    <script src="~/Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+    <script src="~/Scripts/MiniUI/core.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var grid;
+        var gridPerson;
+        var gridcollect;
+        $(document).ready(function () {
+            mini.parse();
+            grid = mini.get("grid1");
+            gridcollect = mini.get("gridCollect");
+            gridPerson = mini.get("SelPerson");
+            $("#btnSave").click(function (event) {
+                form.validate();
+                gridcollect.validate();
+
+                if (form.isValid() == false) {
+                    return;
+                }
+                if (gridcollect.getData().length == 0) {
+                    //mini.showTips({ content: "没有选择保存项目！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                    //return;
+                }
+
+                //var head = form.getData();
+                var items = gridcollect.getData();
+                var head = {};
+                head.SerialNum = $("#PSerialNum").val();
+                head.PreAmount = $("#divPreAmount").html();
+                var floatpreamount = 0.0;
+                if ($("#divPreAmount").html() != "") {
+                    var floatpreamount = parseFloat($("#divPreAmount").html());
+                }
+                if (head.PreAmount)
+                    var am15add = $("#divAdd15Day").html();
+                var am30add = $("#divAdd30Day").html();
+                var floatAddAmount = AddAmount
+
+                var leavAmount = parseFloat(mini.getbyName("LeaveAmount").getValue());
+                head.AddAmount = am30add;
+                head.SettleAmount = parseFloat($("#divFeeAmount").html());
+                head.PatiAmount = parseFloat($("#divFeeAmount").html()) + head.AddAmount;
+
+                head.AddReson = addreason;
+                if (head.SerialNum == "") {
+                    mini.showTips({ content: "没有对应的老人编号！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                    return;
+                }
+                if (head.PreAmount == "") {
+                    mini.showTips({ content: "预交金不对！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                    return;
+                }
+
+                var leavAmount = parseFloat(mini.getbyName("LeaveAmount").getValue());
+                var ysaddAmount = parseFloat(mini.getbyName("LessAddAmount").getValue()); //应收金额
+                var addAmount = parseFloat(mini.getbyName("SSAmount").getValue());  // 实收金额
+
+                var jmString = mini.getbyName("LessAmount").getValue();
+                var jmAmount = 0.0;
+                if (jmString != "") {
+                    jmAmount = parseFloat(jmString);
+                }
+                var lessreason = "";
+                var amount = floatpreamount - head.SettleAmount;
+
+                if (amount >= 0) {
+                    if (amount != leavAmount) {
+                        mini.showTips({ content: "结账数据不正确，请联系管理员！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                        return;
+                    }
+                    head.SettlePayAmount = -amount;
+                }
+                else {
+                    if (-amount != (addAmount+jmAmount)) {
+                        mini.showTips({ content: "实收金额或减免金额不正确，请输入正确金额！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                        return;
+                    }
+                    lessreason = mini.getbyName("LessReson").getValue();
+                    head.LessReson = lessreason;
+                    head.LessAmount = jmAmount;
+                    head.SettlePayAmount = addAmount;
+                }
+
+           
+                var payList = {};
+                var pamode = mini.getbyName("PayModeType").getValue();
+                payList.PayModeType = pamode;
+
+                payList.AmountCash = parseFloat(mini.getbyName("AmountCash").getValue());
+                payList.AmountCard = parseFloat(mini.getbyName("AmountCard").getValue());
+                if ((payList.AmountCash + payList.AmountCard) != addAmount) {
+                    mini.showTips({ content: "现金或者刷卡金额不对！", state: "warning", x: "center", y: "top", timeout: 4000 });
+                    return;
+                }
+                var jsonData = mini.encode({ Settle: head, PatiPay: payList, SettleItems: items });
+                mini.confirm("确定办理出院结账吗？", "确定", function (action) {
+                    if (action == "ok") {
+                        $.ajax({
+                            url: '@Url.Action("SavePatiSettle")',
+                            type: 'post',
+                            data: jsonData,
+                            contentType: "application/json; charset=utf-8",
+                            dataType: 'json',
+                            cache: false,
+                            success: function (result) {
+                                result = eval('(' + result + ')');
+                                if (result.code == "100") {
+                                    mini.showTips({ content: "出院结算成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                                    //$("#divPrintContent").show();
+                                    //$("#divPrintContent").jqprint(); //打印
+                                }
+                                else {
+                                    mini.showTips({ content: result.msg, state: "danger", x: "center", y: "top", timeout: 3000 });
+                                    return;
+                                }
+
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                alert(jqXHR.responseText);
+                                alert(jqXHR.errorThrown);
+                            }
+                        });
+                    }
+                });
+
+            });
+        });
+
+        function PayModeChange() {
+            var pamode = mini.getbyName("PayModeType").getValue();
+            mini.getbyName("AmountCash").setValue(0);
+            mini.getbyName("AmountCard").setValue(0);
+            if (pamode == "0") {
+                $("#divCard").hide();
+                $("#divCash").show();
+            }
+            else if (pamode == "1") {
+                $("#divCard").show();
+                $("#divCash").hide();
+            }
+            else {
+                $("#divCard").show();
+                $("#divCash").show();
+            }
+        }
+
+        function onComboValidation(e) {
+            var items = this.findItems(e.value);
+            if (!items || items.length == 0) {
+                e.isValid = false;
+                e.errorText = "输入值不在下拉数据中";
+
+                $("#PatiMsg").html("");
+                mini.getbyName("SerialNum").setValue("");
+                $("#PatiAmount").html("");
+            }
+        }
+
+        function RefreshPerson(e) {
+            if (e.value.length >= 1) {
+                var url = '@Url.Action("GetInPatiPersonStatus")?status=4&input=' + e.value;
+                gridPerson.load(url);
+            }
+        }
+    </script>
+</head>
+<form id="frmBill">
+    <div id="divPrintContent" showcollapsebutton="true">
+        <div style=" float:left;">
+            <div style="width: 700px; padding: 10px; height: 17%; border: 1px gray solid">
+                <div>
+                    <div style="float: left; margin-left: 5px;font-size:14px;">
+                        选择老人:
+                    </div>
+                    <div style="float: left; margin-left: 5px;font-size:14px;">
+                        <div style="float: left; margin-left: 5px">
+                            <div id="SelPerson" name="SelPerson" class="mini-combobox" style="width:120px;" popupwidth="360px" textfield="PatiName" valuefield="SerialNum"
+                                 url='@Url.Action("GetInPatiPersonStatus", new { status = "4" })' value="" allowinput="true" onvaluechanged="RefreshPerson" onvalidation="onComboValidation" onitemclick="ClickSelPerson">
+                                <div property="columns">
+                                    <div header="床位号" field="BedName"></div>
+                                    <div header="入院编号" field="SerialNum"></div>
+                                    <div header="姓名" field="PatiName"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="float: left; margin-left: 5px; color:red">
+                        提示：请在左侧输入框中输入姓名、入院号或者HIS编号,然后回车！
+                    </div>
+                    <div style="clear: both; height: 20px">
+                    </div>
+                    <div><input type="hidden" id="PSerialNum" /></div>
+
+                    <div style="">
+                        <div style="float: left; margin-left: 5px;font-size:14px;">
+                            老人信息:
+                        </div>
+
+                        <div style="float: left; margin-left: 5px; font-size:14px; color:blue" id="PatiMsg">
+                        </div>
+                    </div>
+                    <div style="clear: both; height: 10px">
+                    </div>
+                    <div style="margin-left: 70px; font-size:14px; color:red" id="PatiAmount">
+                    </div>
+                    <input id="SerialNum" name="SerialNum" class="mini-textbox" style="width: 100px" visible="false" />
+                </div>
+            </div>
+            <div>
+                <div id="tabs1" class="mini-tabs" activeindex="0" style=" float:left;width:720px; height: 70%;"
+                     plain="false">
+                    <div title="汇总" iconcls="icon-addfolder">
+                        <fieldset id="fdCollect" style="width:96%; height: 90%">
+                            <legend><span>汇总费用</span></legend>
+                            <div class="fieldset-body">
+                                <div id="gridCollect" class="mini-datagrid" style="width: 100%; height: 90%;"
+                                     allowresize="true" url="@Url.Action("GetPatiBillCollect","PersonBill")" idfield="Status" pagesize="15" multiselect="true" ondrawsummarycell="onDrawSummaryCell">
+                                    <div property="columns">
+                                        <div type="checkcolumn" width="20">
+                                        </div>
+                                        <div field="ItemId" width="50" headeralign="center" align="center" allowsort="true">
+                                            项目编码
+                                        </div>
+                                        <div field="ItemName" width="50" headeralign="center" align="center" allowsort="true">
+                                            项目名称
+                                        </div>
+                                        <div field="UnitName" width="40" headeralign="center" align="center" allowsort="true">
+                                            规格
+                                        </div>
+                                        <div field="Price" width="50" headeralign="center" align="center" vtype="float" allowsort="true">
+                                            价格
+                                        </div>
+                                        <div field="Quantity" width="40" headeralign="center" align="center" vtype="float" allowsort="true">
+                                            数量
+                                        </div>
+                                        <div field="TotalAmount" width="50" headeralign="center" align="center" vtype="float" allowsort="true">
+                                            总金额
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div title="流水" iconcls="icon-addfolder">
+                        <fieldset id=" fddetail" style="width: 96%; height: 80%">
+                            <legend><span>详细信息</span></legend>
+                            <div class="fieldset-body">
+                                <div id="grid1" class="mini-datagrid" style="width: 100%; height: 90%;"
+                                     allowresize="true" url="@Url.Action("GetPatiBillList", "PersonBill")"  idfield="Status" pagesize="15" multiselect="true">
+                                    <div property="columns">
+                                        <div type="checkcolumn" width="20">
+                                        </div>
+                                        <div field="ItemId" width="50" headeralign="center" align="center" allowsort="true">
+                                            项目编码
+                                        </div>
+                                        <div field="ItemName" width="50" headeralign="center" align="center" allowsort="true">
+                                            项目名称
+                                        </div>
+                                        <div field="UnitName" width="40" headeralign="center" align="center" allowsort="true">
+                                            规格
+                                        </div>
+                                        <div field="Price" width="60" headeralign="center" align="center" allowsort="true">
+                                            价格
+                                        </div>
+                                        <div field="Quantity" width="40" headeralign="center" align="center" allowsort="true">
+                                            数量
+                                        </div>
+                                        <div field="TotalAmount" width="60" headeralign="center" align="center" vtype="float" allowsort="true">
+                                            总金额
+                                        </div>
+                                        <div field="CreateDate" width="60" headeralign="center" align="center" allowsort="true">
+                                            记账时间
+                                        </div>
+                                        <div field="CreateUser" width="50" headeralign="center" align="center" allowsort="true">
+                                            记账人
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="float:left; color:#3896db; font-size:20px; font-weight:bold;margin-top:10px; height:65%;width:30%;border: 1px gray solid">
+            <div><a class="mini-button" href="javascript:void(0);" style="width: 100%; height:30px; margin-right: 50px;">出院结账</a></div>
+            <div>
+                <div style=" float:left;margin-left:10px;margin-top:10px">预交金总金额:</div>
+                <div style="float:left;color:red;margin-top:10px" id="divPreAmount"></div>
+            </div>
+            <div style="clear:both;"></div>
+            <div>
+                <div style=" float:left;margin-left:10px;margin-top:10px">消费总金额:</div>
+                <div style="float:left;color:red;margin-top:10px" id="divFeeAmount"></div>
+            </div>
+            <div style="clear:both;"></div>
+            <div style=" margin-top:10px">
+                <div id="divLeave" style="float:left;font-size:15px;margin-left:10px;">应退金额:<input id="LeaveAmount" name="LeaveAmount" allowinput="false" class="mini-textbox" vtype="float" style="width: 120px" /></div>
+                <div style="clear:both"></div>
+
+                <div id="ysdiv" style=" margin-top:20px; height:160px;font-size:13px;border: 1px gray solid">
+                    <div style="margin-left:10px;">
+                        <div  id="divPay" style="float:left;margin-top:10px">
+                            应收金额:<input id="LessAddAmount" name="LessAddAmount" class="mini-textbox" vtype="float" allowinput="false" value="0" style="width:100px" />
+        
+                        </div>
+                        <div style="clear:both;height:3px"></div>
+                        <div>
+                            加收/减免<input name="isAdd" onvaluechanged="OnisAddChanged" style="width: 70px;" class="mini-combobox" valuefield="CodeId"
+       textfield="CodeName" data="[{CodeId: '0', CodeName: '加收'}, {CodeId: '1', CodeName: '减免'}]"
+       required="true" emptytext="请选择" />
+                        </div>
+                        <div style="clear:both;height:3px"></div>
+                        <div id="divAdd">
+                            <div style="font-size:15px; float:left">
+                                加收金额:<input id="AddAmount" name="AddAmount" class="mini-textbox" vtype="float" value="0" style="width:100px" onvaluechanged="OnLessChange" />
+                            </div>
+                            <div style="font-size:15px; float:left; margin-left:5px">
+                                加收原因:<input id="AddReson" name="AddAmount" class="mini-textbox" value="" style="width:100px" />
+                            </div>
+                        </div>
+                        <div id="divLess" >
+                            <div style="font-size:15px; float:left">
+                                减免金额:<input id="LessAmount" name="LessAmount" class="mini-textbox" vtype="float" value="0" style="width:100px" onvaluechanged="OnLessChange" />
+                            </div>
+                            <div style="font-size:15px; float:left; margin-left:5px">
+                                减免原因:<input id="LessReson" name="LessReson" class="mini-textbox" value="" style="width:100px"  />
+                            </div>
+                        </div>
+
+                        <div style="clear:both;height:3px"></div>
+                        <div >
+                            <div style="float:left; font-size:15px">实收金额:<input id="SSAmount" name="SSAmount" class="mini-textbox" vtype="float"  value="0" style="width:100px" /></div>
+                            <div style="float:left; font-size:15px; margin-left:8px">
+                                <input name="PayModeType" class="mini-combobox" valuefield="CodeId" textfield="CodeName"
+                                       style="width: 100px" allowinput="false" data="[{CodeId: '0', CodeName: '现金'}, {CodeId: '1', CodeName: '刷卡'}, {CodeId: '2', CodeName: '现金+刷卡'}]"
+                                       required="true" emptytext="请选择" onvaluechanged="PayModeChange" />
+                            </div>
+                        </div>
+
+                        <div style=" clear:both; height:10px; font-size:10px">
+                        </div>
+                        <div style="font-weight:bold;">
+                            <div id="divCash" style="float:left; ;font-size:15px;">现金金额:<input id="AmountCash" name="AmountCash" class="mini-textbox" vtype="float" required="true" value="0" style="width: 100px" /></div>
+                            <div id="divCard" style="float:left; margin-left:5px;font-size:15px">刷卡金额:<input id="AmountCard" name="AmountCard" class="mini-textbox" vtype="float" required="true" value="0" style="width: 100px" /></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div style="text-align: center; padding: 10px;margin-top:15px;">
+                <a class="mini-button" id="btnSave" href="javascript:void(0);" style="width: 160px; height:30px;">出院结账</a>
+            </div>
+        </div>
+
+    </div>
+</form>
+<script type="text/javascript">
+    mini.parse();
+    var grid = mini.get("grid1");
+    var form = new mini.Form("frmBill");
+
+
+    function OnLessChange(e)
+    {
+        //alert(e.value);
+    }
+
+    function ClickSelPerson(e) {
+        var result = e.item;
+        if (result.StatusName != "出院申请") {
+            mini.showTips({ content: "此人未申请出院！", state: "warning", x: "center", y: "top", timeout: 3000 });
+            return;
+        }
+        var admitdate = moment(result.AdmitDate).format('YYYY-MM-DD');
+        var PMsg = "姓名:" + result.PatiName + ",入院日期:" + admitdate + ",年龄:" + result.Age
+        $("#PatiMsg").html(PMsg);
+        $("#PSerialNum").val(result.SerialNum);
+        var yjAmount = parseInt(result.PreAmount - result.Deposit);
+        var yeAmount = parseInt(yjAmount - result.FeeAmount);
+        var Pmsg2 = "押金:" + result.Deposit;
+        $("#PatiAmount").html(Pmsg2);
+        $("#divPreAmount").html(result.PreAmount);
+
+        var eat = result.Eatinghabits;
+        var dev = result.Deviant;
+        var floateat = 0;
+        var floatdev = 0;
+        if (eat != "") {
+            floateat = parseFloat(eat);
+            $("#divAdd15Day").html(eat);
+        }
+        if (dev != "") {
+            floatdev = parseFloat(dev);
+            $("#divAdd30Day").html(dev);
+        }
+        mini.getbyName("LessAmount").setValue("0");
+        mini.getbyName("SSAmount").setValue("0");
+
+        var lvAmount = 0.0;
+        lvAmount = (floateat + floatdev + parseFloat(result.FeeAmount)) - result.PreAmount;
+        if (lvAmount >= 0) {
+            mini.getbyName("LeaveAmount").setValue("0");
+            mini.getbyName("LessAddAmount").setValue(lvAmount);
+            $("#divLeave").hide();
+            $("#ysdiv").show();
+        }
+        else {
+            mini.getbyName("LeaveAmount").setValue(-lvAmount);
+            mini.getbyName("LessAddAmount").setValue("0");
+            $("#ysdiv").hide();
+            $("#divLeave").show();
+        }
+
+
+        grid.load({ SerialNum: result.SerialNum });
+        gridcollect.load({ SerialNum: result.SerialNum });
+    }
+
+    function OnisAddChanged(e) {
+        var isadd = mini.getbyName("isAdd");
+        var id = isadd.getValue();
+        if(id=="0")
+        {
+            $("#divAdd").show();
+            $("#divLess").hide();
+        }
+        else
+        {
+            $("#divAdd").hide();
+            $("#divLess").show();
+        }
+    }
+
+    function onDrawSummaryCell(e) {
+
+        var result = e.result;
+        var grid = e.sender;
+        var allAmount = 0.00;
+
+        //服务端汇总计算
+        if (e.field == "TotalAmount") {
+            for (var i = 0; i < result.data.length; i++) {
+                allAmount = parseFloat(allAmount) + parseFloat(result.data[i].TotalAmount);
+            }
+            //e.innerHTML = "<span style='color:Brown;'>"
+            //    + "总金额: " + allAmount
+            //+ "</span>";
+            $("#divFeeAmount").html(allAmount);
+        }
+    }
+
+
+
+</script>

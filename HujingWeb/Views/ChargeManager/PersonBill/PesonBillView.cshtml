@@ -1,0 +1,136 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+<link href="~/Scripts/MiniUI/demo.css" rel="stylesheet" type="text/css" />
+<script src="~/Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+<script src="~/Scripts/MiniUI/core.js" type="text/javascript"></script>
+<script src="~/Scripts/moment.min.js"></script>
+<script src="~/Scripts/Print/jquery.jqprint-0.3.js"></script>
+
+<style type="text/css">
+    html, body {
+        padding: 0;
+        margin: 0;
+        border: 0;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    table td {
+        font-size: 12px;
+    }
+</style>
+<script src="~/Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+<script src="~/Scripts/MiniUI/core.js" type="text/javascript"></script>
+<script type="text/javascript">
+        var grid;
+        var gridcollect;
+        $(document).ready(function () {
+            mini.parse();
+            grid = mini.get("grid1");
+            gridcollect = mini.get("gridCollect");
+            var sernum = mini.getbyName("SerialNum").getValue();
+            grid.load({ SerialNum: sernum });
+            gridcollect.load({ SerialNum: sernum });
+        });
+
+        function onDrawSummaryCell(e) {
+
+            var result = e.result;
+            var grid = e.sender;
+            var allAmount = 0.00;
+
+            //服务端汇总计算
+            if (e.field == "TotalAmount") {
+                for (var i = 0; i < result.data.length; i++) {
+                    allAmount = parseFloat(allAmount) + parseFloat(result.data[i].TotalAmount);
+                }
+                //e.innerHTML = "<span style='color:Brown;'>"
+                //    + "总金额: " + allAmount
+                //+ "</span>";
+                $("#divFeeAmount").html(allAmount);
+            }
+        }
+</script>
+<div>
+    <div><input name="SerialNum" class="mini-textbox" visible="false" value="@ViewBag.SerialNum" /></div>
+    <div id="tabs1" class="mini-tabs" activeindex="0" style=" float:left;width:100%; height: 90%;"
+         plain="false">
+        <div title="汇总" iconcls="icon-addfolder">
+            <fieldset id="fdCollect" style="width:96%; height: 90%">
+                <legend><span>汇总费用</span></legend>
+                <div class="fieldset-body">
+                    <div id="gridCollect" class="mini-datagrid" style="width: 100%; height: 90%;"
+                         allowresize="true" url="@Url.Action("GetPatiBillCollect","PersonBill")" idfield="Status" pagesize="15" multiselect="true" ondrawsummarycell="onDrawSummaryCell">
+                        <div property="columns">
+                            <div type="checkcolumn" width="20">
+                            </div>
+                            <div field="ItemId" width="50" headeralign="center" align="center" allowsort="true">
+                                项目编码
+                            </div>
+                            <div field="ItemName" width="50" headeralign="center" align="center" allowsort="true">
+                                项目名称
+                            </div>
+                            <div field="UnitName" width="40" headeralign="center" align="center" allowsort="true">
+                                规格
+                            </div>
+                            <div field="Price" width="50" headeralign="center" align="center" vtype="float" allowsort="true">
+                                价格
+                            </div>
+                            <div field="Quantity" width="40" headeralign="center" align="center" vtype="float" allowsort="true">
+                                数量
+                            </div>
+                            <div field="TotalAmount" width="50" headeralign="center" align="center" vtype="float" allowsort="true">
+                                总金额
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div title="流水" iconcls="icon-addfolder">
+            <fieldset id=" fddetail" style="width: 96%; height: 90%">
+                <legend><span>详细信息</span></legend>
+                <div class="fieldset-body">
+                    <div id="grid1" class="mini-datagrid" style="width: 100%; height: 90%;"
+                         allowresize="true" url="@Url.Action("GetPatiBillList", "PersonBill")" idfield="Status" pagesize="15" multiselect="true">
+                        <div property="columns">
+                            <div type="checkcolumn" width="20">
+                            </div>
+                            <div field="ItemId" width="50" headeralign="center" align="center" allowsort="true" visible="false">
+                                项目编码
+                            </div>
+                            <div field="ItemName" width="80" headeralign="center" align="center" allowsort="true">
+                                项目名称
+                            </div>
+                            <div field="UnitName" width="30" headeralign="center" align="center" allowsort="true">
+                                规格
+                            </div>
+                            <div field="Price" width="60" headeralign="center" align="center" allowsort="true">
+                                价格
+                            </div>
+                            <div field="Quantity" width="40" headeralign="center" align="center" allowsort="true">
+                                数量
+                            </div>
+                            <div field="TotalAmount" width="60" headeralign="center" align="center" vtype="float" allowsort="true">
+                                总金额
+                            </div>
+                            <div field="CreateDate" width="120" headeralign="center" align="center" allowsort="true" dateformat="yyyy-MM-dd HH:mm:ss">
+                                记账时间
+                            </div>
+                            <div field="CreateUser" width="50" headeralign="center" align="center" allowsort="true">
+                                记账人
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    <div style="clear:both;"></div>
+    <div>
+        <div style=" float:left;margin-left:10px;margin-top:10px">消费总金额:</div>
+        <div style="float:left;color:red;margin-top:10px" id="divFeeAmount"></div>
+    </div>
+</div>

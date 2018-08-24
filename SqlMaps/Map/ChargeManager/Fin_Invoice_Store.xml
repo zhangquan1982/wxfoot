@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sqlMap namespace="Fin_Invoice_StoreMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <alias>
+    <typeAlias alias="Fin_Invoice_Store" type="HujingModel.Fin_Invoice_StoreEntity, HujingModel" />
+  </alias>
+
+  <resultMaps>
+    <resultMap id="SelectResult" class="Fin_Invoice_Store">
+      <result property="InvType" column="InvType"/>
+      <result property="InvEmpId" column="InvEmpId"/>
+      <result property="InvBegin" column="InvBegin"/>
+      <result property="InvEnd" column="InvEnd"/>
+      <result property="InvNow" column="InvNow"/>
+      <result property="InvCount" column="InvCount"/>
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      SELECT InvType ,InvEmpId ,InvBegin ,InvEnd ,InvNow ,InvCount FROM Fin_Invoice_Store
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          1=1
+        </isParameterPresent>
+
+      </dynamic>
+    </select>
+
+    <select id="GetNewInVoiceId" parameterClass="string" resultClass="int">
+      select invNow + 1 from Fin_Invoice_Store where 1=1
+    </select>
+    
+    <insert id="Insert" parameterClass="System.Collections.IDictionary">
+      INSERT INTO Fin_Invoice_Store(InvType ,InvEmpId ,InvBegin ,InvEnd ,InvNow ,InvCount) VALUES(#InvType# ,#InvEmpId# ,#InvBegin# ,#InvEnd# ,#InvNow# ,#InvCount#)
+    </insert>
+
+    <select id="LoadAll" parameterClass="System.Collections.IDictionary" resultMap="SelectResult">
+      SELECT InvType ,InvEmpId ,InvBegin ,InvEnd ,InvNow ,InvCount FROM Fin_Invoice_Store
+    </select>
+
+    <update id="UpdateNowInvoice" parameterClass="Fin_Invoice_Store">
+      declare @invoice int
+      set @invoice = ( select invNow + 1 from [Fin_Invoice_Store] WHERE InvType = '100')
+
+      UPDATE Fin_Invoice_Store
+      SET InvNow=@invoice WHERE InvType = '100'
+    </update>
+
+    <update id="UpdateNowSettleInvoice" parameterClass="Fin_Invoice_Store">
+      declare @invoice int
+      set @invoice = ( select invNow + 1 from [Fin_Invoice_Store] WHERE InvType = '200' )
+
+      UPDATE Fin_Invoice_Store
+      SET InvNow=@invoice WHERE InvType = '200'
+    </update>
+  </statements>
+</sqlMap>

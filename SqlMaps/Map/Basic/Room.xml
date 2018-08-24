@@ -1,0 +1,184 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="RoomMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="Room" type="HujingModel.RoomEntity, HujingModel" />
+    <typeAlias alias="RoomBed" type="HujingModel.BuildRoomBedEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="Room">
+      <result property="RoomId" column="roomid" />
+      <result property="RoomName" column="roomname" />
+      <result property="RoomNum" column="roomnum" />
+      <result property="RoomDirection" column="roomdirection" />
+      <result property="FloorId" column="FloorId" />
+      <result property="Memo" column="memo" />
+      <result property="CreateDate" column="createdate" />
+      <result property="UpdateDate" column="updatedate" />
+      <result property="CreateUser" column="createuser" />
+      <result property="UpdateUser" column="updateuser" />
+      <result property="OrgId" column="orgid" />
+    </resultMap>
+
+    <!--<resultMap id="RoomBedResult" class="RoomBed">
+      <result property="BuildName" column="buildname" />
+      <result property="FloorId" column="floorid" />
+      <result property="FloorName" column="floorname" />
+      <result property="RoomId" column="roomid" />
+      <result property="RoomName" column="roomname" />
+      <result property="RoomNum" column="roomnum" />
+      <result property="RoomDirection" column="roomdirection" />
+      <result property="BedId" column="bedid" />
+      <result property="BedName" column="bedname" />
+      <result property="Status" column="status" />
+      <result property="DepId" column="depid" />
+      <result property="DepName" column="depname" />
+    </resultMap>-->
+
+    
+    <resultMap id="RoomBedResult" class="RoomBed">
+      <result property="DepId" column="DepId" />
+      <result property="DepName" column="DepName" />
+      <result property="BuildId" column="buildid" />
+      <result property="BuildName" column="buildname" />
+      <result property="FloorId" column="floorid" />
+      <result property="FloorName" column="floorname" />
+      <result property="RoomId" column="roomid" />
+      <result property="RoomName" column="roomname" />
+      <result property="RoomNum" column="roomnum" />
+      <result property="RoomDirection" column="roomdirection" />
+      <result property="BedId" column="bedid" />
+      <result property="BedName" column="bedname" />
+      <result property="Status" column="status" />
+    </resultMap>
+
+
+  </resultMaps>
+
+  <statements>
+
+    <select id="GetMaxRoomId" resultClass="string">
+      Select max(cast(roomid as int))
+      From Room where 1=1
+    </select>
+
+    <select id="Count" parameterClass="string" resultClass="int">
+      Select count(roomid) From Room where 1=1 $Condition$
+    </select>
+
+
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      roomid,
+      roomname,
+      roomnum,
+      roomdirection,
+      floorid,
+      memo,
+      createdate,
+      updatedate,
+      createuser,
+      updateuser,
+      orgid
+      From Room
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          roomid=#RoomId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+    <select id="LoadAll" parameterClass="System.Collections.IDictionary" resultMap="SelectResult">
+      select * from
+      ( Select
+      roomid,
+      roomname,
+      roomnum,
+      roomdirection,
+      floorid,
+      memo,
+      createdate,
+      updatedate,
+      createuser,
+      updateuser,
+      orgid,
+      ROW_NUMBER() over(order by $OrderBy$ ) rowNumber
+      From Room
+      where 1=1 $Condition$
+      ) aa
+      where rowNumber BETWEEN  #Next# and #Prev#
+    </select>
+
+    <select id="GetRoomBedCount" parameterClass="string" resultClass="int">
+      select  count(bedid)
+      from room inner join bed on bed.roomid = room.roomid where 1=1 $Condition$
+    </select>
+
+    <select id="LoadAllRoomBed" parameterClass="System.Collections.IDictionary" resultMap="RoomBedResult">
+      select * from
+      (  select
+      dep.DepId,
+      dep.DepName,
+      buildid, Build.buildname,BuildFloor.floorid,floorname,room.roomid, room.roomname,room.roomnum,
+      roomdirection,bed.bedid,bed.bedname,status,
+      ROW_NUMBER() over(order by $OrderBy$ ) rowNumber
+      from room inner join bed on bed.roomid = room.roomid
+      inner join BuildFloor on BuildFloor.FloorId = room.floorid
+      INNER JOIN  dbo.Build ON dbo.BuildFloor.BuildNum = dbo.Build.BuildId
+      left join depbed dp on dp.BedId = bed.BedId
+      left join Department dep on dp.DepId = dep.DepId
+      where 1=1 $Condition$
+      ) aa
+      where rowNumber BETWEEN  #Next# and #Prev#
+    </select>
+
+
+    <insert id="InsertRoom" parameterClass="Room">
+      Insert Into Room (
+      roomid,
+      roomname,
+      floorid,
+      roomnum,
+      roomdirection,
+      memo,
+      createdate,
+      createuser,
+      orgid
+      )Values(
+      #RoomId#,
+      #RoomName#,
+      #FloorId#,
+      #RoomNum#,
+      #RoomDirection#,
+      #Memo#,
+      #CreateDate#,
+      #CreateUser#,
+      #OrgId#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="Room">
+      Update Room Set
+      roomname=#RoomName#,
+      roomnum=#RoomNum#,
+      roomdirection=#RoomDirection#,
+      memo=#Memo#,
+      updatedate=#UpdateDate#,
+      updateuser=#UpdateUser#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          roomid=#RoomId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="DeleteRoom" parameterClass="int">
+      update Room set flag=1
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          roomid=#RoomId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+  </statements>
+</sqlMap>

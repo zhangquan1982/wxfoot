@@ -1,0 +1,251 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="PatiInBillItemMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="PatiInBillItem" type="HujingModel.PatiInBillItemEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="PatiInBillItem">
+      <result property="BillItemId" column="billitemid" />
+      <result property="UserId" column="userid" />
+      <result property="OrdId" column="ordid" />
+      <result property="Amount" column="amount" />
+      <result property="IsUnusual" column="isunusual" />
+      <result property="UnusualMemo" column="unusualmemo" />
+      <result property="CreateDate" column="createdate" />
+      <result property="TypeCode" column="typecode" />
+      <result property="CreateUser" column="createuser" />
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+
+    <select id="Count" parameterClass="string" resultClass="int">
+      Select count(BillItemId) From PatiInBillItem where 1=1 $Condition$
+    </select>
+    
+    
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      billitemid,
+      userid,
+      ordid,
+      amount,
+      isunusual,
+      unusualmemo,
+      createdate,
+      typecode,
+      createuser
+      From PatiInBillItem
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          billitemid=#BillItemId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+
+    <select id="LoadAll" parameterClass="System.Collections.IDictionary" resultMap="SelectResult">
+      select * from
+      ( Select
+      billitemid,
+      userid,
+      ordid,
+      amount,
+      isunusual,
+      unusualmemo,
+      createdate,
+      typecode,
+      createuser,
+      ROW_NUMBER() over(order by ordid ) rowNumber
+      From PatiInBillItem
+      where 1=1 $Condition$
+      ) aa
+      where rowNumber BETWEEN  #Next# and #Prev#
+    </select>
+
+
+    <select id="LoadAllBillItem" parameterClass="System.Collections.IDictionary" resultMap="SelectResult">
+      select * from
+      (
+      Select
+      billitemid,
+      PatiInBillItem.userid,
+      ordid,
+      amount,
+      isunusual,
+      unusualmemo,
+      PatiInBillItem.createdate,
+      typecode,
+      PatiInBillItem.createuser,
+      ROW_NUMBER() over(order by PatiInBillItem.createdate $sortOrder$) rowNumber
+      from PatiInBillItem
+      inner join UserInfo on PatiInBillItem.UserId=UserInfo.UserId
+      where 1=1  $Condition$
+      ) aa
+      where rowNumber  BETWEEN #Next# and #Prev#
+    </select>
+
+    <insert id="Insert" parameterClass="PatiInBillItem">
+      Insert Into PatiInBillItem (
+      billitemid,
+      userid,
+      ordid,
+      amount,
+      isunusual,
+      unusualmemo,
+      createdate,
+      typecode,
+      createuser
+      )Values(
+      #BillItemId#,
+      #UserId#,
+      #OrdId#,
+      #Amount#,
+      #IsUnusual#,
+      #UnusualMemo#,
+      #CreateDate#,
+      #TypeCode#,
+      #CreateUser#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="PatiInBillItem">
+      Update PatiInBillItem Set
+      billitemid=#BillItemId#,
+      userid=#UserId#,
+      ordid=#OrdId#,
+      amount=#Amount#,
+      isunusual=#IsUnusual#,
+      unusualmemo=#UnusualMemo#,
+      createdate=#CreateDate#,
+      typecode=#TypeCode#,
+      createuser=#CreateUser#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          billitemid=#BillItemId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="int">
+      Delete From PatiInBillItem
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          billitemid=#BillItemId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+    <select id="GetPersonBillCount" parameterClass="string" resultClass="int">
+      SELECT Count(*)
+      FROM PatiInBill s1 INNER JOIN
+      PatiInBillItem s2  ON s1.billid = s2.billid
+      inner  join dictitem s3 on s2.itemid=s3.itemid
+      where 1=1  $Condition$
+    </select>
+    
+
+    <select id="GetPersonBillList" parameterClass="System.Collections.IDictionary" resultClass="System.Data.DataTable">
+      select * from
+      (
+      SELECT
+      s1.SerialNum,s3.ItemName,s2.*,
+      ROW_NUMBER() over(order by s1.CreateDate desc) rowNumber
+      FROM PatiInBill s1 INNER JOIN
+      PatiInBillItem s2  ON s1.billid = s2.billid
+      inner  join dictitem s3 on s2.itemid=s3.itemid
+      where 1=1  $Condition$
+      ) aa
+      where rowNumber  BETWEEN #Next# and #Prev#
+    </select>
+
+    <select id="GetPersonBackBillList" parameterClass="System.Collections.IDictionary" resultClass="System.Data.DataTable">
+      select * from
+      (
+      SELECT
+      s1.SerialNum,s1.CreateDate,s1.CreateUser,s3.ItemName,s2.BillItemId,s2.BillId,s2.OrdId,s2.OrdItemId,s2.ItemId,s2.UnitName,
+      s2.Quantity as BackQuantity,0 as Quantity,s2.Price,s2.TotalAmount,s2.RcvAmount,s2.DepExec,s2.DepLoc,
+      ROW_NUMBER() over(order by s1.CreateDate desc) rowNumber
+      FROM PatiInBill s1 INNER JOIN
+      PatiInBillItem s2  ON s1.billid = s2.billid
+      inner  join dictitem s3 on s2.itemid=s3.itemid
+      where 1=1  $Condition$
+      ) aa
+      where rowNumber  BETWEEN #Next# and #Prev#
+    </select>
+
+    
+
+    <select id="GetPersonBillCollect" parameterClass="System.Collections.IDictionary" resultClass="System.Data.DataTable">
+      select * from
+      (
+      SELECT
+      CONVERT(varchar(12),CreateDate,111) as CreateDate,SUM(Amount) as TotalAmount,
+      ROW_NUMBER() over(order by CONVERT(varchar(12),CreateDate, 111 ) desc) rowNumber
+      FROM PatiInBillItem
+      where 1=1 $Condition$  group by CONVERT(varchar(12),CreateDate, 111 )
+      ) aa
+      where rowNumber  BETWEEN #Next# and #Prev#
+    </select>
+
+
+    <select id="GetPersonBillMonthCollect" parameterClass="System.Collections.IDictionary" resultClass="System.Data.DataTable">
+      select * from
+      (
+      SELECT
+      CONVERT(varchar(7),CreateDate,120) as CreateDate,SUM(Amount) as TotalAmount,
+      ROW_NUMBER() over(order by CONVERT(varchar(7),CreateDate, 120 ) desc) rowNumber
+      FROM PatiInBillItem
+      where 1=1 $Condition$  group by CONVERT(varchar(7),CreateDate, 120 )
+      ) aa
+      where rowNumber  BETWEEN #Next# and #Prev#
+    </select>
+
+
+  <select id="GetPersonBillTypeAmount" parameterClass="System.Collections.IDictionary" resultClass="System.Data.DataTable">
+    DECLARE @sql_str VARCHAR(8000)
+    DECLARE @sql_col VARCHAR(8000)
+    SELECT   @sql_col = ISNULL(@sql_col + ',','') +    QUOTENAME([itemname])
+    FROM PatiInBill s1 inner join vOldPersonVisitAll s2 on s1.serialnum = s2.serialnum
+    inner join OldPersonInvisit s3 on s1.serialnum = s3.SerialNum
+    left join Bed s4 on s3.BedId = s4.BedId
+    inner join PatiInBillItem s5 on s1.BillId = s5.BillId
+    inner join DictItem s6  on s5.ItemId = s6.ItemID
+    GROUP BY
+    s1.serialnum,
+    s2.patiname,
+    s2.sexname,
+    s4.bedname,
+    s6.ItemName
+
+    DECLARE @sql_col2 VARCHAR(8000)
+    set @sql_col2 =  dbo.GetDistinctSqlString(@sql_col)
+
+    SET @sql_str = '
+    SELECT * FROM (
+    Select
+    s1.serialnum,
+    s2.patiname,
+    s2.sexname,
+    s4.bedname,
+    s6.ItemName,
+    sum(s5.TotalAmount) TotalAmount
+    FROM PatiInBill s1 inner join vOldPersonVisitAll s2 on s1.serialnum = s2.serialnum
+    inner join OldPersonInvisit s3 on s1.serialnum = s3.SerialNum
+    left join Bed s4 on s3.BedId = s4.BedId
+    inner join PatiInBillItem s5 on s1.BillId = s5.BillId
+    inner join DictItem s6  on s5.ItemId = s6.ItemID
+    where 1=1 $Condition$
+    group by
+    s1.serialnum,
+    s2.patiname,
+    s2.sexname,
+    s4.bedname,
+    s6.ItemName
+    ) a pivot ( sum(TotalAmount) for itemname IN ( '+ @sql_col2 +')) b
+    ORDER BY  serialnum'
+    EXEC (@sql_str)
+  </select>
+  </statements>
+  
+</sqlMap>

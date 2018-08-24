@@ -1,0 +1,191 @@
+﻿@model HujingModel.SysUserRoleEntity
+@{
+    ViewBag.Title = "用户角色授权";
+    Layout = null;
+}
+<head>
+    <title>角色绑定</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <link href="../../../Scripts/MiniUI/demo.css" rel="stylesheet" type="text/css" />
+    <script src="../../../Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+    <script src="../../../Scripts/MiniUI/core.js" type="text/javascript"></script>
+    <script src="../../../Scripts/jquery.form.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        mini.parse();
+      
+        function onClose()
+        {
+            window.CloseOwnerWindow("cancel");
+        }
+
+        function add() {
+            var listbox1 = mini.get("listbox1");
+            var listbox2 = mini.get("listbox2");
+            var items = listbox1.getSelecteds();
+            var userid = @Model.UserId;
+            if (items == "") {
+                mini.showTips({ content: "请选择绑定的角色！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+
+            var ids = [];
+            for (var i = 0; i< items.length; i++) {
+                var r = items[i];
+          
+                ids.push(r.RoleId);
+            }
+            var roleids = ids.join(',');
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("SaveUserRole")',
+                data: { "roles": roleids, "userid": userid },
+                cache: false,
+                success: function (result) {
+                    if (result == "ok") {
+                        mini.showTips({ content: "操作成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+
+                        listbox1.removeItems(items);
+                        listbox2.addItems(items);
+                    }
+                    else {
+                        mini.showTips({ content: "操作失败！", state: "danger", x: "center", y: "top", timeout: 3000 });
+                    }
+                }
+            });
+
+        }
+
+
+        function addAll() {
+            var listbox1 = mini.get("listbox1");
+            var listbox2 = mini.get("listbox2");
+            var items = listbox1.getData();
+
+            var userid = @Model.UserId;
+            if (items == "") {
+                mini.showTips({ content: "请选择绑定的角色！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+
+            var ids = [];
+            for (var i = 0; i< items.length; i++) {
+                var r = items[i];
+          
+                ids.push(r.RoleId);
+            }
+            var roleids = ids.join(',');
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("SaveUserRole")',
+                data: { "roles": roleids, "userid": userid },
+                cache: false,
+                success: function (result) {
+                    if (result == "ok") {
+                        mini.showTips({ content: "操作成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                        listbox1.removeItems(items);
+                        listbox2.addItems(items);
+                    }
+                    else {
+                        mini.showTips({ content: "操作失败！", state: "danger", x: "center", y: "top", timeout: 3000 });
+                    }
+                }
+            });
+        }
+        function removes() {
+            var listbox1 = mini.get("listbox1");
+            var listbox2 = mini.get("listbox2");
+            var items = listbox2.getSelecteds();
+            var userid = @Model.UserId;
+            if (items == "") {
+                mini.showTips({ content: "请选择绑定的角色！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+
+            var ids = [];
+            for (var i = 0; i< items.length; i++) {
+                var r = items[i];
+          
+                ids.push(r.RoleId);
+            }
+            var roleids = ids.join(',');
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("DeleteUserRole")',
+                data: { "roles": roleids, "userid": userid },
+                cache: false,
+                success: function (result) {
+                    if (result == "ok") {
+                        mini.showTips({ content: "操作成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                        listbox2.removeItems(items);
+                        listbox1.addItems(items);
+                    }
+                    else {
+                        mini.showTips({ content: "操作失败！", state: "danger", x: "center", y: "top", timeout: 3000 });
+                    }
+                }
+            });
+        }
+        function removeAll() {
+            var listbox1 = mini.get("listbox1");
+            var listbox2 = mini.get("listbox2");
+            var items = listbox2.getData();
+            var userid = @Model.UserId;
+            if (items == "") {
+                mini.showTips({ content: "请选择绑定的角色！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+            var ids = [];
+            for (var i = 0; i< items.length; i++) {
+                var r = items[i];
+                ids.push(r.RoleId);
+            }
+            var roleids = ids.join(',');
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("DeleteUserRole")',
+                data: { "roles": roleids, "userid": userid },
+                cache: false,
+                success: function (result) {
+                    if (result == "ok") {
+                        mini.showTips({ content: "操作成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                        listbox2.removeItems(items);
+                        listbox1.addItems(items);
+                    }
+                    else {
+                        mini.showTips({ content: "操作失败！", state: "danger", x: "center", y: "top", timeout: 3000 });
+                    }
+                }
+            });
+        }
+
+
+
+
+    </script>
+</head>
+<body>
+    <table>
+        <tr>
+            <td>
+                <input name="UserId"  class="mini-textbox"   visible="fasle" value="@Model.UserId"  />
+                <div id="listbox1" class="mini-listbox" style="width: 140px; height: 230px;" textfield="RoleName"
+                    valuefield="RoleId" showcheckbox="true" multiselect="true" url='@Url.Action("GetNoRole")?userid=@Model.UserId'>
+                </div>
+            </td>
+            <td style="width: 120px; text-align: center;">
+                <input type="button" value=">" onclick="add()" style="width: 40px;" /><br />
+                <input type="button" value=">>" onclick="addAll()" style="width: 40px;" /><br />
+                <input type="button" value="&lt;&lt;" onclick="removeAll()" style="width: 40px;" /><br />
+                <input type="button" value="&lt;" onclick="removes()" style="width: 40px;" /><br />
+            </td>
+            <td>
+                <div id="listbox2" class="mini-listbox" style="width: 140px; height: 230px;" textfield="RoleName" valuefield="RoleId"  showcheckbox="true"
+                    multiselect="true" url='@Url.Action("GetRole")?userid=@Model.UserId'>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <div style="text-align: center; padding: 10px;">
+        <a class="mini-button" onclick="onClose" style="width: 60px;">关闭</a>
+    </div>
+</body>

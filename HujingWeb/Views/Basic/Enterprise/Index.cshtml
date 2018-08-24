@@ -1,0 +1,179 @@
+﻿@{
+    ViewBag.Title = "企业管理";
+    Layout = null;
+}
+<head>
+    <script src="../../Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+    <script src="../../Scripts/MiniUI/core.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var grid;
+        $(document).ready(function () {
+            mini.parse();
+            grid = mini.get("grid1");
+            grid.load();
+        });
+
+
+        function AddRow() {
+            var url = '@Url.Action("Add")';
+            mini.open({
+                url: url,
+                title: "新增企业", width: 280, height: 260,
+                onload: function () {
+                    var iframe = this.getIFrameEl();
+                    var data = { action: "new" };
+                },
+                ondestroy: function (action) {
+                    if (action == "save") {
+                        mini.showTips({ content: "保存成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                        grid.load();
+                    }
+                }
+            });
+        }
+
+        function Edit() {
+            var rows = grid.getSelecteds();
+            if (rows.length <= 0) {
+                mini.showTips({ content: "请选择要编辑的角色！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+            if (rows.length > 1) {
+                mini.showTips({ content: "只能选择一个角色！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+
+            var url = '@Url.Action("Add")?entid=' + rows[0].EntId;
+            if (rows.length == 1) {
+                mini.open({
+                    url: url,
+                    title: "编辑角色", width: 280, height: 260,
+                    onload: function () {
+
+                    },
+                    ondestroy: function (action) {
+                        if (action == "save") {
+                            mini.showTips({ content: "保存成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                            grid.load();
+                        }
+                        else if (action != "cancel") {
+                            grid.load();
+                        }
+                    }
+                });
+
+            }
+
+        }
+
+
+        function Remove() {
+            var rows = grid.getSelecteds();
+            if (rows.length <= 0) {
+                mini.showTips({ content: "请选择需要删除的角色！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+            var ids = [];
+            for (var i = 0, l = rows.length; i < l; i++) {
+                var r = rows[i];
+                ids.push(r.EntId);
+            }
+            var id = ids.join(',');
+            grid.loading("操作中，请稍后......");
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("Delete")',
+                data: { "EntIds": id },
+                cache: false,
+                success: function (result) {
+                    if (result == true) {
+                        mini.showTips({ content: "操作成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                        grid.load();
+                    }
+                    else {
+                        mini.showTips({ content: "操作失败！", state: "danger", x: "center", y: "top", timeout: 3000 });
+                    }
+                }
+            });
+        }
+
+        var entname = [{ id: 01, text: '生产厂商' }, { id: 02, text: '供应商' }];
+        function OnEnterChange(e) {
+            for (var i = 0, l = entname.length; i < l; i++) {
+                var g = entname[i];
+                if (g.id == e.value) return g.text;
+            }
+            return "";
+        }
+
+        function search() {
+            var key = $("#key").val();
+            grid.load({ EntName: key });
+        }
+        function onKeyEnter(e) {
+            search();
+        }
+
+    </script>
+</head>
+<div>
+    <ul class="mnbreadcrumb">
+        <li>
+            <a href="#">基本信息</a> <span class="divider"></span>
+        </li>
+        <li>
+            <a href="#">供应商管理</a>
+        </li>
+    </ul>
+</div>
+<div showcollapsebutton="true">
+    <div style="width: 100%; height: 30px">
+        <div class="mini-toolbar" style="border-bottom: 0; padding: 0px;">
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 100%;">
+                        <a class="mini-button" iconcls="icon-add" onclick="AddRow()">增加</a> <a class="mini-button"
+                            iconcls="icon-edit" onclick="Edit()">编辑</a> <a class="mini-button" iconcls="icon-del"
+                                onclick="Remove()">删除</a>
+                    </td>
+                    <td style="white-space: nowrap;">
+                        <input id="key" placeholder="请输入名称" style="width: 150px;" onenter="onKeyEnter" />
+                        <a class="mini-button" onclick="search()">查询</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div id="grid1" class="mini-datagrid" style="width: 100%; height: 86%;" allowresize="true"
+            url="@Url.Action("GetList")" idfield="EntId" pagesize="15" multiselect="false">
+        <div property="columns">
+            <div type="checkcolumn" width="15">
+            </div>
+            <div field="EntId" width="80" headeralign="center" align="center" allowsort="true">
+                企业编码
+            </div>
+            <div field="EntName" width="70" headeralign="center" align="center" allowsort="true">
+                企业名称
+            </div>
+            <div field="EntTypeId" width="70" headeralign="center" align="center" allowsort="true" renderer="OnEnterChange">
+                企业类型
+            </div>
+            <div field="InputStr" width="70" headeralign="center" align="center" allowsort="true">
+                助记符
+            </div>
+            <div field="Address" width="70" headeralign="center" align="center" allowsort="true">
+                联系地址
+            </div>
+            <div field="Phone" width="70" headeralign="center" align="center" allowsort="true">
+                联系电话
+            </div>
+            <div field="Contactor" width="70" headeralign="center" align="center" allowsort="true">
+                联系人
+            </div>
+            <div field="CreateDate" width="70" headeralign="center" align="center" allowsort="true" dateformat="yyyy-MM-dd">
+                创建日期
+            </div>
+        </div>
+    </div>
+</div>

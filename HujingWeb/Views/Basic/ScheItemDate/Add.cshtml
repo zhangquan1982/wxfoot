@@ -1,0 +1,184 @@
+﻿@{
+    ViewBag.Title = "Add";
+    Layout = null;
+}
+<head>
+    <script src="~/Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+    <script src="~/Scripts/MiniUI/core.js" type="text/javascript"></script>
+
+</head>
+
+<body>
+
+    <form id="frmSche" method="post" action="">
+
+        <fieldset id="fd1" style="width:92%; height:50px">
+            <legend><span>项目排班</span></legend>
+            <div class="fieldset-body">
+                <div style="float:left; margin-left: 5px">
+                    排班日期:
+                </div>
+                <div style="float:left;margin-left: 5px">
+                    <input id="ScheDate" name="ScheDate" class="mini-datepicker" style="width: 120px;" required="true" />
+                </div>
+
+                <div id="divType" style="float: left; margin-left: 105px">
+                    午别:
+                </div>
+                <div id="divType2" style="float: left; margin-left: 5px">
+                    <input id="TypeCode" name="TypeCode" class="mini-combobox" style="width: 120px" valuefield="CodeId" textfield="CodeName" url='@Url.Action("GetCommonDictCode", "DictCode", new { codeType = @HujingCommon.DictCodeTypeClass.Wubie })' required="true" emptytext="请选择" />
+                </div>
+
+                @*<div id="divType" style="float: left; margin-left: 105px">
+                        菜单类别:
+                    </div>
+                    <div id="divType2" style="float: left; margin-left: 5px">
+                        <input id="ScheType" name="ScheType" class="mini-combobox" style="width: 120px" valuefield="CateID" textfield="CateName"
+                               url='@Url.Action("GetDictItem_CateList", "DictItem")' required="true" emptytext="请选择" />
+                    </div>*@
+            </div>
+        </fieldset>
+
+
+        <fieldset id="fd1" style="width: 430px; height: 342px">
+            <legend><span>选择项目</span></legend>
+            <div class="fieldset-body">
+                <div style="padding:5px;">
+                    <input type="hidden" id="hdCateType" value="荤菜" />
+                    <div style="width:680px;">
+                        <div class="mini-toolbar" style="border-bottom:0;padding:0px;">
+                            <table>
+                                <tr>
+                                    <td style="width:100%;">
+                                        <a class="mini-button" iconcls="icon-add" onclick="addRow()" plain="true" tooltip="增加">增加</a><span class="separator"></span>
+                                        <a class="mini-button" iconcls="icon-remove" onclick="removeRow()" plain="true">删除</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="grid1" class="mini-datagrid" style="width:680px;height:290px;"
+                         idfield="MaItemId"
+                         allowresize="true" allowcellselect="true"
+                         allowcelledit="true" editnextonenterkey="true" editnextrowcell="true"
+                         showpager="false">
+                        <div property="columns">
+                            <div type="indexcolumn"></div>
+                            <div field="InputStr" align="center" width="60" headeralign="center" allowsort="false">
+                                助记符
+                                <div id="SelType" name="SelType" class="mini-autocomplete" style="width:250px;" property="editor" url="@Url.Action("GetDictItemList","DictItem")"
+                                     popupwidth="600" value="" text="" textfield="InputStr" valuefield="InputStr" searchfield="inputStr" onvaluechanged="RefreshCateItem">
+                                    <div property="columns">
+                                        <div header="助记符" field="InputStr" width="30"></div>
+                                        <div header="项目编码" field="ItemID"></div>
+                                        <div header="项目名称" field="ItemName"></div>
+                                        <div header="单位" field="UnitName"></div>
+                                        <div header="零售价" field="SalesPrice"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div name="ItemID" field="ItemID" width="80" headeralign="center" allowsort="false" visible="false">
+                                项目编码
+                            </div>
+                            <div name="ItemName" field="ItemName" width="80" headeralign="center" allowsort="false">
+                                项目名称
+                            </div>
+                            <div name="UnitName" align="center" field="UnitName" width="40" headeralign="center" allowsort="false">
+                                单位
+                            </div>
+                            <div field="SalesPrice" align="right" width="60" headeralign="center" allowsort="false">零售价</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <div style="text-align:center;padding:10px;">
+            <a class="mini-button" onclick="SaveData" style="width:60px;margin-right:20px;">确定</a>
+            <a class="mini-button" onclick="onCancel" style="width:60px;">取消</a>
+        </div>
+
+    </form>
+    <script>
+    mini.parse();
+    var grid;
+    var form = new mini.Form("frmSche");
+    var gridSel;
+    $(document).ready(function () {
+        grid = mini.get("grid1");
+        gridSel = mini.get("SelType");
+    });
+
+
+    function RefreshCateItem(e) {
+          var item = e.selected;
+            var row = grid.getSelected();
+            item.ItemID = item.ItemID;
+            item.SalesPrice = item.SalesPrice;
+            grid.updateRow(row, item);
+    }
+
+    function addRow() {
+        var newRow = {};
+        grid.addRow(newRow, 0);
+        //grid.select(grid.getRow(0));
+        //grid.beginEditCell();
+    }
+
+    function removeRow() {
+        var rows = grid.getSelecteds();
+        if (rows.length > 0) {
+            grid.removeRows(rows, true);
+        }
+    }
+
+
+    //grid.on("celleditenter", function (e) {
+    //    var index = grid.indexOf(e.record);
+    //    if (index == grid.getData().length - 1) {
+    //        var row = {};
+    //        grid.addRow(row);
+    //    }
+    //});
+
+    function onValueChanged(e) {
+        var item = e.selected;
+        var row = grid.getSelected();
+        item.SalesAmount = item.SalesPrice;
+        grid.updateRow(row, item);
+    }
+
+    function SaveData() {
+        form.validate();
+        if (form.isValid() == false) return;
+        $.ajax({
+            url: "@Url.Action("SaveData", "ScheItemDate")",
+            type: 'post',
+            dataType: "json",
+            contentType: 'application/json',
+            data: mini.encode({
+                head: form.getData(),
+                items: grid.getChanges()
+            }),
+            cache: false,
+            success: function (text) {
+                if (text) {
+                    window.CloseOwnerWindow("save");
+                } else {
+                    mini.showTips({
+                        content: "保存失败！", state: "warning", x: "center", y: "top", timeout: 3000
+                    });
+                    return;
+                }
+
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(jqXHR.responseText);
+                CloseWindow();
+            }
+        });
+    }
+
+
+    </script>
+
+</body>

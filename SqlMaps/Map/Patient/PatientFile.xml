@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sqlMap namespace="PatientFileMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="PatientFile" type="HujingModel.PatientFileEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="PatientFileResultMap" class="PatientFile">
+      <result property="FileId" column="FileId"/>
+      <result property="SerialNum" column="SerialNum"/>
+      <result property="FileTypeId" column="FileTypeId"/>
+      <result property="DisplayName" column="DisplayName"/>
+      <result property="FileName" column="FileName"/>
+      <result property="FilePath" column="FilePath"/>
+      <result property="FileSize" column="FileSize"/>
+      <result property="CreateUser" column="CreateUser"/>
+      <result property="CreateDate" column="CreateDate"/>
+      <result property="Flag" column="Flag"/>
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+    <select id="Load" parameterClass="int" resultMap="PatientFileResultMap">
+      SELECT FileId ,SerialNum ,FileTypeId ,DisplayName ,FileName ,FilePath ,FileSize ,CreateUser ,CreateDate ,Flag 
+      FROM PatientFile
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          FileId=#FileId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+    <select id="LoadAll" parameterClass="int" resultMap="PatientFileResultMap">
+      SELECT FileId ,SerialNum ,FileTypeId ,DisplayName ,FileName ,FilePath ,FileSize ,CreateUser ,CreateDate ,Flag
+      FROM PatientFile
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          SerialNum=#SerialNum# and Flag=0
+        </isParameterPresent>
+      </dynamic>
+    </select>
+    <insert id="Insert" parameterClass="PatientFile">
+      INSERT INTO PatientFile(SerialNum ,FileTypeId ,DisplayName ,FileName ,FilePath ,FileSize ,CreateUser ,CreateDate ,Flag) 
+      VALUES (#SerialNum# ,#FileTypeId# ,#DisplayName# ,#FileName# ,#FilePath# ,#FileSize# ,#CreateUser# ,#CreateDate# ,#Flag#)
+    </insert>
+    
+
+    <delete id="Delete" parameterClass="int">
+      update  PatientFile set flag = 1
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          FileId=#FileId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+  </statements>
+</sqlMap>

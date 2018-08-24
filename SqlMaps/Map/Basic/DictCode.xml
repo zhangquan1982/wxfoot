@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="DictCodeMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="DictCode" type="HujingModel.DictCodeEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="DictCode">
+      <result property="CodeTypeId" column="codetypeid" />
+      <result property="CodeTypeName" column="codetypename" />
+      <result property="CodeId" column="codeid" />
+      <result property="CodeName" column="codename" />
+      <result property="Memo" column="memo" />
+      <result property="CreateDate" column="createdate" />
+      <result property="CreateUser" column="createuser" />
+      <result property="Flag" column="flag" />
+
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+
+    <select id="Count" parameterClass="string" resultClass="int">
+      Select count(codetypeid+codeid) From DictCode where 1=1 $Condition$
+    </select>
+
+    <select id="Load" parameterClass="DictCode" resultMap="SelectResult">
+      Select
+      codetypeid,
+      codetypename,
+      codeid,
+      codename,
+      memo,
+      createdate,
+      createuser,
+      flag
+      From DictCode
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          flag=0 and codetypeid=#CodeTypeId# and codeid=#CodeId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+    <select id="LoadAll" parameterClass="System.Collections.IDictionary" resultMap="SelectResult">
+      select * from
+      ( Select
+      codetypeid,
+      codetypename,
+      codeid,
+      codename,
+      memo,
+      createdate,
+      createuser,
+      flag,
+      ROW_NUMBER() over(order by $OrderBy$ ) rowNumber
+      From DictCode
+      where flag=0 $Condition$
+      ) aa
+      where rowNumber BETWEEN  #Next# and #Prev#
+    </select>
+
+    <insert id="Save" parameterClass="DictCode">
+      Insert Into DictCode (
+      codetypeid,
+      codetypename,
+      codeid,
+      codename,
+      memo,
+      createdate,
+      createuser,
+      flag
+      )Values(
+      #CodeTypeId#,
+      #CodeTypeName#,
+      #CodeId#,
+      #CodeName#,
+      #Memo#,
+      #CreateDate#,
+      #CreateUser#,
+      #Flag#
+      )
+    </insert>
+
+    <insert id="InitOrgDictCode" parameterClass="DictCode">
+      Insert Into DictCode (
+      codetypeid,
+      codetypename,
+      codeid,
+      codename,
+      memo,
+      createdate,
+      createuser,
+      flag
+      )
+      select
+      codetypeid,
+      codetypename,
+      codeid,
+      codename,
+      memo,
+      createdate,
+      createuser,
+      flag
+      from DictCode
+      where 1=1
+    </insert>
+
+    <update id="Update" parameterClass="DictCode">
+      Update DictCode Set
+      codename=#CodeName#,
+      memo=#Memo#,
+      flag=#Flag#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          codetypeid=#CodeTypeId# and codeid=#CodeId#  
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="DictCode">
+      update DictCode set flag=1
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          codetypeid=#CodeTypeId# and codeid=#CodeId#  
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+  </statements>
+</sqlMap>

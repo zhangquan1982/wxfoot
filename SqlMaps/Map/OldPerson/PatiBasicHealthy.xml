@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="PatiBasicHealthyMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="PatiBasicHealthy" type="HujingModel.PatiBasicHealthyEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="PatiBasicHealthy">
+      <result property="SerialNum" column="SerialNum"/>
+      <result property="AllergyHistory" column="AllergyHistory"/>
+      <result property="DiseaseHistory" column="DiseaseHistory"/>
+      <result property="Disability" column="Disability"/>
+      <result property="GeneticHistory" column="GeneticHistory"/>
+      <result property="Eating" column="Eating"/>
+      <result property="Dressing" column="Dressing"/>
+      <result property="Defecation" column="Defecation"/>
+      <result property="Walk" column="Walk"/>
+      <result property="Bath" column="Bath"/>
+      <result property="Cognitive" column="Cognitive"/>
+      <result property="Emotional" column="Emotional"/>
+      <result property="EyeInfo" column="EyeInfo"/>
+      <result property="Hearing" column="Hearing"/>
+      <result property="CreateUser" column="CreateUser"/>
+      <result property="CreateDate" column="CreateDate"/>
+      <result property="UpdateUser" column="UpdateUser"/>
+      <result property="UpdateDate" column="UpdateDate"/>
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      SerialNum ,AllergyHistory ,DiseaseHistory ,Disability ,GeneticHistory ,Eating ,Dressing ,Defecation ,
+      Walk ,Bath ,Cognitive ,Emotional ,EyeInfo ,Hearing,CreateUser,CreateDate,UpdateUser,UpdateDate
+      From PatiBasicHealthy
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          SerialNum=#SerialNum#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+    <insert id="Insert" parameterClass="PatiBasicHealthy">
+      INSERT INTO PatiBasicHealthy(SerialNum ,AllergyHistory ,
+      DiseaseHistory ,Disability ,GeneticHistory ,Eating ,Dressing ,
+      Defecation ,Walk ,Bath ,Cognitive ,Emotional ,EyeInfo ,Hearing,
+      CreateUser,CreateDate,UpdateUser,UpdateDate)
+      VALUES
+      (#SerialNum# ,#AllergyHistory# ,#DiseaseHistory# ,#Disability# ,#GeneticHistory# ,#Eating# ,#Dressing# ,#Defecation# ,#Walk# ,
+      #Bath# ,#Cognitive# ,#Emotional# ,#EyeInfo# ,#Hearing#,#CreateUser#,#CreateDate#,#UpdateUser#,#UpdateDate#)
+    </insert>
+
+    <update id="Update" parameterClass="PatiBasicHealthy">
+      UPDATE PatiBasicHealthy
+      SET
+      AllergyHistory = #AllergyHistory# ,
+      DiseaseHistory = #DiseaseHistory# ,
+      Disability = #Disability# ,
+      GeneticHistory = #GeneticHistory# ,
+      Eating = #Eating# ,
+      Dressing = #Dressing# ,
+      Defecation = #Defecation# ,
+      Walk = #Walk# ,
+      Bath = #Bath# ,
+      Cognitive = #Cognitive# ,
+      Emotional = #Emotional# ,
+      EyeInfo = #EyeInfo# ,
+      Hearing = #Hearing#,
+      UpdateUser = #UpdateUser#,
+      UpdateDate = #UpdateDate#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          SerialNum=#SerialNum#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="int">
+      Delete From PatiBasicHealthy
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          SerialNum=#SerialNum#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+  </statements>
+</sqlMap>

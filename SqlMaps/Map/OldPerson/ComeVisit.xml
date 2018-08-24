@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="ComeVisitMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="ComeVisit" type="HujingModel.ComeVisitEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="ComeVisit">
+      <result property="ComeVisitId" column="comevisitid" />
+      <result property="VisitDate" column="visitdate" />
+      <result property="LeaveDate" column="leavedate" />
+      <result property="SerialNum" column="serialnum" />
+      <result property="PatiName" column="patiname" />
+      <result property="PeopleCount" column="peoplecount" />
+      <result property="Nexus" column="nexus" />
+      <result property="IDCard" column="idcard" />
+      <result property="VisitReason" column="visitreason" />
+      <result property="Memo" column="memo" />
+      <result property="Flag" column="flag" />
+      <result property="CreateDate" column="createdate" />
+      <result property="CreateUser" column="createuser" />
+      <result property="UpdateDate" column="updatedate" />
+      <result property="UpdateUser" column="updateuser" />
+      <result property="OrgId" column="orgid" />
+      <result property="ComePName" column="comepname" />
+      
+
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+
+    <select id="Count" parameterClass="string" resultClass="int">
+      Select count(comevisitid) From ComeVisit where 1=1 $Condition$
+    </select>
+
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      comevisitid,
+      visitdate,
+      leavedate,
+      serialnum,
+      patiname,
+      peoplecount,
+      nexus,
+      idcard,
+      visitreason,
+      memo,
+      flag,
+      createdate,
+      createuser,
+      updatedate,
+      updateuser,
+      orgid,
+      comepname
+      From ComeVisit
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          comevisitid=#ComeVisitId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+    <select id="LoadAll" parameterClass="System.Collections.IDictionary" resultMap="SelectResult">
+      select * from
+      ( Select
+      comevisitid,
+      visitdate,
+      leavedate,
+      serialnum,
+      patiname,
+      peoplecount,
+      nexus,
+      idcard,
+      visitreason,
+      memo,
+      flag,
+      createdate,
+      createuser,
+      updatedate,
+      updateuser,
+      orgid,
+      comepname,
+      ROW_NUMBER() over(order by visitdate ) rowNumber
+      From ComeVisit
+      where 1=1 $Condition$
+      ) aa
+      where rowNumber BETWEEN  #Next# and #Prev#
+    </select>
+
+
+    <insert id="Save" parameterClass="ComeVisit">
+      Insert Into ComeVisit (
+      comevisitid,
+      visitdate,
+      leavedate,
+      serialnum,
+      patiname,
+      comepname,
+      peoplecount,
+      nexus,
+      idcard,
+      visitreason,
+      memo,
+      flag,
+      createdate,
+      createuser,
+      updatedate,
+      updateuser,
+      orgid
+      )Values(
+      #ComeVisitId#,
+      #VisitDate#,
+      #LeaveDate#,
+      #SerialNum#,
+      #PatiName#,
+      #ComePName#,
+      #PeopleCount#,
+      #Nexus#,
+      #IDCard#,
+      #VisitReason#,
+      #Memo#,
+      #Flag#,
+      #CreateDate#,
+      #CreateUser#,
+      #UpdateDate#,
+      #UpdateUser#,
+      #OrgId#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="ComeVisit">
+      Update ComeVisit Set
+      comevisitid=#ComeVisitId#,
+      visitdate=#VisitDate#,
+      leavedate=#LeaveDate#,
+      serialnum=#SerialNum#,
+      patiname=#PatiName#,
+      comepname=#ComePName#,
+      peoplecount=#PeopleCount#,
+      nexus=#Nexus#,
+      idcard=#IDCard#,
+      visitreason=#VisitReason#,
+      memo=#Memo#,
+      createdate=#CreateDate#,
+      createuser=#CreateUser#,
+      updatedate=#UpdateDate#,
+      updateuser=#UpdateUser#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          comevisitid=#ComeVisitId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="int">
+      update From ComeVisit set flag=1
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          comevisitid=#ComeVisitId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+  </statements>
+</sqlMap>

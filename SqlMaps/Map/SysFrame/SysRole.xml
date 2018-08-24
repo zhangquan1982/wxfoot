@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="SysRoleMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="SysRole" type="HujingModel.SysRoleEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="SysRole">
+      <result property="RoleId" column="roleid" />
+      <result property="RoleName" column="rolename" />
+      <result property="Memo" column="memo" />
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+
+    <select id="Count" parameterClass="string" resultClass="int">
+      Select count(roleid) From SysRole where 1=1 $Condition$
+    </select>
+    
+    
+    <select id="Load" parameterClass="string" resultMap="SelectResult">
+      Select
+      roleid,
+      rolename,
+      memo
+      From SysRole
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          roleid=#RoleId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+
+    <select id="LoadAll" parameterClass="System.Collections.IDictionary" resultMap="SelectResult">
+      select * from
+      ( Select
+      roleid,
+      rolename,
+      memo,
+      ROW_NUMBER() over(order by $OrderBy$ ) rowNumber
+      From SysRole
+      where 1=1 $Condition$
+      ) aa
+      where rowNumber BETWEEN  #Next# and #Prev#
+    </select>
+
+
+    <insert id="Save" parameterClass="SysRole">
+      Insert Into SysRole (
+      roleid,
+      rolename,
+      memo
+      )Values(
+      #RoleId#,
+      #RoleName#,
+      #Memo#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="SysRole">
+      Update SysRole Set
+      orgid=#OrgId#,
+      roleid=#RoleId#,
+      rolename=#RoleName#,
+      memo=#Memo#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          roleid=#RoleId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="string">
+      Delete From SysRole
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          roleid=#RoleId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+    <select id="GetMaxRoleId" parameterClass="string"  resultClass="string">
+      Select max(roleid) From SysRole
+    </select>
+
+  </statements>
+</sqlMap>

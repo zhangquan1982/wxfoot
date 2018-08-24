@@ -1,0 +1,82 @@
+﻿@{
+    ViewBag.Title = "消费报表";
+}
+<head>
+    <script src="~/Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+    <script src="~/Scripts/MiniUI/core.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var grid;
+        $(document).ready(function () {
+            mini.parse();
+            grid = mini.get("gridFeel");
+            grid.load();
+        });
+
+
+        function search() {
+            var datebegin = mini.get("dateBegin").text;;
+            var dateend = mini.get("dateEnd").text;;
+            grid.load({dateBegin: datebegin, dateEnd: dateend});
+        }
+
+        function Export()
+        {
+            var datebegin = mini.get("dateBegin").text;;
+            var dateend = mini.get("dateEnd").text;;
+            window.location.href = '@Url.Action("ExportExcel")' + "?dateBegin=" + datebegin + "&dateEnd=" + dateend;
+        }
+
+    </script>
+</head>
+<div>
+    <ul class="mnbreadcrumb">
+        <li>
+            <a href="#">数据查询</a> <span class="divider"></span>
+        </li>
+        <li>
+            <a href="#">员工用餐</a>
+        </li>
+    </ul>
+</div>
+<div showcollapsebutton="true">
+    <div style="width: 520px; padding: 10px; height:40px; border: 1px gray solid">
+        <div>
+            <div style="float: left; margin-left: 26px">
+                就餐日期:
+            </div>
+            <div style="float: left; margin-left: 5px">
+                <input id="dateBegin" class="mini-datepicker" style="width: 120px;" />
+            </div>
+            <div style="float: left;margin-left: 26px">
+                <input id="dateEnd" class="mini-datepicker" style="width: 120px;" />
+            </div>
+        </div>
+        <div style="position: absolute; left: 400px; top:70px">
+            <a class="mini-button" onclick="search()">查询</a>
+        </div>
+    </div>
+    <div style="clear: both; margin-top: 5px; width: 100%; height: 30px">
+        <div class="mini-toolbar" style="border-bottom: 0; padding: 0px;">
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 100%;">
+                        <a class="mini-button" iconcls="icon-export" onclick="Export()">导出</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div id="gridFeel" class="mini-datagrid" style="width: 100%; height: 65%;" allowresize="true"
+         url="@Url.Action("UserFeeDayList")" idfield="BillItemId" pagesize="15" multiselect="false">
+        <div property="columns">
+            <div type="checkcolumn" width="25">
+            </div>
+            <div field="BillDate" width="70" headeralign="center" align="center" allowsort="true" dateformat="yyyy-MM-dd">
+                就餐日期
+            </div>
+            <div field="TotalAmount" width="70" headeralign="center" align="center" allowsort="true">
+                金额
+            </div>
+        </div>
+    </div>
+</div>

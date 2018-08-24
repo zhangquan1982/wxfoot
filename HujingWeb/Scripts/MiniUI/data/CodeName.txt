@@ -1,0 +1,27 @@
+﻿{
+    "total": 13,
+    "data": [{
+        "CodeId": "001",
+        "CodeName": "基督教",
+        "Memo": 1,
+        "CreateDate": "2015-05-17",
+    },
+    {
+        "CodeId": "002",
+        "CodeName": "天主教",
+        "Memo": 1,
+        "CreateDate": "2015-05-17",
+    },
+    {
+        "CodeId": "003",
+        "CodeName": "东正教",
+        "Memo": 1,
+        "CreateDate": "2015-05-17",
+    },
+    {
+        "CodeId": "004",
+        "CodeName": "佛教",
+        "Memo": 1,
+        "CreateDate": "2015-05-17",
+    }]
+}

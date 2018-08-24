@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="OrgCardMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="OrgCard" type="HujingModel.OrgCardEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="OrgCard">
+      <result property="OrgId" column="orgid" />
+      <result property="OrgIdU" column="orgidu" />
+      <result property="OrgIdP" column="orgidp" />
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      orgid,
+      orgidu,
+      orgidp
+      From OrgCard
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          orgid=#OrgId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+
+    <insert id="Save" parameterClass="OrgCard">
+      Insert Into OrgCard (
+      orgid,
+      orgidu,
+      orgidp
+      )Values(
+      #OrgId#,
+      #OrgIdU#,
+      #OrgIdP#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="OrgCard">
+      Update OrgCard Set
+      orgid=#OrgId#,
+      orgidu=#OrgIdU#,
+      orgidp=#OrgIdP#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="int">
+      Delete From OrgCard
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+  </statements>
+</sqlMap>

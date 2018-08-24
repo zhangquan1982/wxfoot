@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="PatiBasicDetailOldMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="PatiBasicDetailOld" type="HujingModel.PatiBasicDetailOldEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="PatiBasicDetailOld">
+      <result property="PatiId" column="patiid" />
+      <result property="CareType" column="caretype" />
+      <result property="Religion" column="religion" />
+      <result property="Eatinghabits" column="eatinghabits" />
+      <result property="Character" column="character" />
+      <result property="Deviant" column="deviant" />
+      <result property="Hobby" column="hobby" />
+      <result property="CreateDate" column="createdate" />
+      <result property="UpdateDate" column="updatedate" />
+      <result property="CreateUser" column="createuser" />
+      <result property="UpdateUser" column="updateuser" />
+      <result property="OrgId" column="orgid" />
+      
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      patiid,
+      caretype,
+      religion,
+      eatinghabits,
+      character,
+      deviant,
+      hobby,
+      createdate,
+      updatedate,
+      createuser,
+      updateuser,
+      orgid
+      From PatiBasicDetailOld
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          patiid=#PatiId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+
+    <insert id="Insert" parameterClass="PatiBasicDetailOld">
+      Insert Into PatiBasicDetailOld (
+      patiid,
+      caretype,
+      religion,
+      eatinghabits,
+      character,
+      deviant,
+      hobby,
+      createdate,
+      createuser,
+      orgid
+      )Values(
+      #PatiId#,
+      #CareType#,
+      #Religion#,
+      #Eatinghabits#,
+      #Character#,
+      #Deviant#,
+      #Hobby#,
+      #CreateDate#,
+      #CreateUser#,
+      #OrgId#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="PatiBasicDetailOld">
+      Update PatiBasicDetailOld Set
+      caretype=#CareType#,
+      religion=#Religion#,
+      eatinghabits=#Eatinghabits#,
+      character=#Character#,
+      deviant=#Deviant#,
+      hobby=#Hobby#,
+      updatedate=#UpdateDate#,
+      updateuser=#UpdateUser#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          patiid=#PatiId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="int">
+      Delete From PatiBasicDetailOld
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          patiid=#PatiId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+  </statements>
+</sqlMap>

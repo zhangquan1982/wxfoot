@@ -1,0 +1,20 @@
+﻿[
+	{ "id": "user", "text": "基本信息", "iconCls": "icon-split"},
+    { "id": "addBuild", "pid": "user", "text": "企业管理", "iconCls": "Note", "url": "/Enterprise/Index" ,"iconPosition": "top" },
+	{ "id": "addCate", "pid": "user", "text": "辅料分类", "iconCls": "Note", "url": "/DictItemCate/Index" ,"iconPosition": "top" },
+	{ "id": "addCate", "pid": "user", "text": "辅料档案", "iconCls": "Note", "url": "/DictItem/Index" ,"iconPosition": "top" },
+	{ "id": "jiedai", "text": "业务管理","iconCls": "icon-exam"},
+	{ "id": "zixunjiedai", "pid": "jiedai", "text": "咨询接待", "iconCls": "Note", "url": "/Patient/Reception/Index", "iconPosition": "top" },
+    { "id": "zixunjiedai", "pid": "jiedai", "text": "来访接待", "iconCls": "Note", "url": "/Patient/ConsultVisit/Index", "iconPosition": "top" }	,
+	{ "id": "system", "text": "系统管理","iconCls": "icon-system"},
+	{ "id": "right", "text": "库存管理","iconCls": "icon-exam"},
+	{ "id": "addRight", "pid": "right", "text": "个人健康档案", "iconCls": "Note", "url": "/HealthRecord/PersonIndex", "iconPosition": "top" },
+	{ "id": "editRight", "pid": "right", "text": "家庭健康档案", "iconCls": "Reports", "url": "/HealthRecord/FamilyIndex", "iconPosition": "top" },		
+	{ "id": "system", "text": "系统管理","iconCls": "icon-system"},
+	{ "id": "Organization", "pid": "system", "text": "机构管理", "iconCls": "Note", "url": "/Organization/Index", "iconPosition": "top" },
+	{ "id": "role", "pid": "system", "text": "角色管理", "iconCls": "Reports", "url": "/Role/Index", "iconPosition": "top" }	,
+	{ "id": "role", "pid": "system", "text": "模块管理", "iconCls": "Reports", "url": "/SysGroup/Index", "iconPosition": "top" }	,
+	{ "id": "role", "pid": "system", "text": "角色模块管理", "iconCls": "Reports", "url": "/RoleGroup/Index", "iconPosition": "top" },
+    { "id": "UserInfo", "pid": "system", "text": "用户管理", "iconCls": "Note", "url": "/User/Index", "iconPosition": "top" },
+	{ "id": "addDict", "pid": "system", "text": "数据字典", "iconCls": "Note", "url": "/DictCode/Index" ,"iconPosition": "top" }
+]

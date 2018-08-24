@@ -1,0 +1,185 @@
+﻿@{
+    ViewBag.Title = "新增公告";
+    Layout = null;
+}
+<html>
+<head>
+    <title>新增公告</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+
+    <link href="/Scripts/layer/skin/layer.css" rel="stylesheet" />
+
+
+
+    <link href="~/Scripts/MiniUI/demo.css" rel="stylesheet" type="text/css" />
+    <script src="~/Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+    <script src="~/Scripts/MiniUI/core.js" type="text/javascript"></script>
+    @*<script src="~/Scripts/jquery.form.js" type="text/javascript"></script>*@
+    <link href="~/Scripts/bootstrap.3.3/css/bootstrap.min.css" rel="stylesheet" />
+
+    <script src="~/Scripts/jquery-3.0.0.min.js"></script>
+    <script src="~/Scripts/bootstrap.3.3/js/bootstrap.js"></script>
+
+
+    <link href="~/Scripts/Summernote/summernote.css" rel="stylesheet" />
+    <script src="~/Scripts/Summernote/summernote.js"></script>
+    <script src="~/Scripts/Summernote/lang/summernote-zh-CN.js"></script>
+
+    <link href="~/Scripts/JqueryValidate/css/screen.css" rel="stylesheet" />
+    <script src="~/Scripts/JqueryValidate/dist/jquery.validate.js"></script>
+    <script src="/Scripts/layer/layer.js"></script>
+    <style type="text/css">
+        table td {
+            font-size: 9px;
+        }
+
+        .h3 {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .control-label {
+            font-size: 12px;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //保存
+            $("#btnSave").click(function (event) {
+                var flag = $("#form1").valid();
+                if (flag == false) {
+                    return;
+                }
+                var title = $("#NewTitle").val();
+                var Content = $('#summernote').summernote('code');
+                if (Content == "<p><br></p>") {
+                    layer.msg('问题内容不能为空！', { icon: 7 });
+                    return;
+                }
+
+                var strUrl = '/News/SaveNews';
+                var pValue = {
+                    NewTitle: title,
+                    NewContent: encodeURIComponent(Content)
+                };
+
+                $.post(strUrl, pValue, function (result) {
+                    if (result.status == 100) {
+                        layer.msg('提交成功！', { icon: 7 });
+                        location.href = "@Url.Action("Index")";
+                    }
+                    else {
+                        layer.msg('提交失败！', { icon: 2});
+                        return;
+                    }
+                });
+
+            });
+
+
+
+            $('#summernote').summernote({
+                callbacks: {
+                    onImageUpload: function (files) {
+                        sendFile(files[0]);
+                    }
+                },
+                height: 300,                 // set editor height
+                width: 900,
+                minHeight: null,             // set minimum height of editor
+                maxHeight: null,             // set maximum height of editor
+                focus: true,
+                lang: 'zh-CN' // default: 'en-US'
+            });
+
+
+            function sendFile(file) {
+                data = new FormData();
+                data.append("file", file);
+                $.ajax({
+                    data: data,
+                    type: "POST",
+                    url: "/QuestionInfo/SummerUploadImage", //图片上传出来的url，返回的是图片上传后的路径，http格式
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (data) {
+                        $('#summernote').summernote('editor.insertImage', data, 'img');
+                    },
+                    error: function () {
+                        $(".note-alarm").html("上传失败");
+                        setTimeout(function () { $(".note-alarm").remove(); }, 3000);
+                    }
+                });
+            }
+
+            $("#form1").validate({
+                rules: {
+                    NewTitle:
+                    {
+                        required: true
+                    },
+                    summernote: {
+                        required: true
+                    }
+                },
+                messages: {
+                    NewTitle: {
+                        required: "请输入标题"
+                    },
+                    summernote: {
+                        required: "请填写内容"
+                    }
+                }
+            });
+
+        });
+
+
+        function SetData(data) {
+            if (data.action == "new") {
+                mini.getbyName("buildNum").setValue(data.buildNum);
+            }
+        }
+
+        function onCancel(e) {
+            window.CloseOwnerWindow("cancel");
+        }
+
+
+    </script>
+</head>
+
+<body style="overflow-y:auto">
+    <form id="form1">
+
+
+        <div class="wrap">
+            <div class="container">
+                <div class="row">
+                    <div class="settings col-md-12 form-horizontal">
+                        <h2 class="h3 post-title" style="text-align:center;">新建公告</h2>
+                        <div class="form-group">
+                            <label for="NewTitle" class="required control-label col-sm-2">公告标题</label>
+                            <div class="col-sm-10">
+                                <input type="text" id="NewTitle" name="NewTitle" maxlength="35" required class="form-control" placeholder="标题字数限制35个字符。" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="required control-label col-xs-12 col-sm-2">请填写问题内容</label>
+                            <div class="col-xs-12 col-sm-10">
+                                <div id="summernote"></div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="text-center">
+                            <a id="btnSave" class="btn btn-xl btn-primary">提交</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</body>
+</html>

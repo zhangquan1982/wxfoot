@@ -1,0 +1,189 @@
+﻿@model HujingModel.OrganizationEntity
+@{
+    ViewBag.Title = "机构维护";
+    Layout = null;
+}
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>员工面板</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <link href="~/Scripts/MiniUI/demo.css" rel="stylesheet" type="text/css" />
+    <script src="~/Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+    <script src="~/Scripts/MiniUI/core.js" type="text/javascript"></script>
+    <script src="~/Scripts/jquery.form.js" type="text/javascript"></script>
+    <style type="text/css">
+        html, body {
+            padding: 0;
+            margin: 0;
+            border: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        table td {
+            font-size: 12px;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            mini.parse();
+            var form = new mini.Form("formEdit");
+            //保存
+            $("#btnSave").click(function (event) {
+                form.validate();
+                if (form.isValid() == false) {
+                    return;
+                }
+                $("#formEdit").ajaxSubmit({
+                    success: function (callback) {
+                        if (callback == "ok") {
+                            window.CloseOwnerWindow("save");
+                        }
+                        else {
+                            mini.showTips({
+                                content: "修改失败！",
+                                state: "warning",
+                                x: "center",
+                                y: "top",
+                                timeout: 3000
+                            });
+                        }
+                    },
+                    error: function () {
+                        mini.showTips({
+                            content: "保存失败！",
+                            state: "warning",
+                            x: "center",
+                            y: "top",
+                            timeout: 3000
+                        });
+                    }
+                });
+            });
+        });
+
+        function OrgtypeChange() {
+            var orgTypeCombo = mini.getbyName("OrgType");
+            var orgTypename = mini.getbyName("OrgTypeName");
+            orgTypename.setValue(orgTypeCombo.getText());
+            //            $("#OrgTypeName").val(orgTypeCombo.getText());
+        }
+
+        function onCancel(e) {
+            window.CloseOwnerWindow("cancel");
+        }
+    </script>
+</head>
+<body>
+    <form id="formEdit" method="post" action="/Organization/Update">
+        <input name="id" class="mini-hidden" />
+        <div style="padding-left: 11px; padding-bottom: 5px;">
+            <fieldset id="fd1" style="width: 460px;">
+                <legend><span>基本信息</span></legend>
+                <table style="table-layout: fixed;">
+                    <tr>
+                        <td style="width: 70px;">
+                            机构编码：
+                        </td>
+                        <td style="width: 150px;">
+                            <input type="text" name="OrgId" id="OrgId" class="mini-textbox" value="@Model.OrgId" required="true" allowinput="false" />
+                        </td>
+                        <td style="width: 70px;">
+                            机构名称：
+                        </td>
+                        <td style="width: 150px;">
+                            <input type="text" id="OrgName" name="OrgName" class="mini-textbox" required="true" value="@Model.OrgName" emptytext="请输入机构名称" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            助记符：
+                        </td>
+                        <td>
+                            <input id="InputStr" name="InputStr" class="mini-textbox" required="true" value="@Model.InputStr" />
+                        </td>
+                        <td>
+                            机构类型：
+                        </td>
+                        <td>
+                            <input name="OrgType" value="@Model.OrgType" class="mini-combobox" valuefield="CodeId" textfield="CodeName"  
+                                   url='@Url.Action("GetCommonDictCodeAdmin", "Common", new { codeType = @HujingCommon.DictCodeTypeClass.OrgType })' onvaluechanged="OrgtypeChange"
+                                   required="true" emptytext="请选择机构类型" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            是否停用：
+                        </td>
+                        <td>
+                            <input name="Flag" value="@Model.Flag" class="mini-checkbox" truevalue="1" falsevalue="0" />
+                        </td>
+                    </tr>
+                </table>
+                <fieldset id="fd2" style="width: 460px;">
+                    <legend><span>其它信息</span></legend>
+                    <table style="table-layout: fixed;">
+                        <tr>
+                            <td style="width: 70px;">成立日期：</td>
+                            <td style="width: 150px;">
+                                <input id="SetupTime" name="SetupTime" class="mini-datepicker" value="@Model.SetupTime" style="width: 120px;"
+                                       value="1950-01-01" />
+                            </td>
+                            <td style="width: 70px;">联系人：</td>
+                            <td style="width: 150px;">
+                                <input name="RelationPeople" class="mini-textbox" value="@Model.RelationPeople" required="true" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>固定电话：</td>
+                            <td>
+                                <input name="TelPhone" class="mini-textbox" value="@Model.TelPhone" required="true" />
+                            </td>
+                            <td>手机号码：</td>
+                            <td>
+                                <input name="Mobile" class="mini-textbox" value="@Model.Mobile"  required="true" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                床位数：
+                            </td>
+                            <td>
+                                <input name="BedNum" class="mini-textbox" value="@Model.BedNum" required="true" />
+                            </td>
+                            <td>
+                                占地面积：
+                            </td>
+                            <td>
+                                <input name="Area" class="mini-textbox" required="true" value="@Model.Area" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                详细地址：
+                            </td>
+                            <td colspan="3">
+                                <input name="Address" class="mini-textbox" required="true" style="width: 350px;" value="@Model.Address" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                备注：
+                            </td>
+                            <td colspan="3">
+                                <input name="Memo" class="mini-textarea" style="width: 350px;" value="@Model.Memo" />
+                            </td>
+                        </tr>
+                    </table>
+                </fieldset>
+            </fieldset>
+        </div>
+        <div style="text-align: center; padding: 10px;">
+            <a class="mini-button" id="btnSave" href="javascript:void(0);" style="width: 60px;
+            margin-right: 20px;">确定</a> <a class="mini-button" onclick="onCancel" style="width: 60px;">
+                取消
+            </a>
+        </div>
+    </form>
+</body>
+</html>

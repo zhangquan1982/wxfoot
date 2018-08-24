@@ -1,0 +1,161 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<style type="text/css">
+    html, body {
+        padding: 0;
+        margin: 0;
+        border: 0;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    table td {
+        font-size: 12px;
+    }
+</style>
+<head>
+    <script src="../../Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+    <script src="../../Scripts/MiniUI/core.js" type="text/javascript"></script>
+    <script src="~/Scripts/Print/jquery.jqprint-0.3.js"></script>
+    <script type="text/javascript">
+        var tree;
+        var grid;
+        $(document).ready(function () {
+            mini.parse();
+            tree = mini.get("tree1");
+            grid = mini.get("grid1");
+            mini.getbyName("rbdType").setValue("-1");
+            $("#SerialNum").val(@ViewBag.SerialNum);
+            tree.on("nodeselect", function (e) {
+                $("#SerialNum").val(e.node.id);
+                grid.load({ "OrdType": "-1", SerialNum: e.node.id });
+                $("#patiname").html(e.node.name);
+            });
+
+            $("#btnSearch").click(function () {
+                var sernum = $("#SerialNum").val();
+                var orderType = mini.getbyName("rbdType").getValue();
+                grid.load({ "SerialNum": sernum, "OrdType": orderType });
+            });
+        });
+
+
+    </script>
+</head>
+<div class="mini-splitter" style="width: 100%; height: 100%;">
+    <div size="180" showcollapsebutton="true">
+        <div class="mini-fit">
+            <div class="mini-panel-header">
+                选择老人
+            </div>
+            <ul id="tree1" class="mini-tree" url='@Url.Action("PatiVisitTreeList", "PatiInBill")' style="width: 100%; height:20%"
+                showtreeicon="true" textfield="name" idfield="id" parentfield="pid" resultastree="false"></ul>
+        </div>
+        <input id="SerialNum" type="hidden" />
+    </div>
+    <div id="printContent" style="padding-left: 15px; padding-top: 8px;height:30%">
+        <fieldset style="border:solid 1px #aaa;padding:3px; height:80px">
+            <legend>查询条件</legend>
+            <div>
+                <div>
+
+                    <div style="float:left; margin-left:10px">
+                        护嘱类型：<input id="rbdType" name="rbdType" style="width: 120px;" class="mini-combobox" textfield="text" valuefield="id"
+                               data="[{id: '-1', text: '全部'},{id: '0', text: '临时'}, {id: '1', text: '长期'}]"
+                               required="true" emptytext="请选择" />
+                    </div>
+                    <div style="float: left; margin-left: 56px">
+                        开始日期:
+                    </div>
+                    <div style="float: left; margin-left: 5px">
+                        <input id="dateBegin" class="mini-datepicker" style="width: 120px;" />
+                    </div>
+                </div>
+                <div style="clear:both; height:10px"></div>
+                <div>
+                    <div id="patiname" style="float:left; margin-left:10px; font-weight:bold; font-size:14px">@ViewBag.PatiName</div>
+                    <div style="float: left; margin-left: 146px">
+                        结束日期:
+                    </div>
+                    <div style="float: left; margin-left: 5px">
+                        <input id="dateBegin" class="mini-datepicker" style="width: 120px;" />
+                    </div>
+                </div>
+
+                <div style="position: absolute; left: 500px; top:50px">
+                    <a class="mini-button" iconcls="icon-search" id="btnSearch">查询</a>
+                </div>
+            </div>
+
+
+        </fieldset>
+        <div style="clear:both;height:20px"></div>
+        <div style="width: 100%; height: 30px">
+            <div class="mini-toolbar" style="border-bottom: 0; padding: 0px;">
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="width: 100%;">
+                            <a class="mini-button" iconcls="icon-add" id="btnAdd" onclick="addPrint()">打印</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+
+
+        <div id="grid1" class="mini-datagrid" style="width: 100%; height: 80%;"
+             allowresize="true" url="@Url.Action("GetExecOrder")" idfield="Status" pagesize="15" multiselect="true">
+            <div property="columns">
+                <div field="ordname" width="80" headeralign="center" align="center" allowsort="true">
+                    护嘱名称
+                </div>
+                <div field="OrdTypeID" width="60" headeralign="center" align="center" allowsort="true" renderer="OnSexChange">
+                    医嘱类型
+                </div>
+                <div field="freqname" width="60" headeralign="center" align="center" allowsort="true">
+                    频次
+                </div>
+                <div field="itemid" width="60" headeralign="center" align="center" allowsort="true">
+                    项目编码
+                </div>
+                <div field="itemname" width="80" headeralign="center" align="center" allowsort="true">
+                    项目名称
+                </div>
+                <div field="execQuantity" width="50" headeralign="center" align="center" allowsort="true">
+                    执行数量
+                </div>
+                <div field="unitname" width="60" headeralign="center" align="center" allowsort="true">
+                    单位
+                </div>
+                <div field="itemspec" width="60" headeralign="center" align="center" allowsort="true">
+                    规格
+                </div>
+                <div field="execdate" width="120" headeralign="center" align="center" allowsort="true" dateformat="yyyy-MM-dd HH:mm:ss">
+                    生成时间
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    //$("#printContent").jqprint(); //打印
+    function addPrint() {
+        $("#printContent").jqprint();
+    }
+
+    var Genders = [{ id: 0, text: '临时' }, { id: 1, text: '长期' }];
+    function OnSexChange(e) {
+        for (var i = 0, l = Genders.length; i < l; i++) {
+            var g = Genders[i];
+            if (g.id == e.value) return g.text;
+        }
+        return "";
+    }
+</script>

@@ -1,0 +1,258 @@
+﻿@{
+    ViewBag.Title = "项目维护";
+    Layout = null;
+}
+<head>
+    <script src="~/Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+    <script src="~/Scripts/MiniUI/core.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var grid;
+        $(document).ready(function () {
+            mini.parse();
+            grid = mini.get("gridDictItem");
+
+            grid.on("cellendedit", function (sender) {
+                if (sender.field == "ItemID") {
+                    sender.cellStyle = "color:red;font-weight:bold";
+                }
+            });
+
+            tree = mini.get("tree1");
+
+            tree.on("nodeselect", function (e) {
+                mini.get("CateId").setValue(e.node.id);
+
+                grid.load({ upperid: e.node.id });
+                mini.get("btnAdd").enabled = true;
+                mini.get("btnEdit").enabled = true;
+            });
+
+
+            var form = new mini.Form("frmDictItem");
+            //保存
+            $("#btnSave").click(function (event) {
+                var o = form.getData();
+
+                form.validate();
+                if (form.isValid() == false) {
+                    return;
+                }
+                mini.get("btnAdd").enabled = true;
+                mini.get("btnEdit").enabled = true;
+                var grid = mini.get("gridDictItem");
+                grid.commitEdit();
+                var data = grid.getChanges();
+                var json = mini.encode(data);
+                if (json.toString().length <= 2) {
+                    mini.showTips({ content: "没有需要保存的数据！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                    return;
+                }
+                var addtype = mini.get("addType").getValue();
+                var strCateId = mini.get("CateId").getValue();
+                var itemid = $("#editItemId").val();
+                $.ajax({
+                    url: '@Url.Action("Save")?CateId=' + strCateId + "&addType=" + addtype + "&ItemId=" + itemid,
+                    type: 'post',
+                    data: json,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: 'json',
+                    cache: false,
+                    success: function (result) {
+                        result = eval('(' + result + ')');
+                        if (result.code == "100") {
+                            mini.showTips({ content: "保存成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                            grid.load({ upperid: strCateId });
+                        }
+                        else {
+                            mini.showTips({ content: result.msg, state: "danger", x: "center", y: "top", timeout: 3000 });
+                            return;
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        mini.showTips({ content: jqXHR.responseText, state: "danger", x: "center", y: "top", timeout: 3000 });
+                        return;
+                    }
+                });
+            });
+        });
+
+
+        function OnCellBeginEdit(e) {
+            var record = e.record, field = e.field;
+            if (field == "ItemID") {
+                var addtype = mini.get("addType").getValue();
+                if (addtype == "Add") {
+                    e.cancel = false;
+                }
+                else {
+                    e.cancel = true;
+                }
+            }
+        }
+
+        function Cacel() {
+            var cateid = mini.get("CateId").getValue();
+            grid.load({ upperid: cateid });
+            //grid.cancelEdit();
+        }
+    </script>
+</head>
+<form id="frmDictItem">
+    <div>
+        <ul class="mnbreadcrumb">
+            <li>
+                <a href="#">基本信息</a> <span class="divider"></span>
+            </li>
+            <li>
+                <a href="#">项目管理</a>
+            </li>
+        </ul>
+    </div>
+    <div class="mini-splitter" style="width: 100%; height: 90%;">
+        <div size="240" showcollapsebutton="true">
+            <div class="mini-toolbar" style="padding: 2px; border-top: 0; border-left: 0; border-right: 0;">
+                <span style="padding-left: 5px;">项目分类树</span>
+            </div>
+            <div class="mini-fit">
+                <ul id="tree1" class="mini-tree" url="@Url.Action("GetDictCateTree", "DictItemCate")" style="width: 80%;"
+                    showtreeicon="true" textfield="name" idfield="id" parentfield="pid" resultastree="false"></ul>
+            </div>
+        </div>
+        <div showcollapsebutton="true">
+            <div class="mini-toolbar" style="padding: 2px; border-top: 0; border-left: 0; border-right: 0;">
+                <a id="btnAdd" class="mini-button" iconcls="icon-add" plain="true" onclick="AddRow()">新增</a>
+                <span class="separator"></span>
+                <a id="btnEdit" class="mini-button" iconcls="icon-edit" plain="true" onclick="editRow()">编辑</a>
+                <span class="separator"></span>
+                <a class="mini-button" iconcls="icon-save" id="btnSave" plain="true">保存</a>
+                <span class="separator"></span>
+                <a id="btnUpdate" class="mini-button" iconcls="icon-remove" plain="true" onclick="Remove()">删除</a>
+                <span class="separator"></span>
+                <a class="mini-button" iconcls="icon-cancel" id="btnSave" plain="true" onclick="Cacel()">取消</a>
+                <input id="CateId" property="editor" class="mini-textbox" visible="false" />
+                <input id="addType" property="editor" class="mini-textbox" visible="false" />
+                <input type="hidden" id="editItemId" />
+                <input type="hidden" id="isadd" />
+            </div>
+            <div id="gridDictItem" class="mini-datagrid" style="width: 100%; height: 95%;" pagesize="30" sizelist="[30,50,100]" url="@Url.Action("GetList")"
+                 multiselect="false" oncellbeginedit="OnCellBeginEdit">
+                <div property="columns">
+                    <div type="checkcolumn">
+                    </div>
+                    <div field="ItemID" headeralign="center"  visible="false">
+                        项目编码
+                        <input property="editor" class="mini-textbox" required="true" />
+                    </div>
+                    <div field="ItemName" headeralign="center" >
+                        项目名称
+                        <input property="editor" class="mini-textbox"  required="true" />
+                    </div>
+                    <div name="InputStr" field="InputStr" headeralign="center" width="100">
+                        助记符
+                        <input property="editor" class="mini-textbox"  required="true" />
+                    </div>
+                    <div name="ItemDes" field="ItemDes" headeralign="center" width="100">
+                        别名
+                        <input property="editor" class="mini-textbox" minwidth="200" />
+                    </div>
+                    <div type="comboboxcolumn" autoshowpopup="true" field="UnitTypeId" width="100" allowsort="true"
+                         align="center" headeralign="center">
+                        默认单位
+                        <input property="editor" class="mini-combobox" valuefield="CodeId" textfield="CodeName" url='@Url.Action("GetCommonDictCode", "DictCode", new { codeType = @HujingCommon.DictCodeTypeClass.UnitType })' required="true" />
+                    </div>
+                    <div name="SalesPrice" field="SalesPrice" headeralign="center" width="100">
+                        零售价
+                        <input property="editor" class="mini-textbox" vtype="float" required="true" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        mini.parse();
+
+
+        var grid = mini.get("gridDictItem");
+
+        function AddRow() {
+            mini.get("btnEdit").enabled = false
+
+            mini.get("addType").setValue("Add");
+            //mini.get("addType").setValue("Update");
+            var cateid = mini.get("CateId").getValue();
+            if (cateid == "") {
+                mini.showTips({ content: "请选择项目分类！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+            var newRow = { name: "New Row" };
+            grid.addRow(newRow, 0);
+            grid.beginEditRow(newRow);
+        }
+
+        function Remove() {
+            var rows = grid.getSelecteds();
+            if (rows.length <= 0) {
+                mini.showTips({ content: "请选择需要删除的项目！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+
+            mini.confirm("确定删除此项目？", "确定？", function (action) {
+                if (action == "ok") {
+                    var ids = [];
+                    for (var i = 0, l = rows.length; i < l; i++) {
+                        var r = rows[i];
+                        ids.push(r.ItemID);
+                    }
+                    var id = ids.join(',');
+                    grid.loading("操作中，请稍后......");
+                    var strCateId = mini.get("CateId").getValue();
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("Delete")',
+                        data: { "ItemIds": id },
+                        cache: false,
+                        success: function (result) {
+                            if (result == "ok") {
+                                mini.showTips({ content: "操作成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                                grid.load({ upperid: strCateId });
+                            }
+                            else {
+                                mini.showTips({ content: "操作失败！", state: "danger", x: "center", y: "top", timeout: 3000 });
+                            }
+                        }
+                    });
+                } else {
+
+                }
+            });
+        }
+
+        function editRow() {
+            mini.get("btnAdd").enabled = false
+
+            mini.get("addType").setValue("Update");
+            var cateid = mini.get("CateId").getValue();
+            if (cateid == "") {
+                mini.showTips({ content: "请选择项目分类！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+            grid.cancelEdit();
+            var rows = grid.getSelecteds();
+            if (rows[0].ItemID == undefined) {
+                mini.showTips({ content: "请选择需要编辑的行！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                return;
+            }
+
+            $("#editItemId").val(rows[0].ItemID);
+            if (rows.length > 0) {
+                for (var i = 0, l = rows.length; i < l; i++) {
+                    var row = rows[i];
+                    grid.beginEditRow(row);
+
+                }
+            }
+            //grid.setFrozenStartColumn(0);
+            //grid.setFrozenEndColumn(1);
+        }
+    </script>
+</form>

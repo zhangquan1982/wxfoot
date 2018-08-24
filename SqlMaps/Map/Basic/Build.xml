@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="BuildMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="Build" type="HujingModel.BuildEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="Build">
+      <result property="BuildId" column="buildid" />
+      <result property="BuildName" column="buildname" />
+      <result property="Memo" column="memo" />
+      <result property="OrgId" column="orgid" />
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+
+    <select id="Count" parameterClass="string" resultClass="int">
+      Select count(buildid) From Build where 1=1 $Condition$
+    </select>
+    
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      buildid,
+      buildname,
+      memo,
+      orgid
+      From Build
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          buildid=#BuildId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+    <select id="LoadAll" parameterClass="string" resultMap="SelectResult">
+      Select
+      buildid,
+      buildname,
+      memo,
+      orgid
+      From Build
+      where 1=1 $Condition$
+    </select>
+
+
+    <insert id="Save" parameterClass="Build">
+      Insert Into Build (
+      buildid,
+      buildname,
+      memo,
+      orgid
+      )Values(
+      #BuildId#,
+      #BuildName#,
+      #Memo#,
+      #OrgId#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="Build">
+      Update Build Set
+      buildid=#BuildId#,
+      buildname=#BuildName#,
+      memo=#Memo#,
+      orgid=#OrgId#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          buildid=#BuildId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="int">
+      Delete From Build
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          buildid=#BuildId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+  </statements>
+</sqlMap>

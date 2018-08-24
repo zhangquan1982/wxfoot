@@ -1,0 +1,196 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="DictItemMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="DictItem" type="HujingModel.DictItemEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="DictItem">
+      <result property="ItemID" column="itemid" />
+      <result property="ItemName" column="itemname" />
+      <result property="CateID" column="cateid" />
+      <result property="CateType" column="catetype" />
+      <result property="ItemDes" column="itemdes" />
+      <result property="InputStr" column="inputstr" />
+      <result property="StopFlag" column="stopflag" />
+      <result property="SalesPrice" column="salesprice" />
+      <result property="ItemSpec" column="itemspec" />
+      <result property="UnitName" column="unitname" />
+      <result property="UnitTypeId" column="unittypeid" />
+      <result property="CreateDate" column="createdate" />
+      <result property="UpdateDate" column="updatedate" />
+      <result property="CreateUser" column="createuser" />
+      <result property="UpdateUser" column="updateuser" />
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+
+    <select id="Count" parameterClass="string" resultClass="int">
+      Select count(itemid) From DictItem where 1=1 $Condition$
+    </select>
+
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      itemid,
+      itemname,
+      cateid,
+      catetype,
+      itemdes,
+      inputstr,
+      stopflag,
+      salesprice,
+      wholesaleprice,
+      itemspec,
+      unitname,
+      unittypeid,
+      createdate,
+      updatedate,
+      createuser,
+      updateuser
+      From DictItem
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          itemid=#ItemID#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+    <select id="LoadAllByPacktypeId" parameterClass="string" resultMap="SelectResult">
+      Select
+      DictItem.itemid,
+      DictItem.itemname,
+      cateid,
+      catetype,
+      itemdes,
+      inputstr,
+      stopflag,
+      stopflagin,
+      stopflagout,
+      salesprice,
+      wholesaleprice,
+      itemspec,
+      unitname,
+      unittypeid,
+      DictItem.createdate,
+      updatedate,
+      DictItem.createuser,
+      updateuser,
+      outprice,
+      batchcode,
+      enterpriseid
+      From DictItem inner join PackageItem on DictItem.itemid= PackageItem.itemid
+      inner join PackageType on PackageType.PackAgeTypeId=PackageItem.PackTypeId
+      where PackageType.PackAgeTypeId = #PackTypeId#
+    </select>
+
+
+    <select id="LoadAll" parameterClass="int" resultMap="SelectResult">
+      select * from
+      ( Select
+      itemid,
+      itemname,
+      cateid,
+      catetype,
+      itemdes,
+      inputstr,
+      stopflag,
+      salesprice,
+      itemspec,
+      unitname,
+      unittypeid,
+      createdate,
+      updatedate,
+      createuser,
+      updateuser,
+      ROW_NUMBER() over(order by $OrderBy$ ) rowNumber
+      From DictItem
+      where stopFlag=0 $Condition$
+      ) aa
+      where rowNumber BETWEEN  #Next# and #Prev#
+    </select>
+
+    <select id="LoadDictItemJoin" parameterClass="string" resultMap="SelectResult">
+      Select
+      itemid,
+      itemname,
+      s1.cateid,
+      s1.catetype,
+      itemdes,
+      s1.inputstr,
+      stopflag,
+      salesprice,
+      itemspec,
+      unitname,
+      unittypeid,
+      s1.createdate,
+      s1.updatedate,
+      s1.createuser,
+      s1.updateuser
+      From DictItem s1
+      inner join DictItem_Cate s2 on s1.CateID = s2.CateID
+      where stopFlag=0 $Condition$
+    </select>
+
+    <insert id="Save" parameterClass="DictItem">
+      Insert Into DictItem (
+      itemid,
+      itemname,
+      cateid,
+      catetype,
+      itemdes,
+      inputstr,
+      stopflag,
+      salesprice,
+      itemspec,
+      unitname,
+      unittypeid,
+      createdate,
+      createuser
+      )Values(
+      #ItemID#,
+      #ItemName#,
+      #CateID#,
+      #CateType#,
+      #ItemDes#,
+      #InputStr#,
+      #StopFlag#,
+      #SalesPrice#,
+      #ItemSpec#,
+      #UnitName#,
+      #UnitTypeId#,
+      #CreateDate#,
+      #CreateUser#
+      )
+    </insert>
+
+    <update id="Update" parameterClass="DictItem">
+      Update DictItem Set
+      itemname=#ItemName#,
+      cateid=#CateID#,
+      catetype=#CateType#,
+      itemdes=#ItemDes#,
+      inputstr=#InputStr#,
+      salesprice=#SalesPrice#,
+      itemspec=#ItemSpec#,
+      unitname=#UnitName#,
+      unittypeid=#UnitTypeId#,
+      updatedate=#UpdateDate#,
+      updateuser=#UpdateUser#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          itemid=#ItemID#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="int">
+      Update  DictItem set StopFlag = 1
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          itemid=#ItemID#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+  </statements>
+</sqlMap>

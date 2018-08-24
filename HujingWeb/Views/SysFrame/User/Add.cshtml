@@ -1,0 +1,162 @@
+﻿@model HujingModel.UserInfoEntity
+@{
+    ViewBag.Title = "员工增加";
+    Layout = null;
+}
+<head>
+    <title>员工面板</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <link href="~/Scripts/MiniUI/demo.css" rel="stylesheet" type="text/css" />
+    <script src="~/Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+    <script src="~/Scripts/MiniUI/core.js" type="text/javascript"></script>
+    <script src="~/Scripts/jquery.form.js" type="text/javascript"></script>
+    <style type="text/css">
+        html, body
+        {
+            padding: 0;
+            margin: 0;
+            border: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+        table td
+        {
+            font-size: 12px;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            mini.parse();
+            var form = new mini.Form("frmAdd");
+
+            //保存
+            $("#btnSave").click(function (event) {
+
+                form.validate();
+                if (form.isValid() == false) {
+                    return;
+                }
+                $("#frmAdd").ajaxSubmit({
+                    success: function (callback) {
+                        if (callback) {
+                            window.CloseOwnerWindow("save");
+                        }
+                        else {
+                            mini.showTips({
+                                content: "新增失败！",
+                                state: "warning",
+                                x: "center",
+                                y: "top",
+                                timeout: 3000
+                            });
+                        }
+                    },
+                    error: function () {
+                        mini.showTips({
+                            content: "新增失败！",
+                            state: "warning",
+                            x: "center",
+                            y: "top",
+                            timeout: 3000
+                        });
+                    }
+                });
+            });
+        });
+
+
+        function SetData(data) {
+            if (data.action == "new") {
+                mini.getbyName("DepId").setValue(data.depid);
+            }
+        }
+
+        function onCancel(e) {
+            window.CloseOwnerWindow("cancel");
+        }
+    </script>
+</head>
+<body>
+    <form id="frmAdd" method="post" action="/User/Save">
+    <input name="id" class="mini-hidden" />
+    <div style="padding-left: 11px; padding-bottom: 5px;">
+        <table style="table-layout: fixed;">
+            <tr>
+                <td style="width: 70px;">
+                    员工姓名：
+                </td>
+                <td style="width: 150px;">
+                    <input type="text" name="UserName" id="UserName" class="mini-textbox" required="true" />
+                </td>
+                <td style="width: 70px;">
+                    性别：
+                </td>
+                <td style="width: 150px;">
+                    <select name="Sex" class="mini-radiobuttonlist">
+                        <option value="0">男</option>
+                        <option value="1">女</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    手机号码：
+                </td>
+                <td>
+                    <input id="Mobile" name="Mobile" class="mini-textbox" vtype="range:10000000000,19999999999" required="true" />
+                </td>
+                <td>
+                    身份证：
+                </td>
+                <td>
+                    <input name="IdentyCard" class="mini-textbox" required="true"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    出生日期：
+                </td>
+                <td>
+                    <input name="BirthDate" class="mini-datepicker" required="true" emptytext="请选择日期" />
+                </td>
+                <td>
+                    Email：
+                </td>
+                <td colspan="3">
+                    <input name="Email" vtype="email" class="mini-textbox"  />
+                    <input name="DepId" class="mini-textbox" visible="fasle" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    家庭住址：
+                </td>
+                <td>
+                    <input id="Address" name="Address" class="mini-textbox" required="true" />
+                </td>
+                <td>
+                    固定电话：
+                </td>
+                <td>
+                    <input id="Phone" name="Phone" class="mini-textbox" />
+                </td>
+
+            </tr>
+            <tr>
+                <td>
+                    备注：
+                </td>
+                <td colspan="3">
+                    <input name="Memo" class="mini-textarea" style="width: 350px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div style="text-align: center; padding: 10px;">
+        <a class="mini-button" id="btnSave" href="javascript:void(0);" style="width: 60px;
+            margin-right: 20px;">确定</a> <a class="mini-button" onclick="onCancel" style="width: 60px;">
+                取消</a>
+    </div>
+    </form>
+</body>

@@ -1,0 +1,669 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+<link href="~/Scripts/MiniUI/demo.css" rel="stylesheet" type="text/css" />
+<script src="~/Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+<script src="~/Scripts/MiniUI/core.js" type="text/javascript"></script>
+<script src="~/Scripts/moment.min.js"></script>
+<style type="text/css">
+    html, body {
+        padding: 0;
+        margin: 0;
+        border: 0;
+        height: 100%;
+    }
+
+    table td {
+        font-size: 12px;
+    }
+
+
+    .myrowBill {
+        background: #0094ff;
+    }
+
+    .myrowBillStop {
+        background: #4cff00;
+    }
+
+    .myrowNoBillStop {
+        background: #808080;
+    }
+</style>
+<head>
+    <script src="~/Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+    <script src="~/Scripts/MiniUI/core.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var tree;
+        var grid;
+        $(document).ready(function () {
+            mini.parse();
+            tree = mini.get("tree1");
+            grid = mini.get("grid1");
+            grid2 = mini.get("grid2");
+            var form = new mini.Form("fromOrder");
+            $("#longSel").hide();
+            $("#longTime").hide();
+            $("#divEndDate").hide();
+            var serial = $("#SerialNum").val();
+            if (serial != "") {
+                mini.getbyName("SerialNum").setValue(serial);
+                grid.load({ SerialNum: serial });
+                grid2.load({ OrdId: "S313" });
+            }
+
+            grid.on("drawcell", function (e) {
+                var record = e.record,
+                column = e.column,
+                field = e.field,
+                value = e.value;
+
+                if (record.OrdStatusID == "1") {
+                    if (record.CancUser == null) {
+                    }
+                    else {
+                        e.cellStyle = "color:gray;font-weight:bold;";
+                    }
+                }
+                else if (record.OrdStatusID == "2") {
+                    if (record.CancUser == null) {
+                        e.cellStyle = "color:blue;font-weight:bold;";
+                    }
+                    else {
+                        e.cellStyle = "color:red;font-weight:bold;";
+                    }
+                }
+            });
+
+            var nowTime = moment().format("YYYY-MM-DD HH:mm:ss");
+            mini.getbyName("BeginDate").setValue(nowTime);
+
+            @*tree.on("nodeselect", function (e) {
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("GetOldPersonBySerialNum","PatiInBill")',
+                    data: { "SerialNum": e.node.id },
+                    cache: false,
+                    success: function (result) {
+
+                        if (result != false) {
+                            $("#serialNum2").html(result.SerialNum + '/' + result.PatiName);
+                            $("#patiSex").html(result.SexName);
+                            $("#patiAge").html(result.Age);
+                            $("#bedName").html(result.BedName);
+                            $("#floorName").html(result.FloorName);
+                            $("#preAmount").html(result.PreAmount);
+                            $("#feeAmount").html(result.FeeAmount);
+                            $("#deposit").html(result.Deposit);
+                            $("#LeaveAmount").html(result.LeaveAmount);
+                            $("#SerialNum").val(result.SerialNum)
+                            mini.getbyName("SerialNum").setValue(result.SerialNum);
+                            var birthdayMilliseconds = parseInt(result.AdmitDate.replace(/\D/igm, ""));
+                            //实例化一个新的日期格式，使用1970 年 1 月 1 日至今的毫秒数为参数
+                            var date = new Date(birthdayMilliseconds);
+                            var dateStr = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+                            $("#admitDate").html(dateStr);
+                            grid.load({ SerialNum: e.node.id });
+                            grid2.load();
+                            mini.getbyName("OrdName").setValue("");
+                            mini.getbyName("TimeTypeId").setValue("");
+                            mini.getbyName("FreqId").setValue("");
+                            mini.getbyName("OrdTypeID").setValue("");
+                        }
+                        else {
+                            mini.showTips({ content: "操作失败！", state: "danger", x: "center", y: "top", timeout: 3000 });
+                        }
+                    }
+                });
+
+            });*@
+            tree.on("nodedblclick", function (e) {
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("GetList", "Package")',
+                    data: { "TypeId": e.node.id, "pageIndex": 0, "pageSize": 9999 },
+                    cache: false,
+                    success: function (result) {
+                        if (result.data.length > 0) {
+                            $("#btnSave").show();
+                            var nowTime = moment().format("YYYY-MM-DD HH:mm:ss");
+                            mini.getbyName("BeginDate").setValue(nowTime);
+                            grid.clearRows();
+                            grid2.clearRows();
+                            mini.getbyName("OrdName").setValue(e.node.name);
+                            var rows = [];
+                            for (var i = 0; i < result.data.length; i++) {
+                                var item = result.data[i];
+                                var newRow = {};
+                                newRow.ItemID = item.ItemID;
+                                newRow.Quantity = item.Quantity;
+                                newRow.ItemName = item.ItemName;
+                                newRow.UnitName = item.UnitName;
+                                newRow.Price = item.SalesPrice;
+                                newRow.TotAmount = item.SalesPrice * item.Quantity;
+                                newRow.BatchCode = item.BatchCode;
+                                newRow.EnterpriseName = item.EnterpriseName;
+                                rows[i] = new Object();
+                                rows[i] = newRow;
+                            }
+
+                            grid2.addRows(rows, 0);
+                        }
+                        else {
+                            mini.showTips({ content: "此套餐没有维护明细！", state: "danger", x: "center", y: "top", timeout: 3000 });
+                        }
+                    }
+                });
+
+            });
+
+            $("#btnSave").click(function (event) {
+                form.validate();
+                grid2.validate();
+
+                if (form.isValid() == false) {
+                    return;
+                }
+
+                if (grid2.getData().length == 0) {
+                    mini.showTips({ content: "没有选择保存项目！", state: "warning", x: "center", y: "top", timeout: 3000 });
+                    return;
+                }
+                var head = form.getData();
+                var items = grid2.getData();
+
+                mini.confirm("确定保存此护嘱吗？", "确定信息",
+                function (action) {
+                    if (action == "ok") {
+                        $.ajax({
+                            url: "@Url.Action("SavePatInOrder", "InOrder")",
+                            type: 'post',
+                            dataType: "json",
+                            contentType: 'application/json',
+                            data: mini.encode({
+                                Order: form.getData(),
+                                items: grid2.getData()
+                            }),
+                            cache: false,
+                            success: function (text) {
+                                if (text == true) {
+                                    mini.showTips({ content: "保存成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                                    var serial = $("#SerialNum").val();
+                                    grid.load({ SerialNum: serial });
+                                    grid2.load({ OrdId: "S313" });
+                                } else {
+                                    mini.showTips({ content: "保存失败！", state: "danger", x: "center", y: "top", timeout: 3000 });
+                                }
+
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                alert(jqXHR.responseText);
+                                CloseWindow();
+                            }
+                        });
+                    }
+                });
+
+            });
+
+        });
+
+        function Cacel() {
+            var serial = $("#SerialNum").val();
+            if (serial != "") {
+                mini.getbyName("SerialNum").setValue(serial);
+                grid.load({ SerialNum: serial });
+                grid2.load({ OrdId: "S313" });
+            }
+        }
+
+        function OrderTypeChange(e) {
+            if (e.value == "0") {
+                $("#longSel").hide();
+                $("#longTime").hide();
+                $("#divEndDate").hide();
+            }
+            else {
+                $("#longSel").show();
+                $("#longTime").show();
+                $("#divEndDate").show();
+            }
+        }
+
+    </script>
+</head>
+<form id="fromOrder">
+    <div>
+        <ul class="mnbreadcrumb">
+            <li>
+                <a href="#">护理管理</a>
+            </li>
+            <li>
+                <a href="#">护嘱管理</a>
+            </li>
+        </ul>
+    </div>
+    <div class="mini-splitter" style="width: 100%; height: 100%;">
+        <div size="180" showcollapsebutton="true">
+            <div class="mini-toolbar" style="padding: 2px; border-top: 0; border-left: 0; border-right: 0;">
+                <span style="padding-left: 5px;">选择套餐</span>
+            </div>
+            <div class="mini-fit">
+                <ul id="tree1" class="mini-tree" url="@Url.Action("GetTypeTree","Package")" style="width: 100%;"
+                    showtreeicon="true" textfield="name" idfield="id" parentfield="pid" resultastree="false"></ul>
+            </div>
+        </div>
+        <div showcollapsebutton="true">
+            <input type="hidden" name="SerialNum" id="SerialNum" value="@ViewBag.PatiInfo.SerialNum" />
+            <input type="hidden" name="SerialNum" class="mini-textbox" visible="false" value="@ViewBag.PatiInfo.SerialNum" />
+            <div style="padding-left: 15px; padding-top: 8px;">
+                <table style="table-layout: fixed; width:100%;">
+                    <tr>
+                        <td>入院号：<span id="serialNum2">@ViewBag.PatiInfo.SerialNum/@ViewBag.PatiInfo.PatiName</span></td>
+                        <td>性别：<span id="patiSex">@ViewBag.PatiInfo.SexName</span></td>
+                        <td>年龄：<span id="patiAge">@ViewBag.PatiInfo.Age</span>岁</td>
+                    </tr>
+                    <tr>
+                        <td>入院日期：<span id="admitDate">@ViewBag.PatiInfo.AdmitDate.ToString("yyyy-MM-dd")</span></td>
+                        <td>床位：<span id="bedName">@ViewBag.PatiInfo.BedName</span></td>
+                        <td>楼层：<span id="floorName">@ViewBag.PatiInfo.FloorName</span></td>
+                    </tr>
+                    <tr style="color:red; font-weight:bold;font-size:14px">
+                        <td>预交金额：<span id="preAmount">@ViewBag.PatiInfo.PreAmount</span></td>
+                        <td>消费金额：<span id="feeAmount">@ViewBag.PatiInfo.FeeAmount</span></td>
+                        <td>
+                            当前余额：<span id="LeaveAmount">@ViewBag.PatiInfo.LeaveAmount</span>
+                        </td>
+
+                    </tr>
+                </table>
+            </div>
+            <br />
+            <div style="width: 100%; height: 30px">
+                <div class="mini-toolbar" style="border-bottom: 0; padding: 0px;">
+                    <table style="width: 100%;">
+                        <tr>
+                            <td style="width: 100%;">
+                                <a class="mini-button" iconcls="icon-add" id="btnAdd" onclick="AddRow()">增加</a>
+                                <span class="separator"></span>
+                                <a class="mini-button" iconcls="icon-save" id="btnSave" plain="true">保存</a>
+                                <span class="separator"></span>
+                                <a class="mini-button" iconcls="icon-reload" id="btnSave" plain="true" onclick="Cacel()">刷新</a>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <input id="key" placeholder="请输入护嘱名称" style="width: 150px;" onenter="onKeyEnter" />
+                                <a class="mini-button" onclick="search()">查询</a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div id="grid1" class="mini-datagrid" style="width: 100%; height: 40%;"
+                 allowresize="true" url='@Url.Action("GetPersonPatiInOrder")' onselectionchanged="OrdChangeClick" idfield="OrderItemId" showpager="false"
+                 contextmenu="#gridMenu">
+                <div property="columns">
+                    <div type="checkcolumn" width="10">
+                    </div>
+                    <div field="CreateDate" width="60" headeralign="center" align="center" allowsort="true" dateformat="yyyy-MM-dd HH:mm:ss">
+                        开立时间
+                    </div>
+                    <div field="OrdName" width="40" headeralign="center" align="center" allowsort="true">
+                        护嘱
+                    </div>
+                    <div field="OrdTypeID" width="40" headeralign="center" align="center" allowsort="true" renderer="OnOrdTypeChange">
+                        护嘱类型
+                    </div>
+                    <div field="CreateUser" width="40" headeralign="center" align="center" allowsort="true">
+                        开立人
+                    </div>
+                    <div field="EndDate" width="60" headeralign="center" align="center" allowsort="true" dateformat="yyyy-MM-dd HH:mm:ss">
+                        结束时间
+                    </div>
+                    <div field="CancUser" width="40" headeralign="center" align="center" allowsort="true">
+                        终止人
+                    </div>
+                    <div field="CancReason" width="40" headeralign="center" align="center" allowsort="true">
+                        终止原因
+                    </div>
+                    <div field="CancDate" width="60" headeralign="center" align="center" allowsort="true" dateformat="yyyy-MM-dd HH:mm:ss">
+                        停止时间
+                    </div>
+                    <div field="OrdStatusID" width="40" headeralign="center" align="center" allowsort="true" renderer="OnOrdStatusChange">
+                        护嘱状态
+                    </div>
+                </div>
+            </div>
+            <ul id="gridMenu" class="mini-contextmenu" onbeforeopen="onBeforeOpen">
+                <li name="remove" iconcls="icon-remove" onclick="onStop">停止</li>
+                <li id="setBeginDate" name="setBeginDate" iconcls="icon-edit" onclick="SetDateTime">设置开始时间</li>
+            </ul>
+            <div>
+                <div>
+                    <table>
+                        <tr>
+                            <td>
+                                开始时间：
+                                <input id="BeginDate" name="BeginDate" class="mini-datepicker" style="width:200px;" nullvalue="null"
+                                       format="yyyy-MM-dd H:mm:ss" timeformat="H:mm:ss" showtime="true" showokbutton="true" showclearbutton="false" ondrawdate="onDrawDate" required="true" />
+                            </td>
+                            <td style="width: 150px;">
+                                <select name="OrdTypeID" class="mini-radiobuttonlist" onvaluechanged="OrderTypeChange" required="true">
+                                    <option value="0">临时</option>
+                                    <option value="1">长期</option>
+                                </select>
+                            </td>
+                            <td>
+
+                        </tr>
+                        <tr>
+                            <td>护嘱：<input id="OrdName" name="OrdName" class="mini-textbox" style="width: 220px" required="true" /></td>
+                            <td>
+                                <div id="longTime">
+                                    时间类型：<input name="TimeTypeId" class="mini-combobox" style="width: 120px" valuefield="CodeId" textfield="CodeName"
+                                                data=" [{CodeId: '1', CodeName: '固定频次'}]" emptytext="请选择" required="true" />
+                                </div>
+                            </td>
+                            <td>
+                                <div id="longSel" style="float:left">
+                                    频次:<input name="FreqId" class="mini-combobox" style="width: 120px" valuefield="CodeId" textfield="CodeName"
+                                              url='@Url.Action("GetCommonDictCode", "Common", new { codeType = @HujingCommon.DictCodeTypeClass.FreqType })' required="true" emptytext="请选择" />
+                                </div>
+
+                                <div id="divEndDate" style="float:left; margin-left:10px">
+                                    结束时间：
+                                    <input id="EndDate" name="EndDate" class="mini-datepicker" style="width:200px;" nullvalue="null"
+                                           format="yyyy-MM-dd H:mm:ss" timeformat="H:mm:ss" showtime="true" showokbutton="true" showclearbutton="false" ondrawdate="onDrawDate" />
+                                </div>
+                        </tr>
+                    </table>
+                </div>
+                <div id="grid2" class="mini-datagrid" style="width: 100%; height: 30%;"
+                     allowresize="true" url='@Url.Action("GetOrderItem")' idfield="Status" allowresize="true" allowcellselect="true"
+                     allowcelledit="true" editnextonenterkey="true" editnextrowcell="true"
+                     showpager="false">
+                    <div property="columns">
+                        <div type="indexcolumn"></div>
+                        <div field="InputStr" align="center" width="60" headeralign="center" allowsort="false">
+                            助记符
+                            <div class="mini-autocomplete" style="width:250px;" property="editor"
+                                 popupwidth="500" value="" text="" textfield="InputStr" valuefield="ItemID" searchfield="inputStr"
+                                 url="@Url.Action("GetDictItemList", "InOutStore")" onvaluechanged="onValueChanged">
+                                <div property="columns">
+                                    <div header="助记符" field="InputStr"></div>
+                                    <div header="项目编码" field="ItemID"></div>
+                                    <div header="项目名称" field="ItemName"></div>
+                                    <div header="单位" field="UnitName"></div>
+                                    <div header="价格" field="WholesalePrice"></div>
+                                    <div header="生产厂家" field="EnterpriseName"></div>
+                                    <div header="批次号" field="BatchCode"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div name="ItemID" field="ItemID" width="80" headeralign="center" allowsort="false">
+                            项目编码
+                        </div>
+                        <div name="ItemName" field="ItemName" width="80" headeralign="center" allowsort="false">
+                            项目名称
+                        </div>
+                        <div name="UnitName" align="center" field="UnitName" width="40" headeralign="center" allowsort="false">
+                            单位
+                        </div>
+                        <div field="Quantity" align="center" width="40" headeralign="center" allowsort="false">
+                            数量
+                            <input property="editor" vtype="float" class="mini-textbox" style="width:100%;" />
+                        </div>
+                        <div field="Price" align="right" width="60" headeralign="center" allowsort="false">价格</div>
+                        <div field="TotAmount" align="right" width="60" headeralign="center" allowsort="false">金额</div>
+                        <div field="BatchCode" align="right" width="60" headeralign="center" allowsort="false">批号</div>
+                        <div field="EnterpriseId" visible="false" width="100" headeralign="center" allowsort="false">企业</div>
+                        <div field="EnterpriseName" width="100" headeralign="center" allowsort="false">生产厂家</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script type="text/javascript">
+    mini.parse();
+    var grid = mini.get("grid1");
+    var grid2 = mini.get("grid2");
+    var form = new mini.Form("fromOrder");
+
+    function AddRow() {
+        var nowTime = moment().format("YYYY-MM-DD HH:mm:ss");
+        mini.getbyName("BeginDate").setValue(nowTime);
+
+        var newRow = {};
+        grid.clearRows();
+        grid2.clearRows();
+        grid2.addRow(newRow, 0);
+        $("#btnSave").show();
+        $("#btnStop").hide();
+        mini.getbyName("OrdName").setValue("");
+        mini.getbyName("TimeTypeId").setValue("");
+        mini.getbyName("FreqId").setValue("");
+        mini.getbyName("OrdTypeID").setValue("");
+    }
+
+    function onDrawDate(e) {
+        var date = e.date;
+        var d = new Date();
+
+        if (date.getTime() < d.getTime()) {
+            e.allowSelect = false;
+        }
+    }
+
+    function onBeforeOpen(e) {
+        var grid = mini.get("grid1");
+        var menu = e.sender;
+
+        var row = grid.getSelected();
+        var rowIndex = grid.indexOf(row);
+        if (!row) {
+            e.cancel = true;
+            //阻止浏览器默认右键菜单
+            e.htmlEvent.preventDefault();
+            return;
+        }
+        var removeItem = mini.getbyName("remove", menu);
+        if (row.OrdName == "初始套餐") {
+            var beginDateItem = mini.getbyName("setBeginDate", menu);
+            $("#setBeginDate").show();
+        }
+        else {
+            $("#setBeginDate").hide();
+        }
+        removeItem.enable();
+    }
+
+    function onStop(e) {
+        var row = grid.getSelected();
+        var intStatus = parseInt(row.OrdStatusID);
+        if (row.CancUser != null) {
+            mini.showTips({ content: "此护嘱已停止，无法停止！", state: "warning", x: "center", y: "top", timeout: 3000 });
+            return;
+        }
+        var serial = $("#SerialNum").val();
+        if (row) {
+            var ordid = row.OrdId;
+            if (ordid != "") {
+                mini.prompt("停止原因：", "确认停止此护嘱？",
+                    function (action, value) {
+                        if (action == "ok") {
+                            $.ajax({
+                                type: 'POST',
+                                url: '@Url.Action("CancelOrder")',
+                                data: { "OrdId": ordid, "CanReason": value },
+                                cache: false,
+                                success: function (result) {
+                                    if (result == true) {
+                                        mini.showTips({ content: "操作成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                                        grid.load({ SerialNum: serial });
+                                        grid2.load({ OrdId: "S313" });
+                                    }
+                                    else {
+                                        mini.showTips({ content: "操作失败！", state: "danger", x: "center", y: "top", timeout: 3000 });
+                                    }
+                                }
+                            });
+                        }
+                    });
+            }
+        }
+    }
+
+    function SetDateTime(e) {
+        var row = grid.getSelected();
+        if (row.BeginDate != null) {
+            mini.showTips({ content: "套餐开始日期已经设置，无法再次设置！", state: "warning", x: "center", y: "top", timeout: 3000 });
+            return;
+        }
+        var url = '@Url.Action("SetBegDate")';
+        mini.open({
+            url: url,
+            title: "设置套餐开始日期", width: 280, height: 300,
+            onload: function () {
+                var iframe = this.getIFrameEl();
+                var data = { action: "new", OrdId: row.OrdId };
+                iframe.contentWindow.SetData(data);
+            },
+            ondestroy: function (action) {
+                if (action != "cancel") {
+                    mini.showTips({ content: "设置成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                    alert(row.SerialNum);
+                    grid.load({ SerialNum: row.SerialNum });
+                }
+            }
+        });
+    }
+
+
+    function onBillStop(e) {
+        var row = grid.getSelected();
+        var intStatus = parseInt(row.OrdStatusID);
+        if ((row.OrdTypeID == "0") && (intStatus > 1)) {
+            mini.showTips({ content: "护嘱状态非已提交状态，无法停止！", state: "warning", x: "center", y: "top", timeout: 3000 });
+            return;
+        }
+        else if ((row.OrdTypeID == "1") && (intStatus > 2)) {
+            mini.showTips({ content: "此护嘱已停止，无法停止！", state: "warning", x: "center", y: "top", timeout: 3000 });
+            return;
+        }
+        var serial = $("#SerialNum").val();
+        if (row) {
+            var ordid = row.OrdId;
+            if (ordid != "") {
+                mini.prompt("停止原因：", "确认出院计费并停止此护嘱？",
+                    function (action, value) {
+                        if (action == "ok") {
+                            $.ajax({
+                                type: 'POST',
+                                url: '@Url.Action("PatiLeaveAndBillOrder")',
+                                data: { "OrdId": ordid, "CanReason": value },
+                                cache: false,
+                                success: function (result) {
+                                    if (result == "执行成功") {
+                                        mini.showTips({ content: "执行成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                                        grid.load({ SerialNum: serial });
+                                        grid2.load({ OrdId: "S313" });
+                                    }
+                                    else {
+                                        mini.showTips({ content: result, state: "danger", x: "center", y: "top", timeout: 3000 });
+                                    }
+                                }
+                            });
+                        }
+                    });
+            }
+        }
+    }
+
+
+    function OrdChangeClick(e) {
+        if (e.selecteds.length > 0) {
+            $("#btnSave").hide();
+            $("#btnStop").show();
+            mini.getbyName("FreqId").setValue(e.selected.FreqId);
+            mini.getbyName("TimeTypeId").setValue(e.selected.TimeTypeId);
+            var strBeginDate = e.selected.BeginDate;
+            mini.getbyName("OrdTypeID").setValue(e.selected.OrdTypeID);
+            if (e.selected.OrdTypeID == 1) {
+                $("#longSel").show();
+                $("#longTime").show();
+                $("#divEndDate").show();
+            }
+            else {
+                $("#longSel").hide();
+                $("#longTime").hide();
+                $("#divEndDate").hide();
+            }
+            mini.getbyName("BeginDate").setValue(strBeginDate);
+            mini.getbyName("EndDate").setValue(e.selected.EndDate);
+            mini.getbyName("OrdName").setValue(e.selected.OrdName);
+            grid2.load({ OrdId: e.selected.OrdId });
+        }
+    }
+
+    var ordType = [{ id: 0, text: '临时' }, { id: 1, text: '长期' }];
+    function OnOrdTypeChange(e) {
+        for (var i = 0, l = ordType.length; i < l; i++) {
+            var g = ordType[i];
+            if (g.id == e.value)
+                return g.text;
+        }
+        return "";
+    }
+    //, { id: 3, text: '未计费停止' }, { id: 4, text: '已计费停止' }
+    var ordStatus = [{ id: 1, text: '已开立' }, { id: 2, text: '已计费' }];
+    function OnOrdStatusChange(e) {
+        var crow = e.row;
+        if (crow.OrdStatusID == "1") {
+            if (crow.CancUser == null) {
+                return "已开立";
+            }
+            else {
+                return "已停止";
+            }
+        }
+        else if (crow.OrdStatusID == "2") {
+            if (crow.CancUser == null) {
+                return "已计费";
+            }
+            else {
+                return "已计费停止";
+            }
+        }
+        return "";
+    }
+
+    function onValueChanged(e) {
+        var item = e.selected;
+        var row = grid2.getSelected();
+        item.Quantity = 1;
+        if (item.ItemName != "") {
+            var newRow = {};
+            item.Price = item.SalesPrice;
+            item.TotAmount = item.SalesPrice * 1;
+        }
+        var strordName = mini.getbyName("OrdName").getValue();
+        if (strordName != "") {
+            mini.getbyName("OrdName").setValue(strordName + ";" + item.ItemName);
+        }
+        else {
+            mini.getbyName("OrdName").setValue(item.ItemName);
+        }
+        grid2.updateRow(row, item);
+        var newRow = {};
+        grid2.addRow(newRow, 0);
+    }
+
+    grid2.on("cellendedit", function (sender) {
+        if (sender.field == "Quantity") {
+            var row = grid2.getRow(sender.rowIndex);
+            row.TotAmount = row.SalesPrice * row.Quantity;
+            grid2.updateRow(row, row);
+        }
+    });
+</script>

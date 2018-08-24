@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="PatiContactsMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="PatiContacts" type="HujingModel.PatiContactsEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+    <resultMap id="SelectResult" class="PatiContacts">
+      <result property="PatiId" column="patiid" />
+      <result property="ConName" column="conname" />
+      <result property="ContactId" column="contactid" />
+      <result property="Address" column="address" />
+      <result property="CodeId" column="codeid" />
+      <result property="Phone" column="phone" />
+      <result property="Memo" column="memo" />
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      Select
+      patiid,
+      conname,
+      contactid,
+      address,
+      codeid,
+      phone,
+      memo
+      From PatiContacts
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          contactid=#ContactId#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+
+    <insert id="Save" parameterClass="PatiContacts">
+      Insert Into PatiContacts (
+      patiid,
+      conname,
+      address,
+      codeid,
+      phone,
+      memo
+      )Values(
+      #PatiId#,
+      #ConName#,
+      #Address#,
+      #CodeId#,
+      #Phone#,
+      #Memo#
+      )
+    </insert>
+
+    <insert id="SaveList"  parameterClass="ArrayList">
+      <iterate conjunction=" " open="" close=""  >
+        <![CDATA[  
+        insert into PatiContacts ([PatiId], [ConName], [CodeId], [Address], [Phone], [Memo]) values  
+            (#[].PatiId#, #[].ConName#, #[].CodeId#, #[].Address#,#[].Phone#, #[].Memo#)  
+        ]]>
+      </iterate>
+    </insert>
+
+    <update id="Update" parameterClass="PatiContacts">
+      Update PatiContacts Set
+      patiid=#PatiId#,
+      conname=#ConName#,
+      contactid=#ContactId#,
+      address=#Address#,
+      codeid=#CodeId#,
+      phone=#Phone#,
+      memo=#Memo#
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          contactid=#ContactId#
+        </isParameterPresent>
+      </dynamic>
+    </update>
+
+    <delete id="Delete" parameterClass="int">
+      Delete From PatiContacts
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          contactid=#ContactId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+    <delete id="DeleteByPatiId" parameterClass="string">
+      Delete From PatiContacts
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          patiid=#PatiId#
+        </isParameterPresent>
+      </dynamic>
+    </delete>
+
+  </statements>
+</sqlMap>

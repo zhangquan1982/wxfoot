@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sqlMap namespace="PersonBasicInfoMap" xmlns="http://ibatis.apache.org/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <alias>
+    <typeAlias alias="PersonBasicInfo" type="HujingModel.PersonBasicInfoEntity, HujingModel" />
+  </alias>
+  <resultMaps>
+
+    <resultMap id="SelectResult" class="PersonBasicInfo">
+      <result property="PatiID" column="PatiID"/>
+      <result property="PatiName" column="PatiName"/>
+      <result property="SexId" column="SexId"/>
+      <result property="SexName" column="SexName"/>
+      <result property="BirthDate" column="BirthDate"/>
+      <result property="Age" column="Age"/>
+      <result property="CareType" column="CareType"/>
+      <result property="CareTypeName" column="CareTypeName"/>
+      <result property="NationId" column="NationId"/>
+      <result property="NationName" column="NationName"/>
+      <result property="Address" column="Address"/>
+      <result property="CertNum" column="CertNum"/>
+      <result property="CertTypeId" column="CertTypeId"/>
+      <result property="HCardId" column="HCardId"/>
+      <result property="HCardTypeId" column="HCardTypeId"/>
+      <result property="WorkType" column="WorkType"/>
+      <result property="Marriage" column="Marriage"/>
+      <result property="MarriageName" column="MarriageName"/>
+
+    </resultMap>
+  </resultMaps>
+
+  <statements>
+
+
+    <select id="Load" parameterClass="int" resultMap="SelectResult">
+      SELECT SerialNum
+      ,PatiID ,StatusName ,SexId ,SexName ,MediaChannelName ,PatiName ,BirthDate,
+      Age ,AdmitDate ,CareType ,CareTypeName ,NationId ,NationName ,Religion ,Address ,LeaveDate ,
+      CreateUser ,BedId ,BedName ,BuildName ,RoomName ,Eatinghabits ,Character ,Deviant ,Hobby ,
+      CertNum ,CertTypeId ,HCardId ,HCardTypeId ,WorkType ,Marriage ,MarriageName ,FloorName ,NurseGrade,NurseUser,
+      PreAmount ,FeeAmount,LeaveAmount,DepId,DepName
+      from vOldPersonVisitList
+      <dynamic prepend="WHERE">
+        <isParameterPresent>
+          serialnum=#SerialNum#
+        </isParameterPresent>
+      </dynamic>
+    </select>
+
+
+    <select id="LoadAll" parameterClass="System.Collections.IDictionary" resultMap="SelectResult">
+      select * from
+      (
+      SELECT SerialNum ,PatiID ,StatusName ,SexId ,SexName ,MediaChannelName ,PatiName ,BirthDate ,
+      Age ,AdmitDate ,CareType ,CareTypeName ,NationId ,NationName ,Religion ,Address ,LeaveDate ,
+      CreateUser ,BedId ,BedName ,BuildName ,RoomName ,Eatinghabits ,Character ,Deviant ,Hobby ,
+      CertNum ,CertTypeId ,HCardId ,HCardTypeId ,WorkType ,Marriage ,MarriageName ,FloorName ,
+      PreAmount ,FeeAmount,NurseGrade,NurseUser,LeaveAmount,DepId,DepName,
+      ROW_NUMBER() over(order by $sortField$ $sortOrder$) rowNumber
+      from vOldPersonVisitList
+      where 1=1  $Condition$
+      ) aa
+      where rowNumber  BETWEEN #Next# and #Prev#
+    </select>
+
+  </statements>
+</sqlMap>

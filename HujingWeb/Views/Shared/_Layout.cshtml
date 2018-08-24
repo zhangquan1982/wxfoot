@@ -1,0 +1,137 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+
+<!doctype html>
+<html lang="en" class="fixed">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title></title>
+    <link rel="apple-touch-icon" sizes="120x120" href="favicon/apple-icon-120x120.png">
+
+    <link rel="icon" type="image/png" sizes="192x192" href="~/Scripts/Helsinki/favicon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="~/Scripts/Helsinki/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="~/Scripts/Helsinki/favicon/favicon-16x16.png">
+    <link rel="stylesheet" type="text/css" href="http://apps.bdimg.com/libs/bootstrap/3.3.4/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/font-awesome/4.6.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="~/Scripts/Helsinki/vendor/animate.css/animate.css">
+    <link rel="stylesheet" href="~/Scripts/Helsinki/vendor/toastr/toastr.min.css">
+    <link rel="stylesheet" href="~/Scripts/Helsinki/vendor/magnific-popup/magnific-popup.css">
+    <link rel="stylesheet" href="~/Scripts/Helsinki/stylesheets/css/style.css">
+    <script src="~/Scripts/Helsinki/javascripts/jquery.min.js"></script>
+    <script src="~/Scripts/jquery.cookie.js"></script>
+    <script src="~/Scripts/js.cookie.js"></script>
+    <style type="text/css">
+        .tsFont {
+            font-size: 16px;
+            margin: 0;
+            text-align: center;
+            font: bold 100px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+            color: #f6e9e9;
+            text-shadow: 0 1px 0 #cccccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbbbbb, 0 4px 0 #b9b9b9, 0 5px 0 #aaaaaa, 0 6px 1px rgba(0, 0, 0, 0.1), 0 0 5px #e549e4, 0 1px 3px rgba(0, 0, 0, 0.3), 0 3px 5px rgba(0, 0, 0, 0.2), 0 5px 10px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.2), 0 20px 20px rgba(0, 0, 0, 0.15);
+            -webkit-transition: .2s all linear;
+        }
+
+        body {
+            margin: 5px;
+            padding: 1px;
+        }
+
+        li {
+            list-style: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">        
+        <div class="page-header">
+          @Html.Partial("Top", "Home")
+        </div>
+        <div class="page-body">
+            <div class="left-sidebar">
+                <div class="left-sidebar-header">
+                    <div class="left-sidebar-toggle c-hamburger c-hamburger--htla hidden-xs" data-toggle-class="left-sidebar-collapsed" data-target="html">
+                        <span></span>
+                    </div>
+                </div>
+                <div id="left-nav" class="nano">
+                    @{ Html.RenderAction("Menu", "Home");}
+                </div>
+            </div>
+            <div class="content">
+                @RenderBody()
+            </div>
+            <div class="right-sidebar">
+                <div class="right-sidebar-toggle" data-toggle-class="right-sidebar-opened" data-target="html">
+                    <i class="fa fa-cog fa-spin" aria-hidden="true"></i>
+                </div>
+                <div id="right-nav" class="nano">
+                    <div class="nano-content">
+                        <div class="template-settings">
+                            <h4 class="text-center">Template Settings</h4>
+                            <ul class="toggle-settings pv-xlg">
+                                <li>
+                                    <h6 class="text">Header fixed</h6>
+                                    <label class="switch">
+                                        <input id="header-fixed" type="checkbox" checked>
+                                        <span class="slider round"></span>
+                                    </label>
+                                </li>
+                                <li>
+                                    <h6 class="text">Left sidebar fixed</h6>
+                                    <label class="switch">
+                                        <input id="left-sidebar-fixed" type="checkbox" checked>
+                                        <span class="slider round"></span>
+                                    </label>
+                                </li>
+                                <li>
+                                    <h6 class="text">Left sidebar collapsed</h6>
+                                    <label class="switch">
+                                        <input id="left-sidebar-collapsed" type="checkbox">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </li>
+                                <li>
+                                    <h6 class="text">Content header fixed</h6>
+                                    <label class="switch">
+                                        <input id="content-header-fixed" type="checkbox" checked>
+                                        <span class="slider round"></span>
+                                    </label>
+                                </li>
+                            </ul>
+                            <h4 class="text-center">Template Colors</h4>
+                            <ul class="toggle-colors">
+                                <li>
+                                    <a href="index.html" class="on-click"> <img alt="Helsinki-green" src="~/Scripts/Helsinki/images/helsinki-green.png" /></a>
+                                </li>
+                                <li>
+                                    <a href="../helsinki-light/index.html" class="on-click"> <img alt="Helsinki-light" src="~/Scripts/Helsinki/images/helsinki-light.png" /></a>
+                                </li>
+                                <li>
+                                    <a href="../helsinki-blue/index.html" class="on-click"> <img alt="Helsinki-blue" src="~/Scripts/Helsinki/images/helsinki-blue.png" /></a>
+                                </li>
+                                <li>
+                                    <a href="../helsinki-red/index.html" class="on-click"> <img alt="Helsinki-red" src="~/Scripts/Helsinki/images/helsinki-red.png" /></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a href="#" class="scroll-to-top"><i class="fa fa-angle-double-up"></i></a>
+        </div>
+    </div>
+    <script src="~/Scripts/Helsinki/javascripts/jquery.min.js"></script>
+    <script src="~/Scripts/Helsinki/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/Scripts/Helsinki/vendor/nano-scroller/nano-scroller.js"></script>
+    <script src="~/Scripts/Helsinki/javascripts/template-script.min.js"></script>
+    <script src="~/Scripts/Helsinki/javascripts/template-init.min.js"></script>
+    <script src="~/Scripts/Helsinki/vendor/toastr/toastr.min.js"></script>
+    <script src="~/Scripts/Helsinki/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+</body>
+
+</html>
