@@ -47,7 +47,7 @@ namespace HujingWeb.Controllers
                 Random rad = new Random();
                 if (user != null)
                 {
-                    string Condition = " and userid='" + userid + "'  and orderdate between '" + orderDate.ToString("yyyy-MM-dd 00:00:00") + "'  and  '" + orderDate.ToString("yyyy-MM-dd 23:59:59") + "' and typecode=" + footTime;
+                    string Condition = " and (CancUser is null or CancUser = '') and userid='" + userid + "'  and orderdate between '" + orderDate.ToString("yyyy-MM-dd 00:00:00") + "'  and  '" + orderDate.ToString("yyyy-MM-dd 23:59:59") + "' and typecode=" + footTime;
                     int rowCount = dinnerlogic.Count(Condition);
                     if (rowCount > 0)
                     {
@@ -415,6 +415,7 @@ namespace HujingWeb.Controllers
                 result.Data = new { status = 200, msg = "此订单不存在！" };
                 return Json(result, JsonRequestBehavior.AllowGet);
             }
+            //return Json(result, JsonRequestBehavior.AllowGet);
         }
 
 
@@ -423,8 +424,6 @@ namespace HujingWeb.Controllers
         [HttpPost]
         public async Task<ActionResult> setBatchOrder(string userid, DateTime startDate, DateTime endDate, int orderNumber, string footTime)
         {
-            //aaddds
-
             try
             {
                 JsonResult result = new JsonResult();
@@ -438,7 +437,7 @@ namespace HujingWeb.Controllers
                         return Json(result, JsonRequestBehavior.AllowGet);
                     }
 
-                    string Condition = " and userid='"+ userid + "'  and orderdate between '" + startDate.ToString("yyyy-MM-dd 00:00:00") + "'  and  '" + endDate.ToString("yyyy-MM-dd 23:59:59") + "' and typecode="+ footTime;
+                    string Condition = " and (CancUser is null or CancUser = '') and userid='" + userid + "'  and orderdate between '" + startDate.ToString("yyyy-MM-dd 00:00:00") + "'  and  '" + endDate.ToString("yyyy-MM-dd 23:59:59") + "' and typecode="+ footTime;
                     int rowCount =  dinnerlogic.Count(Condition);
                     if(rowCount>0)
                     {
