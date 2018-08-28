@@ -415,7 +415,6 @@ namespace HujingWeb.Controllers
                 result.Data = new { status = 200, msg = "此订单不存在！" };
                 return Json(result, JsonRequestBehavior.AllowGet);
             }
-            //return Json(result, JsonRequestBehavior.AllowGet);
         }
 
 
