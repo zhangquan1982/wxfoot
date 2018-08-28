@@ -436,7 +436,7 @@ namespace HujingWeb.Controllers
                         result.Data = new { status = 200, msg = "开始日期或结束日期不能早于或者等于当前日期" };
                         return Json(result, JsonRequestBehavior.AllowGet);
                     }
-
+                    // 取消不算
                     string Condition = " and (CancUser is null or CancUser = '') and userid='" + userid + "'  and orderdate between '" + startDate.ToString("yyyy-MM-dd 00:00:00") + "'  and  '" + endDate.ToString("yyyy-MM-dd 23:59:59") + "' and typecode="+ footTime;
                     int rowCount =  dinnerlogic.Count(Condition);
                     if(rowCount>0)
