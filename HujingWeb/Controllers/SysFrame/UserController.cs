@@ -96,7 +96,7 @@ namespace HujingWeb.Controllers
                 string CardId = newObj.UserId + numString;
                 newObj.CardId = CardId;
                 newObj.LoginName = newObj.UserId;
-                newObj.Flag = false;
+                newObj.Flag = 0;
                 newObj.Password = StringCipherCls.EncryptDES("654321", StringCipherCls.keyIn);
                 newObj.CreateDate = DateTime.Now;
                 newObj.CreateUser = strUserId;

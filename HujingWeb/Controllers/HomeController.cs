@@ -296,7 +296,7 @@ namespace HujingWeb.Controllers
                     entity.UserId = GetMaxUserId();   // DateTime.Now.ToString("yyMMddHHmmssfff") + Result.ToString();
                     entity.UserName = "";
                     entity.Mobile = phoneNumber;
-                    entity.Flag = false;
+                    entity.Flag = 0;
                     entity.Password = StringCipherCls.EncryptDES("666666", StringCipherCls.keyIn);
                     entity.CreateDate = DateTime.Now;
                     entity.RoleType = "0";

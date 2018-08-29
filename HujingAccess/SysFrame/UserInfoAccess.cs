@@ -206,7 +206,7 @@ namespace HujingAccess
                     if (ids[i] != "")
                     {
                         UserInfoEntity userInfo = QueryForObject<UserInfoEntity>("UserInfoMap.Load", ids[i]);
-                        userInfo.Flag = true;
+                        userInfo.Flag = 1;
                         userInfo.UpdateDate = DateTime.Now;
                         userInfo.UpdateUser = checkUser;
                         Update("UserInfoMap.CheckUser", userInfo);

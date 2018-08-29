@@ -187,13 +187,23 @@ namespace HujingWeb.Controllers
             try
             {
                 UserCardEntity cardInfo = cardlogic.Load(carid);
+
                 if (cardInfo == null)
                 {
                     result.Data = new { status = 200, msg = "无此用户" };
                     return Json(result, JsonRequestBehavior.AllowGet);
                 }
                 UserInfoEntity userinfo = userLogic.Load(cardInfo.UserId);
-
+                if (userinfo.Flag == -1)
+                {
+                    result.Data = new { status = 200, msg = "此用户已经停用，不能扫码收费！" };
+                    return Json(result, JsonRequestBehavior.AllowGet);
+                }
+                //if (userinfo.Flag == 0)
+                //{
+                //    result.Data = new { status = 200, msg = "此用户未审核，不能扫码收费！" };
+                //    return Json(result, JsonRequestBehavior.AllowGet);
+                //}
 
                 string TypeCode = "";
                 string typeCodeName = "";

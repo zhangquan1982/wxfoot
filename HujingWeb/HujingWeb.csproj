@@ -287,7 +287,6 @@
     <Content Include="Images\LoginWX.jpg" />
     <Content Include="Images\logo.jpg" />
     <Content Include="Images\man.gif" />
-    <Content Include="Images\man1.gif" />
     <Content Include="Images\page_loginwxicon.png" />
     <Content Include="Images\quit.png" />
     <Content Include="Images\secondHand.png" />

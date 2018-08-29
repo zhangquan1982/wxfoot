@@ -261,7 +261,7 @@
     </update>
 
     <delete id="Delete" parameterClass="int">
-      update UserInfo set flag=1
+      update UserInfo set flag=-1
       <dynamic prepend="WHERE">
         <isParameterPresent>
           userid=#UserId#

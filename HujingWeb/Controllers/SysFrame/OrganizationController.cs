@@ -398,7 +398,7 @@ namespace HujingWeb.Controllers
                     user.LoginName = UserId;
                     user.UserName = UserId;
                     user.Password = Password;
-                    user.Flag = false;
+                    user.Flag = 0;
                     user.RoleType = "1";
                     user.CreateDate = DateTime.Now;
                     user.BirthDate = DateTime.Now;

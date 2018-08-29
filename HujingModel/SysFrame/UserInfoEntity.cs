@@ -29,7 +29,7 @@ namespace HujingModel
         private string _inputstr;
         private string _password;
         private string _depid;
-        private bool _flag;
+        private int _flag;
         private string _address;
         private string _phone;
         private string _mobile;
@@ -100,7 +100,7 @@ namespace HujingModel
         ///<sumary>
         /// 
         ///</sumary>
-        public bool Flag
+        public int Flag
         {
             get { return _flag; }
             set { _flag = value; }
