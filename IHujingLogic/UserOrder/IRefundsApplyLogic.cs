@@ -19,5 +19,8 @@ namespace IHujingLogic.UserOrder
 
         bool Update(RefundsApplyEntity obj);
 
+
+        bool BackUserFee(string applyId, string backUserId);
+
     }
 }

@@ -12,6 +12,8 @@
       <result property="ApplyDate" column="applydate" />
       <result property="IsBack" column="isback" />
       <result property="PayId" column="payid" />
+      <result property="BackUserId" column="backuserid" />
+      <result property="BackDate" column="backdate" />
     </resultMap>
   </resultMaps>
 
@@ -24,7 +26,9 @@
       reason,
       applydate,
       isback,
-      payid
+      payid,
+      backuserid,
+      backdate
       From RefundsApply
       <dynamic prepend="WHERE">
         <isParameterPresent>
@@ -43,6 +47,8 @@
       applydate,
       isback,
       payid,
+      backuserid,
+      backdate,
       ROW_NUMBER() over(order by applydate desc ) rowNumber
       From RefundsApply
       where 1=1 $Condition$
@@ -58,7 +64,9 @@
       reason,
       applydate,
       isback,
-      payid
+      payid,
+      backuserid,
+      backdate,
       )Values(
       #ApplyId#,
       #UserId#,
@@ -66,7 +74,11 @@
       #Reason#,
       #ApplyDate#,
       #IsBack#,
-      #PayId#
+      #PayId#,
+      #IsBack#,
+      #PayId#,
+      #BackUserId#,
+      #BackDate#
       )
     </insert>
 
@@ -78,7 +90,9 @@
       reason=#Reason#,
       applydate=#ApplyDate#,
       isback=#IsBack#,
-      payid=#PayId#
+      payid=#PayId#,
+      backuserid=#BackUserId#,
+      backdate=#BackDate#
       <dynamic prepend="WHERE">
         <isParameterPresent>
           applyid=#ApplyId#

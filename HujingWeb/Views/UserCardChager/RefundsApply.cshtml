@@ -1,5 +1,176 @@
 ﻿@{
-    ViewBag.Title = "RefundsApply";
+    ViewBag.Title = "退费管理";
+    Layout = null;
 }
+<script src="~/Scripts/MiniUI/scripts/boot.js" type="text/javascript"></script>
+<script src="~/Scripts/MiniUI/core.js" type="text/javascript"></script>
 
-<h2>RefundsApply</h2>
+<style type="text/css">
+    .icon-boy, .icon-female {
+        width: 16px;
+        height: 16px;
+        overflow: hidden;
+        margin: auto;
+        background: url(../../../Images/man.gif) no-repeat;
+        text-align: center;
+        display: block;
+    }
+
+    .icon-female {
+        background: url(../../../Images/woman.gif) no-repeat;
+    }
+
+    .myrow {
+        background: #fceee2;
+    }
+</style>
+
+
+<script type="text/javascript">
+    var tree;
+    var grid;
+    $(document).ready(function () {
+        $("#usermini").removeAttr("style");
+        mini.parse();
+        grid = mini.get("grid1");
+        grid.load({ strType: "0" });
+
+        grid.on("drawcell", function (e) {
+            var record = e.record,
+                column = e.column,
+                field = e.field,
+                value = e.value;
+
+            if (column.field == "Sex") {
+                if (e.value == "1") {
+                    e.cellHtml = "<span class='icon-female'></span>"
+                } else {
+                    e.cellHtml = "<span class='icon-boy'></span>"
+                }
+            }
+
+            //设置行样式
+            if (record.SexName == "1") {
+                e.rowCls = "myrow";
+            }
+        });
+    });
+
+    function BackFee() {
+        debugger;
+        var row = grid.getSelected();
+        if (row.length <= 0) {
+            mini.showTips({ content: "请选择需要退费的记录！", state: "warning", x: "center", y: "top", timeout: 3000 });
+            return;
+        }
+        if (row.IsBack == "1") {
+            mini.showTips({ content: "此记录已经退费,不能重新退费！", state: "warning", x: "center", y: "top", timeout: 3000 });
+            return;
+        }
+        mini.confirm("确定给此员工退费吗？", "确定信息", function (action) {
+            if (action == "ok") {
+                $.post("/UserCardChager/BackUserFee", { ApplyId: row.ApplyId }, function (result) {
+                    debugger;
+                    if (result.Data.status==100) {
+                        mini.showTips({ content: "操作成功！", state: "success", x: "center", y: "top", timeout: 3000 });
+                        grid.load({ strType: "0" });
+                    }
+                    else {
+                        mini.showTips({ content: result.Data.msg, state: "danger", x: "center", y: "top", timeout: 3000 });
+                    }
+                });
+            }
+        });
+
+
+    }
+
+    function search() {
+        var key = $("#selType").val();
+        grid.load({ strType: key });
+    }
+
+    function onKeyEnter(e) {
+        search();
+    }
+
+
+    var Checks = [{ id: 0, text: '未退费' }, { id: 1, text: '已退费' }];
+    function OnCheckChange(e) {
+        for (var i = 0, l = Checks.length; i < l; i++) {
+            var g = Checks[i];
+            if (g.id == 0) {
+                //e.rowStyle = 'background-color:red';
+                e.cellStyle = "color:gray;font-weight:bold;";
+            }
+            else if (g.id == 1) {
+                //e.rowStyle = 'background-color:red';
+                e.cellStyle = "color:green;font-weight:bold;";
+            }
+            if (g.id == e.value) {
+                return g.text;
+            }
+        }
+        return "";
+    }
+
+</script>
+<div>
+    <ul class="mnbreadcrumb">
+        <li>
+            <a href="#">系统管理</a> <span class="divider"></span>
+        </li>
+        <li>
+            <a href="#">员工退费</a>
+        </li>
+    </ul>
+</div>
+<div showcollapsebutton="true">
+    <div class="mini-toolbar" style="border-bottom: 0; padding: 0px;">
+        <table style="width: 100%;">
+            <tr>
+                <td style="width: 100%;">
+                    <a class="mini-button" iconcls="icon-ok" onclick="BackFee()">退费</a>
+                </td>
+                <td style="white-space: nowrap;">
+                    <select id="selType">
+                        <option value="0">未退费</option>
+                        <option value="1">已退费</option>
+                    </select>
+                    <a class="mini-button" onclick="search()">查询</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="grid1" class="mini-datagrid" style="width: 100%; height: 90%;" allowresize="true"
+         url="@Url.Action("GetListRefundsApply")" idfield="ApplyId" pagesize="15" multiselect="true">
+        <div property="columns">
+            <div type="checkcolumn">
+            </div>
+            <div field="ApplyDate" width="90" headeralign="center" dateformat="yyyy-MM-dd">
+                申请日期
+            </div>
+            <div field="Reason" width="80" headeralign="center" align="center" allowsort="true">
+                申请原因
+            </div>
+            <div field="UserId" width="80" headeralign="center" align="center" allowsort="true">
+                员工工号
+            </div>
+            <div field="UserName" width="70" headeralign="center" align="center" allowsort="true">
+                姓名
+            </div>
+            <div field="Sex" width="60" headeralign="center" align="center">
+                性别
+            </div>
+            <div field="IsBack" headeralign="center" width="100" renderer="OnCheckChange">
+                状态
+            </div>
+            <div field="Amount" headeralign="center" width="100">
+                退费金额
+            </div>
+            <div field="BackDate" headeralign="center" width="100" dateformat="yyyy-MM-dd">
+                退费日期
+            </div>
+        </div>
+    </div>
+</div>

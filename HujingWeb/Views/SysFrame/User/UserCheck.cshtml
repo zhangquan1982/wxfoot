@@ -42,6 +42,26 @@
                 grid.load({ upperid: e.node.id });
             }
         });
+
+        grid.on("drawcell", function (e) {
+            var record = e.record,
+                column = e.column,
+                field = e.field,
+                value = e.value;
+
+            if (column.field == "Sex") {
+                if (e.value == "1") {
+                    e.cellHtml = "<span class='icon-female'></span>"
+                } else {
+                    e.cellHtml = "<span class='icon-boy'></span>"
+                }
+            }
+
+            //设置行样式
+            if (record.SexName == "1") {
+                e.rowCls = "myrow";
+            }
+        });
     });
 
     function CheckUser() {
@@ -88,26 +108,13 @@
     function onKeyEnter(e) {
         search();
     }
-    /////////////////////////////////////////////////
-    function onBirthdayRenderer(e) {
-        var value = e.value;
-        if (value) return mini.formatDate(value, 'yyyy-MM-dd');
-        return "";
-    }
+
 
     function onMarriedRenderer(e) {
         if (e.value == 1) return "是";
         else return "否";
     }
 
-    var Genders = [{ id: 0, text: '男' }, { id: 1, text: '女' }];
-    function OnSexChange(e) {
-        for (var i = 0, l = Genders.length; i < l; i++) {
-            var g = Genders[i];
-            if (g.id == e.value) return g.text;
-        }
-        return "";
-    }
 
     var Checks = [{ id: -1, text: '停用' }, { id: 0, text: '未审核' }, { id: true, text: '审核' }];
     function OnCheckChange(e) {
@@ -178,7 +185,7 @@
                 <div field="UserName" width="70" headeralign="center" align="center" allowsort="true">
                     姓名
                 </div>
-                <div field="Sex" width="60" headeralign="center" align="center" renderer="OnSexChange">
+                <div field="Sex" width="60" headeralign="center" align="center">
                     性别
                 </div>
                 <div field="BirthDate" width="90" headeralign="center" dateformat="yyyy-MM-dd">

@@ -60,7 +60,6 @@
 
     <update id="Update" parameterClass="SysRole">
       Update SysRole Set
-      orgid=#OrgId#,
       roleid=#RoleId#,
       rolename=#RoleName#,
       memo=#Memo#

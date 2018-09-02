@@ -33,6 +33,7 @@ namespace HujingModel
         private DateTime _createdate;
         private string _typecode;
         private string _createuser;
+        private DateTime _billdate;
 
         public string UserName { get; set; }
 
@@ -107,6 +108,15 @@ namespace HujingModel
         {
             get { return _createuser; }
             set { _createuser = value; }
+        }
+
+        ///<sumary>
+        /// 
+        ///</sumary>
+        public DateTime BillDate
+        {
+            get { return _billdate; }
+            set { _billdate = value; }
         }
     }
 }

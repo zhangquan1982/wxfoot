@@ -32,6 +32,7 @@ namespace HujingModel
         private string _settleid;
         private string _settledate;
         private DateTime _createdate;
+        private DateTime _billdate;
         private string _createuser;
 
         private string _orgid;
@@ -113,6 +114,15 @@ namespace HujingModel
         {
             get { return _createuser; }
             set { _createuser = value; }
+        }
+
+        ///<sumary>
+        /// 
+        ///</sumary>
+        public DateTime BillDate
+        {
+            get { return _billdate; }
+            set { _billdate = value; }
         }
     }
 }

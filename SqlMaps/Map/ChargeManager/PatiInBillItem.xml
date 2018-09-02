@@ -14,6 +14,7 @@
       <result property="CreateDate" column="createdate" />
       <result property="TypeCode" column="typecode" />
       <result property="CreateUser" column="createuser" />
+      <result property="BillDate" column="billdate" />
     </resultMap>
   </resultMaps>
 
@@ -34,7 +35,8 @@
       unusualmemo,
       createdate,
       typecode,
-      createuser
+      createuser,
+      billdate
       From PatiInBillItem
       <dynamic prepend="WHERE">
         <isParameterPresent>
@@ -56,6 +58,7 @@
       createdate,
       typecode,
       createuser,
+      billdate,
       ROW_NUMBER() over(order by ordid ) rowNumber
       From PatiInBillItem
       where 1=1 $Condition$
@@ -77,6 +80,7 @@
       PatiInBillItem.createdate,
       typecode,
       PatiInBillItem.createuser,
+      billdate,
       ROW_NUMBER() over(order by PatiInBillItem.createdate $sortOrder$) rowNumber
       from PatiInBillItem
       inner join UserInfo on PatiInBillItem.UserId=UserInfo.UserId
@@ -95,7 +99,8 @@
       unusualmemo,
       createdate,
       typecode,
-      createuser
+      createuser,
+      billdate
       )Values(
       #BillItemId#,
       #UserId#,
@@ -105,7 +110,8 @@
       #UnusualMemo#,
       #CreateDate#,
       #TypeCode#,
-      #CreateUser#
+      #CreateUser#,
+      getdate()
       )
     </insert>
 

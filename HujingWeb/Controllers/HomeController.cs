@@ -515,57 +515,79 @@ namespace HujingWeb.Controllers
                 if ((usermodel != null) && (usermodel.RoleType == "1"))
                 {
                     groupList = IgroupLogic.LoadAll("  and ( ParentID is null or ParentID='') ", 1000, 1, "GroupID");
+                    IList<SysGroupVM> groupvmList = new List<SysGroupVM>();
+                    foreach (SysGroupEntity enty in groupList)
+                    {
+                        SysGroupVM groupvm = new SysGroupVM();
+                        groupvm.id = enty.GroupID;
+                        groupvm.text = enty.GroupName;
+                        groupvm.iconCls = enty.IconCls;
+                        groupvm.pid = enty.ParentID;
+                        groupvm.url = enty.URL;
+                        groupvm.HisType = enty.HisType;
+                        groupvm.iconPosition = "top";
+
+                        Condition = " and ParentID = '" + enty.GroupID + "'";
+                        IList<SysGroupEntity> itemList = IgroupLogic.LoadAll(Condition, 1000, 1, "groupid");
+                        groupvm.subList = new List<SysGroupEntity>();
+                        groupvm.subList = itemList;
+                        groupvmList.Add(groupvm);
+                    }
+
+                    return PartialView(new MenuModel { Menus = groupvmList });
                 }
                 else
                 {
                     groupList = IgroupLogic.LoadGroupListByUserId(strUserId);
-                }
-                //string Condition = " and ( ParentID is null or ParentID='') ";
-                //IList<SysGroupEntity> groupList = IgroupLogic.LoadAll(Condition, 1000, 1, "groupid");
-                if (groupList.Count > 0)
-                {
-                    List<SysGroupEntity> groupListMenuOne = new List<SysGroupEntity>();
                     if (groupList.Count > 0)
                     {
-                        foreach (SysGroupEntity enty in groupList)
+                        List<SysGroupEntity> groupListMenuOne = new List<SysGroupEntity>();
+                        if (groupList.Count > 0)
                         {
-                            if (string.IsNullOrEmpty(enty.ParentID))
+                            foreach (SysGroupEntity enty in groupList)
                             {
-                                groupListMenuOne.Add(enty);
+                                if (string.IsNullOrEmpty(enty.ParentID))
+                                {
+                                    groupListMenuOne.Add(enty);
+                                }
                             }
                         }
-                    }
 
-                    if (groupListMenuOne.Count > 0)
-                    {
-                        IList<SysGroupVM> groupvmList = new List<SysGroupVM>();
-                        foreach (SysGroupEntity enty in groupListMenuOne)
+                        if (groupListMenuOne.Count > 0)
                         {
+                            IList<SysGroupVM> groupvmList = new List<SysGroupVM>();
+                            foreach (SysGroupEntity enty in groupListMenuOne)
+                            {
 
-                            SysGroupVM groupvm = new SysGroupVM();
-                            groupvm.id = enty.GroupID;
-                            groupvm.text = enty.GroupName;
-                            groupvm.iconCls = enty.IconCls;
-                            groupvm.pid = enty.ParentID;
-                            groupvm.url = enty.URL;
-                            groupvm.HisType = enty.HisType;
-                            groupvm.iconPosition = "top";
+                                SysGroupVM groupvm = new SysGroupVM();
+                                groupvm.id = enty.GroupID;
+                                groupvm.text = enty.GroupName;
+                                groupvm.iconCls = enty.IconCls;
+                                groupvm.pid = enty.ParentID;
+                                groupvm.url = enty.URL;
+                                groupvm.HisType = enty.HisType;
+                                groupvm.iconPosition = "top";
 
-                            Condition = " and ParentID = '" + enty.GroupID + "'";
-                            Condition = " and UserInfo.userid = '" + strUserId + "' and SysGroup.parentid = '" + enty.GroupID + "'";
-                            IList<SysGroupEntity> itemList = IgroupLogic.LoadAllByParentIdAndUserId(Condition, 1000, 1, "groupid");
-                            groupvm.subList = new List<SysGroupEntity>();
-                            groupvm.subList = itemList;
-                            groupvmList.Add(groupvm);
+                                Condition = " and ParentID = '" + enty.GroupID + "'";
+                                Condition = " and UserInfo.userid = '" + strUserId + "' and SysGroup.parentid = '" + enty.GroupID + "'";
+                                IList<SysGroupEntity> itemList = IgroupLogic.LoadAllByParentIdAndUserId(Condition, 1000, 1, "groupid");
+                                groupvm.subList = new List<SysGroupEntity>();
+                                groupvm.subList = itemList;
+                                groupvmList.Add(groupvm);
 
 
+                            }
+
+                            return PartialView(new MenuModel { Menus = groupvmList });
                         }
-
-                        return PartialView(new MenuModel { Menus = groupvmList });
                     }
                 }
+                return null;
             }
-            return null;
+            else
+            {
+                return null;
+            }
         }
 
         public PartialViewResult MenuOld()

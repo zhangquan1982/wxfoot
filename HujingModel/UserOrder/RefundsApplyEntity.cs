@@ -31,6 +31,8 @@ namespace HujingModel
         private DateTime _applydate;
         private string _isback;
         private string _payid;
+        private string _backuserid;
+        private DateTime? backdate;
 
         ///<sumary>
         /// 
@@ -87,6 +89,20 @@ namespace HujingModel
         {
             get { return _payid; }
             set { _payid = value; }
+        }
+
+
+
+        public string BackUserId
+        {
+            get { return _backuserid; }
+            set { _backuserid = value; }
+        }
+
+        public DateTime? BackDate
+        {
+            get { return backdate; }
+            set { backdate = value; }
         }
     }
 }

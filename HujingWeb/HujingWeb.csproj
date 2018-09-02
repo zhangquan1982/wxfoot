@@ -244,6 +244,7 @@
     <Compile Include="JsonEntitys\JsonTreeModel.cs" />
     <Compile Include="JsonEntitys\TreeModel.cs" />
     <Compile Include="Model\OrgApply\BedSidyApplyModel.cs" />
+    <Compile Include="Model\OrgApply\RefundsApplyVM.cs" />
     <Compile Include="Model\Report\EChartData.cs" />
     <Compile Include="Model\Report\MapItem.cs" />
     <Compile Include="Scripts\Models\ConsultVisitModel.cs" />

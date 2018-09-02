@@ -3,6 +3,7 @@ using HujingModel;
 using HujingModel.SysFrame;
 using HujingModel.ViewModel;
 using HujingWeb.Filter;
+using HujingWeb.Model.OrgApply;
 using IHujingLogic;
 using IHujingLogic.SysFrame;
 using IHujingLogic.UserOrder;
@@ -32,6 +33,9 @@ namespace HujingWeb.Controllers
         public IUserCardLogic cardlogic { get; set; }
 
         public IOrderDinnerLogic dinnerlogic { get; set; }
+
+
+        public IRefundsApplyLogic resundApply { get; set; }
 
 
         [LoginValidateAttribute]
@@ -154,6 +158,7 @@ namespace HujingWeb.Controllers
             {
                 billitem.TypeCode = "03";
             }
+            billitem.BillDate = DateTime.Now;
             billitem.CreateDate = DateTime.Now;
             billitem.CreateUser = CreateUser;
 
@@ -172,7 +177,7 @@ namespace HujingWeb.Controllers
 
         public ActionResult RefundsApply()
         {
-            return Json(true);
+            return View();
         }
 
         public ActionResult SweepCodeCharger()
@@ -241,6 +246,61 @@ namespace HujingWeb.Controllers
             catch (Exception ex)
             {
                 result.Data = new { status = 200, msg = ex.Message };
+                return Json(result, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
+        /// <summary>
+        /// 退费页面
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult GetListRefundsApply(string strType,int pageIndex, int pageSize, string sortField, string sortOrder)
+        {
+            pageIndex = pageIndex + 1;
+            string Condition = " and IsBack = " + strType;
+            IList<RefundsApplyEntity> refundList = resundApply.LoadAll(Condition, pageSize, pageIndex, "");
+            IList<RefundsApplyVM> refVMList = new List<RefundsApplyVM>();
+            if (refundList != null  && refundList.Count>0)
+            {
+                foreach(var item in refundList)
+                {
+                    RefundsApplyVM vmItem = new RefundsApplyVM();
+                    UserInfoEntity user = userLogic.Load(item.UserId);
+                    vmItem.ApplyId = item.ApplyId;
+                    vmItem.UserId = item.UserId;
+                    vmItem.ApplyDate = item.ApplyDate;
+                    vmItem.Amount = item.Amount;
+                    vmItem.BackDate = DateTime.Now;
+                    vmItem.IsBack = item.IsBack;
+                    vmItem.BackUserId = item.BackUserId;
+                    vmItem.UserName = user.UserName;
+                    vmItem.Sex = user.Sex;
+                    refVMList.Add(vmItem);
+                }
+            }
+            return Json(refVMList, JsonRequestBehavior.AllowGet);
+        }
+
+
+        public ActionResult BackUserFee(string ApplyId)
+        {
+            JsonResult result = new JsonResult();
+            if (string.IsNullOrEmpty(ApplyId))
+            {
+                result.Data = new { status = 200, msg = "申请单号不能为空!", userid = "", cardCode = "" };
+                return Json(result, JsonRequestBehavior.AllowGet);
+            }
+            string CreateUser = HttpContext.ApplicationInstance.Context.Request.Cookies["UserId"].Value;
+            bool isok = resundApply.BackUserFee(ApplyId, CreateUser);
+            if (isok)
+            {
+                result.Data = new { status = 100, msg = "", userid = "", cardCode = "" };
+                return Json(result, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                result.Data = new { status = 200, msg = "退费失败！", userid = "", cardCode = "" };
                 return Json(result, JsonRequestBehavior.AllowGet);
             }
         }
